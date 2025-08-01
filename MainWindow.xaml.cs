@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using ROGraph.Data;
+using ROGraph.Models;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +21,9 @@ namespace ROGraph
         public MainWindow()
         {
             InitializeComponent();
+            ReadingOrders.Items.Add(0, new ReadingOrder() { Name = "RO1", PageNumber = 1 });
+            ReadingOrders.Items.Add(1, new ReadingOrder() { Name = "RO2", PageNumber = 2 });
+            //TODO: load list of reading orders from storage
         }
     }
 }
