@@ -22,6 +22,9 @@ namespace ROGraph.Pages
     public partial class ReadingOrderPage : Page
     {
         private ReadingOrder readingOrder;
+
+        private const int STARTING_TOP_OFFSET = 100;
+        private const int STARTING_LEFT_OFFSET = 400;
         public ReadingOrderPage(ReadingOrder readingOrder)
         {
             this.readingOrder = readingOrder;
@@ -31,14 +34,41 @@ namespace ROGraph.Pages
 
         private void PopulateNodes()
         {
-            Node newNode = new Node { Name = "My Reading Order", Type = Enums.NodeType.Diamond };
-            UIElement display = (UIElement)((DataTemplate)this.Resources["NodeDisplay"]).LoadContent();
-            ((FrameworkElement)display).DataContext = newNode;
+            //TODO: Change to use actual data
+            // Place the root node
+            Node root = new Node { Name = "My Reading Order", Type = Enums.NodeType.Diamond };
+            PlaceNode(root, 0, 0);
 
-            Canvas.SetTop(display, 100);
-            Canvas.SetLeft(display, 20);
+            root.Children.Add(new Node { Name = "My Reading Order", Type = Enums.NodeType.Diamond });
+            root.Children.Add(new Node { Name = "My Reading Order", Type = Enums.NodeType.Diamond });
+
+            PlaceChildNodes(root, STARTING_LEFT_OFFSET, STARTING_TOP_OFFSET);
+        }
+
+        private void PlaceNode(Node node, int leftOffset, int topOffset)
+        {
+            UIElement display = (UIElement)((DataTemplate)this.Resources["NodeDisplay"]).LoadContent();
+            ((FrameworkElement)display).DataContext = node;
+
+            Canvas.SetTop(display, 100 + topOffset);
+            Canvas.SetLeft(display, 20 + leftOffset);
 
             ReadingOrderCanvas.Children.Add(display);
+        }
+
+        private void PlaceChildNodes(Node root, int leftOffset, int topOffset)
+        {
+            if(!root.Children.Any())
+            {
+                return;
+            }
+            int shiftDown = 0;
+            foreach (Node child in root.Children)
+            {
+                PlaceNode(child, leftOffset, topOffset + (shiftDown*400));
+                shiftDown++;
+                PlaceChildNodes(child, leftOffset * 2, topOffset);
+            }
         }
     }
 }
