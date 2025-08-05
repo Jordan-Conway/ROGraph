@@ -11,5 +11,7 @@ namespace ROGraph.Models
     {
         public required string Name { get; set; }
         public required NodeType Type { get; set; }
+
+        public List<Node> Children { get; set; } = new List<Node>();
     }
 }
