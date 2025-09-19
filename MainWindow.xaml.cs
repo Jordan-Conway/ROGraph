@@ -21,8 +21,8 @@ namespace ROGraph
         public MainWindow()
         {
             InitializeComponent();
-            ReadingOrders.Items.Add(0, new ReadingOrder() { Name = "RO1", PageNumber = 1 });
-            ReadingOrders.Items.Add(1, new ReadingOrder() { Name = "RO2", PageNumber = 2 });
+            ReadingOrders.Items.Add(0, new ReadingOrder() { Name = "RO1", PageNumber = 1, Nodes = [] });
+            ReadingOrders.Items.Add(1, new ReadingOrder() { Name = "RO2", PageNumber = 2, Nodes = [] });
             //TODO: load list of reading orders from storage
         }
     }
