@@ -10,6 +10,7 @@ namespace ROGraph.Enums
     {
         Circle,
         Diamond,
-        Triangle
+        Triangle,
+        Line
     }
 }
