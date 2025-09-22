@@ -23,52 +23,74 @@ namespace ROGraph.Pages
     {
         private ReadingOrder readingOrder;
 
-        private const int STARTING_TOP_OFFSET = 100;
-        private const int STARTING_LEFT_OFFSET = 400;
+        private const int IMAGE_SIZE = 240;
+        private const int IMAGE_GAP_SIZE = 80;
         public ReadingOrderPage(ReadingOrder readingOrder)
         {
             this.readingOrder = readingOrder;
             InitializeComponent();
-            PopulateNodes();
+            PlaceNodes();
         }
 
-        private void PopulateNodes()
+        private void PlaceNodes()
         {
-            //TODO: Change to use actual data
-            // Place the root node
-            Node root = new Node { Name = "My Reading Order", Type = Enums.NodeType.Diamond };
-            PlaceNode(root, 0, 0);
+            if(readingOrder.Nodes.Count() == 0)
+            {
+                Console.WriteLine("No Nodes to Place");
+                return;
+            }
 
-            root.Children.Add(new Node { Name = "My Reading Order", Type = Enums.NodeType.Diamond });
-            root.Children.Add(new Node { Name = "My Reading Order", Type = Enums.NodeType.Diamond });
+            // Place in the connectors first
+            foreach(List<Line> list in this.readingOrder.Nodes.Connectors)
+            {
+                foreach (Line line in list)
+                {
+                    this.PlaceLine(line);
+                }
+            }
 
-            PlaceChildNodes(root, STARTING_LEFT_OFFSET, STARTING_TOP_OFFSET);
+            // Fill in the nodes
+            int columnNumber = 0;
+            foreach (List<Node?> list in this.readingOrder.Nodes.Nodes)
+            {
+                int rowNumber = 0;
+                foreach(Node? node in list)
+                {
+                    if (node != null)
+                    {
+                        this.PlaceNode(node, rowNumber, columnNumber);
+                    }
+                    rowNumber++;
+                }
+                columnNumber++;
+            }
+
+            return;
         }
 
-        private void PlaceNode(Node node, int leftOffset, int topOffset)
+        private void PlaceLine(Line line)
+        {
+            line.Stroke = System.Windows.Media.Brushes.Black;
+            line.SnapsToDevicePixels = true;
+            line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+            line.StrokeThickness = 10;
+            ReadingOrderCanvas.Children.Add(line);
+            System.Diagnostics.Debug.WriteLine("Placed a line");
+        }
+
+        private void PlaceNode(Node node, int rowNumber, int columnNumber)
         {
             UIElement display = (UIElement)((DataTemplate)this.Resources["NodeDisplay"]).LoadContent();
             ((FrameworkElement)display).DataContext = node;
 
-            Canvas.SetTop(display, 100 + topOffset);
-            Canvas.SetLeft(display, 20 + leftOffset);
+            int x = node.X + (columnNumber * IMAGE_SIZE) + (columnNumber * IMAGE_GAP_SIZE);
+            int y = node.Y + (rowNumber * IMAGE_SIZE) + (rowNumber * (IMAGE_GAP_SIZE/2));
+
+            Canvas.SetLeft(display, x);
+            Canvas.SetTop(display, y);
 
             ReadingOrderCanvas.Children.Add(display);
-        }
-
-        private void PlaceChildNodes(Node root, int leftOffset, int topOffset)
-        {
-            if(!root.Children.Any())
-            {
-                return;
-            }
-            int shiftDown = 0;
-            foreach (Node child in root.Children)
-            {
-                PlaceNode(child, leftOffset, topOffset + (shiftDown*400));
-                shiftDown++;
-                PlaceChildNodes(child, leftOffset * 2, topOffset);
-            }
+            System.Diagnostics.Debug.WriteLine("Place a node");
         }
     }
 }

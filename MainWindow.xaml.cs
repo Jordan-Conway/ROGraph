@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace ROGraph
 {
@@ -21,8 +22,11 @@ namespace ROGraph
         public MainWindow()
         {
             InitializeComponent();
-            ReadingOrders.Items.Add(0, new ReadingOrder() { Name = "RO1", PageNumber = 1, Nodes = [] });
-            ReadingOrders.Items.Add(1, new ReadingOrder() { Name = "RO2", PageNumber = 2, Nodes = [] });
+            ReadingOrder ro1 = new ReadingOrder("RO1", 1, new ReadingOrderNodes());
+            ReadingOrder ro2 = new ReadingOrder("RO2", 2, new ReadingOrderNodes());
+
+            ReadingOrders.Items.Add(0, ro1);
+            ReadingOrders.Items.Add(1, ro2);
             //TODO: load list of reading orders from storage
         }
     }
