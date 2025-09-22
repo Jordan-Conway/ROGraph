@@ -11,6 +11,5 @@ namespace ROGraph.Enums
         Circle,
         Diamond,
         Triangle,
-        Line
     }
 }
