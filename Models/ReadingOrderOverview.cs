@@ -8,9 +8,14 @@ namespace ROGraph.Models
 {
     public class ReadingOrderOverview
     {
-        public required string Name { get; set; }
-        public required string Page { get; set; }
+        public string Name { get; set; }
 
         public string? Description { get; set; }
+
+        public ReadingOrderOverview(string? name, string? description = null)
+        {
+            this.Name = name == null ? string.Empty : name;
+            this.Description = description;
+        }
     }
 }
