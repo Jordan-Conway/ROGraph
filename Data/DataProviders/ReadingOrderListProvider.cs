@@ -8,18 +8,10 @@ namespace ROGraph.Data.DataProviders
     {
         public static List<ReadingOrderOverview> GetReadingOrders()
         {
-            DirectoryInfo currentDir = new DirectoryInfo(Environment.CurrentDirectory);
+            
+            string currentDir = DataFolderProvider.GetDataDirectory();
 
-            while(currentDir.GetDirectories("Data").Length == 0)
-            {
-                if(currentDir.Parent == null)
-                {
-                    throw new NullReferenceException("Reached null parent while looking for Data folder");
-                }
-                currentDir = currentDir.Parent;
-            }
-
-            DirectoryInfo directoryInfo = new DirectoryInfo(currentDir + @"\Data\ReadingOrders\");
+            DirectoryInfo directoryInfo = new DirectoryInfo(currentDir + @"\ReadingOrders\");
             List<ReadingOrderOverview> overviews = new List<ReadingOrderOverview>();
 
             foreach (DirectoryInfo readingOrder in directoryInfo.EnumerateDirectories())
