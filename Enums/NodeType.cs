@@ -8,8 +8,8 @@ namespace ROGraph.Enums
 {
     public enum NodeType
     {
-        Circle,
-        Diamond,
-        Triangle,
+        Circle =0,
+        Diamond =1,
+        Triangle =2,
     }
 }
