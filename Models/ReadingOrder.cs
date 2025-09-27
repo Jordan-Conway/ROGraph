@@ -10,21 +10,30 @@ namespace ROGraph.Models
     {
         public string Name { get; set; }
         public string? Description { get; set; }
-        public int PageNumber { get; set; }
-        public ReadingOrderNodes Nodes { get; set; }
+        public Guid Id { get; set; }
+        public CoordinateTranslator? CoordinateTranslator { get; set; }
+        public ReadingOrderContents Contents { get; set; }
 
-        public ReadingOrder(String name, int pageNumber, ReadingOrderNodes? nodes = null, string description = "")
+        public ReadingOrder(String name, Guid? guid, ReadingOrderContents? nodes = null, string description = "")
         {
             this.Name = name;
-            this.PageNumber = pageNumber;
             
-            if (nodes == null )
+            if (guid == null)
             {
-                this.Nodes = new ReadingOrderNodes();
+                this.Id = Guid.NewGuid();
             }
             else
             {
-                this.Nodes = nodes;
+                this.Id = (Guid)guid;
+            }
+
+            if (nodes == null)
+            {
+                this.Contents = new ReadingOrderContents();
+            }
+            else
+            {
+                this.Contents = nodes;
             }
 
                 this.Description = description;

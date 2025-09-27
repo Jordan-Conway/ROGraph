@@ -1,4 +1,5 @@
 ﻿using ROGraph.Data;
+using ROGraph.Data.DataProviders;
 using ROGraph.Models;
 using System.Text;
 using System.Windows;
@@ -22,11 +23,6 @@ namespace ROGraph
         public MainWindow()
         {
             InitializeComponent();
-            ReadingOrder ro1 = new ReadingOrder("RO1", 1, new ReadingOrderNodes());
-            ReadingOrder ro2 = new ReadingOrder("RO2", 2, new ReadingOrderNodes());
-
-            ReadingOrders.Items.Add(0, ro1);
-            ReadingOrders.Items.Add(1, ro2);
             //TODO: load list of reading orders from storage
         }
     }

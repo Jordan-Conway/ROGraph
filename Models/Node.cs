@@ -7,13 +7,39 @@ using System.Threading.Tasks;
 
 namespace ROGraph.Models
 {
-    public class Node(string name, NodeType type, int x = 0, int y = 0)
+    public abstract class Node
     {
-        public string Name { get; set; } = name;
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public bool IsCompleted { get; set; }
+        public Checklist? Checklist { get; set; }
+        public Guid Origin { get; set; }
+        public DateTime created { get; set; }
+        public DateTime lastModified { get; set; }
 
-        public int X { get; set; } = x;
+        public Node(
+            Guid id,
+            string name, 
+            Guid origin, 
+            DateTime created, 
+            DateTime lastModified, 
+            bool isCompleted = false,
+            Checklist? checklist = null,
+            string? description = null
+            )
+        {
+            this.Id = id;
+            this.Name = name;
+            this.Origin = origin;
+            this.created = created;
+            this.lastModified = lastModified;
+            this.IsCompleted = isCompleted;
+            this.Checklist = checklist;
+            this.Description = description;
+        }
 
-        public int Y { get; set; } = y;
-        public NodeType Type { get; set; } = type;
+        public abstract Guid GetX();
+        public abstract Guid GetY();
     }
 }
