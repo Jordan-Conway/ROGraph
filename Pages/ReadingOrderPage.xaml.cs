@@ -1,4 +1,6 @@
 ﻿using ROGraph.Data;
+using ROGraph.Data.DataProviders.Interfaces;
+using ROGraph.Data.DataProviders.MockProviders;
 using ROGraph.Data.DataProviders.SQLiteProviders;
 using ROGraph.Models;
 using System;
@@ -22,6 +24,7 @@ namespace ROGraph.Pages
     /// <summary>
     /// Interaction logic for ReadingOrderPage.xaml
     /// </summary>
+    /// 
     public partial class ReadingOrderPage : Page
     {
         private Guid readingOrderId;
@@ -29,6 +32,7 @@ namespace ROGraph.Pages
 
         private const int IMAGE_SIZE = 240;
         private const int IMAGE_GAP_SIZE = 80;
+
         public ReadingOrderPage(Guid readingOrderId)
         {
             Loaded += OnPageLoaded;
@@ -122,13 +126,29 @@ namespace ROGraph.Pages
 
         private void GetReadingOrder(Guid readingOrderId)
         {
-            ReadingOrderOverview? overview = new ReadingOrderListProvider().GetReadingOrderOverview(readingOrderId);
-            if(overview == null)
+            IReadingOrderListProvider readingOrderListProvider;
+            IReadingOrderProvider readingOrderProvider;
+
+            if(Environment.GetEnvironmentVariable("USE_MOCK_PROVIDERS") == "true")
+            {
+                readingOrderListProvider = new MockReadingOrderListProvider();
+                readingOrderProvider = new MockReadingOrderProvider();
+            }
+            else
+            {
+                readingOrderListProvider = new ReadingOrderListProvider();
+                readingOrderProvider = new ReadingOrderProvider();
+            }
+
+            ReadingOrderOverview? overview = readingOrderListProvider.GetReadingOrderOverview(readingOrderId);
+
+            if (overview == null)
             {
                 return;
             }
 
-            ReadingOrder? result = new ReadingOrderProvider().GetReadingOrder(overview);
+            
+            ReadingOrder? result = readingOrderProvider.GetReadingOrder(overview);
 
             if(result == null)
             {

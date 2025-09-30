@@ -1,4 +1,6 @@
 ﻿using ROGraph.Data;
+using ROGraph.Data.DataProviders.Interfaces;
+using ROGraph.Data.DataProviders.MockProviders;
 using ROGraph.Data.DataProviders.SQLiteProviders;
 using ROGraph.Models;
 using System;
@@ -31,7 +33,18 @@ namespace ROGraph.Pages
 
         private void PopulateList()
         {
-            List<ReadingOrderOverview> roList = new ReadingOrderListProvider().GetReadingOrders();
+            IReadingOrderListProvider readingOrderListProvider;
+
+            if (Environment.GetEnvironmentVariable("USE_MOCK_PROVIDERS") == "true")
+            {
+                readingOrderListProvider = new MockReadingOrderListProvider();
+            }
+            else
+            {
+                readingOrderListProvider = new ReadingOrderListProvider();
+            }
+
+            List<ReadingOrderOverview> roList = readingOrderListProvider.GetReadingOrders();
 
             for (int i = 0; i < roList.Count; i++)
             {

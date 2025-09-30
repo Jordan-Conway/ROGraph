@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="bin\Debug\net9.0-windows\.env" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\StarNode.png" />
   </ItemGroup>
 
