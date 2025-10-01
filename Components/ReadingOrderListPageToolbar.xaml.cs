@@ -1,7 +1,8 @@
-﻿using ROGraph.Data;
-using ROGraph.Data.DataProviders;
-using ROGraph.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,19 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Xml.Linq;
 
-namespace ROGraph
+namespace ROGraph.Components
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ReadingOrderListPageToolbar.xaml
     /// </summary>
-    public partial class MainWindow : NavigationWindow
+    public partial class ReadingOrderListPageToolbar : UserControl
     {
-        public MainWindow()
+        public ReadingOrderListPageToolbar()
         {
             InitializeComponent();
-            //TODO: load list of reading orders from storage
         }
     }
 }

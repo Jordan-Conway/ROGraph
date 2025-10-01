@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ROGraph.Enums
+namespace ROGraph.Models
 {
-    public enum NodeType
+    public class Checklist
     {
-        Circle =0,
-        Diamond =1,
-        Triangle =2,
     }
 }

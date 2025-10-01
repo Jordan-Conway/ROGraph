@@ -7,5 +7,6 @@
         xmlns:models="clr-namespace:ROGraph.Models"
         mc:Ignorable="d"
         Title="ROGraph" Height="450" Width="800"
-        Source="./Pages/ReadingOrderListPage.xaml">
+        Source="./Pages/ReadingOrderListPage.xaml"
+        ShowsNavigationUI="False">
 </NavigationWindow>

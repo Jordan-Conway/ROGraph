@@ -1,4 +1,7 @@
 ﻿using ROGraph.Data;
+using ROGraph.Data.DataProviders.Interfaces;
+using ROGraph.Data.DataProviders.MockProviders;
+using ROGraph.Data.DataProviders.SQLiteProviders;
 using ROGraph.Models;
 using System;
 using System.Collections.Generic;
@@ -30,7 +33,18 @@ namespace ROGraph.Pages
 
         private void PopulateList()
         {
-            Dictionary<int, ReadingOrder> roList = ReadingOrders.Items ?? [];
+            IReadingOrderListProvider readingOrderListProvider;
+
+            if (Environment.GetEnvironmentVariable("USE_MOCK_PROVIDERS") == "true")
+            {
+                readingOrderListProvider = new MockReadingOrderListProvider();
+            }
+            else
+            {
+                readingOrderListProvider = new ReadingOrderListProvider();
+            }
+
+            List<ReadingOrderOverview> roList = readingOrderListProvider.GetReadingOrders();
 
             for (int i = 0; i < roList.Count; i++)
             {
@@ -51,18 +65,18 @@ namespace ROGraph.Pages
 
         private void NavigateToPage(object sender, RoutedEventArgs e)
         {
-            int itemNum = (int)((Button)sender).Tag;
-            System.Diagnostics.Debug.WriteLine("Moving to " + itemNum);
+            Guid id = (Guid)((Button)sender).Tag;
+            System.Diagnostics.Debug.WriteLine("Moving to Reading Order " + id);
             NavigationService navigationService = NavigationService.GetNavigationService(this);
 
             ReadingOrderPage roPage;
             try
             {
-                roPage = new ReadingOrderPage(ReadingOrders.Items[itemNum]);
+                roPage = new ReadingOrderPage(id);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Exception when accessing " + itemNum + " in ReadingOrderList");
+                System.Diagnostics.Debug.WriteLine("Exception when accessing " + id + " in ReadingOrderList");
                 //TODO: Show error to user
                 return;
             }
