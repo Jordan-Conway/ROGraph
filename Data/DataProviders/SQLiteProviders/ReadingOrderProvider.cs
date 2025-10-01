@@ -85,7 +85,7 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
             CoordinateTranslator coordinateTranslator = new CoordinateTranslator(overview.MaxX, overview.MaxY);
 
             ReadingOrderContentsProvider contentsProvider = new ReadingOrderContentsProvider();
-            ReadingOrderContents? contents = contentsProvider.GetReadingOrderNodes(overview.Id, coordinateTranslator);
+            ReadingOrderContents? contents = contentsProvider.GetReadingOrderContents(overview.Id, coordinateTranslator);
 
             ReadingOrder readingOrder = new ReadingOrder(overview.Name, overview.Id, contents);
             readingOrder.CoordinateTranslator = coordinateTranslator;

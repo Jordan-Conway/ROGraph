@@ -75,12 +75,7 @@ namespace ROGraph.Pages
             // Place in the connectors first
             foreach (Connector connector in this.readingOrder.Contents.Connectors)
             {
-                Line line = new Line();
-                line.X1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item1).Output;
-                line.X2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item2).Output;
-                line.Y1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item1).Output;
-                line.Y2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item2).Output;
-                PlaceLine(line);
+                PlaceConnector(connector);
             }
 
             // Fill in the nodes
@@ -94,13 +89,30 @@ namespace ROGraph.Pages
                     Debug.WriteLine("Node has invalid coordinates");
                     continue;
                 }
-                Debug.WriteLine("Drawing node at " + rowNumber.Output + "," + colNumber.Output);
                 PlaceNode(node, rowNumber.Output, colNumber.Output);
             }
         }
 
-        private void PlaceLine(Line line)
+        private void PlaceConnector(Connector connector)
         {
+            if(this.readingOrder.CoordinateTranslator == null)
+            {
+                Debug.WriteLine("No translator present. Skipping drawing of connectors");
+                return;
+            }
+
+            Line line = new Line();
+            int x1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item1).Output;
+            int y1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item2).Output;
+            int x2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item1).Output;
+            int y2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item2).Output;
+
+            line.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE/2);
+            line.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE/2)) + (IMAGE_SIZE / 2);
+            line.X2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
+            line.Y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
+            Debug.WriteLine($"X1:{line.X1}, Y1:{line.Y1}, X2:{line.X2}, Y2:{line.Y2}");
+
             line.Stroke = System.Windows.Media.Brushes.Black;
             line.SnapsToDevicePixels = true;
             line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
