@@ -10,10 +10,16 @@
     <Page.Resources>
         <DataTemplate x:Key="NodeDisplay" DataType="{x:Type models:Node}">
             <StackPanel>
-                <Image Width="240" Height="240">
+                <Image Width="240" Height="240" MouseRightButtonDown="OpenNodeContextMenu">
                     <Image.Source>
                         <BitmapImage DecodePixelWidth="240" UriSource="E:\Projects\Tutorials\ROGraph\ROGraph\Images\StarNode.png" />
                     </Image.Source>
+                    <Image.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Edit" Click="OpenEditNode" Tag="{Binding Id}" />
+                            <MenuItem Header="Delete" Click="OpenDeleteNode" Tag="{Binding Id}" />
+                        </ContextMenu>
+                    </Image.ContextMenu>
                 </Image>
                 <TextBlock Text="{Binding Name}" />
             </StackPanel>

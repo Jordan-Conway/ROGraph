@@ -1,9 +1,9 @@
-﻿using ROGraph.Data;
+﻿using ROGraph.Components;
+using ROGraph.Data;
 using ROGraph.Data.DataProviders.Interfaces;
 using ROGraph.Data.DataProviders.MockProviders;
 using ROGraph.Data.DataProviders.SQLiteProviders;
 using ROGraph.Models;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,6 +18,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Net.Mime.MediaTypeNames;
+using Image = System.Windows.Controls.Image;
 
 namespace ROGraph.Pages
 {
@@ -52,19 +54,19 @@ namespace ROGraph.Pages
 
         private void PlaceNodes()
         {
-            if(this.readingOrder == null)
+            if (this.readingOrder == null)
             {
                 Debug.WriteLine("Reading Order is Null");
                 return;
             }
 
-            if(this.readingOrder.Contents == null)
+            if (this.readingOrder.Contents == null)
             {
                 Debug.WriteLine("Reading Order has no content");
                 return;
             }
 
-            if(this.readingOrder.CoordinateTranslator == null)
+            if (this.readingOrder.CoordinateTranslator == null)
             {
                 throw new NullReferenceException("Reading Order has no translator");
             }
@@ -79,12 +81,12 @@ namespace ROGraph.Pages
             }
 
             // Fill in the nodes
-            foreach(Node node in this.readingOrder.Contents.Nodes)
+            foreach (Node node in this.readingOrder.Contents.Nodes)
             {
                 Result<int> colNumber = this.readingOrder.CoordinateTranslator.GetFromId(node.GetX());
                 Result<int> rowNumber = this.readingOrder.CoordinateTranslator.GetFromId(node.GetY());
 
-                if(!(colNumber.Success && rowNumber.Success))
+                if (!(colNumber.Success && rowNumber.Success))
                 {
                     Debug.WriteLine("Node has invalid coordinates");
                     continue;
@@ -95,7 +97,7 @@ namespace ROGraph.Pages
 
         private void PlaceConnector(Connector connector)
         {
-            if(this.readingOrder.CoordinateTranslator == null)
+            if (this.readingOrder.CoordinateTranslator == null)
             {
                 Debug.WriteLine("No translator present. Skipping drawing of connectors");
                 return;
@@ -107,8 +109,8 @@ namespace ROGraph.Pages
             int x2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item1).Output;
             int y2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item2).Output;
 
-            line.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE/2);
-            line.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE/2)) + (IMAGE_SIZE / 2);
+            line.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
+            line.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
             line.X2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
             line.Y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
             Debug.WriteLine($"X1:{line.X1}, Y1:{line.Y1}, X2:{line.X2}, Y2:{line.Y2}");
@@ -117,6 +119,8 @@ namespace ROGraph.Pages
             line.SnapsToDevicePixels = true;
             line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
             line.StrokeThickness = 10;
+
+            line.MouseRightButtonDown += OpenConnectorContextMenu;
             ReadingOrderCanvas.Children.Add(line);
             Debug.WriteLine("Placed a line");
         }
@@ -127,7 +131,7 @@ namespace ROGraph.Pages
             ((FrameworkElement)display).DataContext = node;
 
             int x = (columnNumber * IMAGE_SIZE) + (columnNumber * IMAGE_GAP_SIZE);
-            int y = (rowNumber * IMAGE_SIZE) + (rowNumber * (IMAGE_GAP_SIZE/2));
+            int y = (rowNumber * IMAGE_SIZE) + (rowNumber * (IMAGE_GAP_SIZE / 2));
 
             Canvas.SetLeft(display, x);
             Canvas.SetTop(display, y);
@@ -141,7 +145,7 @@ namespace ROGraph.Pages
             IReadingOrderListProvider readingOrderListProvider;
             IReadingOrderProvider readingOrderProvider;
 
-            if(Environment.GetEnvironmentVariable("USE_MOCK_PROVIDERS") == "true")
+            if (Environment.GetEnvironmentVariable("USE_MOCK_PROVIDERS") == "true")
             {
                 readingOrderListProvider = new MockReadingOrderListProvider();
                 readingOrderProvider = new MockReadingOrderProvider();
@@ -159,10 +163,10 @@ namespace ROGraph.Pages
                 return;
             }
 
-            
+
             ReadingOrder? result = readingOrderProvider.GetReadingOrder(overview);
 
-            if(result == null)
+            if (result == null)
             {
                 Debug.WriteLine("Failed to find reading order. Returning to previous page");
                 ReadingOrderListPage navPage = new ReadingOrderListPage();
@@ -173,6 +177,34 @@ namespace ROGraph.Pages
             }
             Debug.WriteLine("Found reading order");
             this.readingOrder = result;
+        }
+
+        private void OpenNodeContextMenu(object sender, MouseButtonEventArgs e)
+        {
+            Image image = sender as Image;
+            image.ContextMenu.PlacementTarget = image;
+            image.ContextMenu.IsOpen = true;
+        }
+
+        private void OpenConnectorContextMenu(object sender, MouseButtonEventArgs e)
+        {
+            Debug.WriteLine("Connector was Right Clicked");
+        }
+
+        private void OpenEditNode(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            Guid id = (Guid)(item.Tag);
+            Debug.WriteLine("Editing node " + id);
+            throw new NotImplementedException();
+        }
+
+        private void OpenDeleteNode(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            Guid id = (Guid)(item.Tag);
+            Debug.WriteLine("Deleting node " + id);
+            throw new NotImplementedException();
         }
     }
 }
