@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ROGraph.Data.DataProviders.SQLiteProviders
 {
-    public class ReadingOrderNodesProvider
+    public class ReadingOrderContentsProvider
     {
         private static readonly string GET_NODES = 
             "Select nodes.id, name, x, y, type, isCompleted, description, origin, created, lastModified, Checklist " +
