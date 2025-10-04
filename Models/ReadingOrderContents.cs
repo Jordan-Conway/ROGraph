@@ -24,5 +24,40 @@ namespace ROGraph.Models
             this.Nodes = nodes;
             this.Connectors = connectors;
         }
+
+        public Node? GetNode(Guid id)
+        {
+            foreach (Node node in Nodes)
+            {
+                if(node.Id == id)
+                {
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Replaces a node with the same id as the parameter node
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns>
+        /// True is successfully replaced. Returns false in all other cases
+        /// </returns>
+        public bool ReplaceNode(Node node)
+        {
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                if(Nodes[i].Id == node.Id)
+                {
+                    Nodes.RemoveAt(i);
+                    Nodes.Add(node);
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

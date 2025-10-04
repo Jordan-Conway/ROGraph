@@ -191,20 +191,40 @@ namespace ROGraph.Pages
             Debug.WriteLine("Connector was Right Clicked");
         }
 
-        private void OpenEditNode(object sender, RoutedEventArgs e)
+        private void OpenEditNodeDialog(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
             Guid id = (Guid)(item.Tag);
             Debug.WriteLine("Editing node " + id);
-            throw new NotImplementedException();
+
+            Node? node = this.readingOrder.Contents.GetNode(id);
+
+            if(node == null)
+            {
+                throw new NullReferenceException("Tried to edit node that is not present");
+            }
+
+            Window window = new Window
+            {
+                Title = "Edit Node",
+                Content = new EditNodeDialog(node, this.UpdateNode)
+            };
+
+            window.Show();
         }
 
-        private void OpenDeleteNode(object sender, RoutedEventArgs e)
+        private void OpenDeleteNodeDialog(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
             Guid id = (Guid)(item.Tag);
             Debug.WriteLine("Deleting node " + id);
             throw new NotImplementedException();
+        }
+         
+        private void UpdateNode(Node node)
+        {
+            this.readingOrder.Contents.ReplaceNode(node);
+            this.InvalidateVisual();
         }
     }
 }

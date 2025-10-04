@@ -16,8 +16,8 @@
                     </Image.Source>
                     <Image.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Edit" Click="OpenEditNode" Tag="{Binding Id}" />
-                            <MenuItem Header="Delete" Click="OpenDeleteNode" Tag="{Binding Id}" />
+                            <MenuItem Header="Edit" Click="OpenEditNodeDialog" Tag="{Binding Id}" />
+                            <MenuItem Header="Delete" Click="OpenDeleteNodeDialog" Tag="{Binding Id}" />
                         </ContextMenu>
                     </Image.ContextMenu>
                 </Image>
