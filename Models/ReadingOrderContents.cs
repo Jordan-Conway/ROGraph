@@ -59,5 +59,19 @@ namespace ROGraph.Models
 
             return false;
         }
+
+        public bool deleteConnector((Guid, Guid) orign, (Guid, Guid) destination)
+        {
+            for (int i = 0; i < Connectors.Count; i++)
+            {
+                if (Connectors[i].origin == orign && Connectors[i].destination == destination)
+                {
+                    Connectors.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

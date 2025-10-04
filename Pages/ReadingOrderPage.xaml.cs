@@ -103,25 +103,22 @@ namespace ROGraph.Pages
                 return;
             }
 
-            Line line = new Line();
+            Line display = (Line)((DataTemplate)this.Resources["ConnectorDisplay"]).LoadContent();
+            display.DataContext = connector;
+            Debug.WriteLine($"Tag is " + display.Tag);
+
             int x1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item1).Output;
             int y1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item2).Output;
             int x2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item1).Output;
             int y2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item2).Output;
 
-            line.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
-            line.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
-            line.X2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
-            line.Y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
-            Debug.WriteLine($"X1:{line.X1}, Y1:{line.Y1}, X2:{line.X2}, Y2:{line.Y2}");
+            display.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
+            display.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
+            display.X2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
+            display.Y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
+            Debug.WriteLine($"X1:{display.X1}, Y1:{display.Y1}, X2:{display.X2}, Y2:{display.Y2}");
 
-            line.Stroke = System.Windows.Media.Brushes.Black;
-            line.SnapsToDevicePixels = true;
-            line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-            line.StrokeThickness = 10;
-
-            line.MouseRightButtonDown += OpenConnectorContextMenu;
-            ReadingOrderCanvas.Children.Add(line);
+            ReadingOrderCanvas.Children.Add(display);
             Debug.WriteLine("Placed a line");
         }
 
@@ -188,7 +185,7 @@ namespace ROGraph.Pages
 
         private void OpenConnectorContextMenu(object sender, MouseButtonEventArgs e)
         {
-            Debug.WriteLine("Connector was Right Clicked");
+            throw new NotImplementedException();
         }
 
         private void OpenEditNodeDialog(object sender, RoutedEventArgs e)
@@ -225,6 +222,11 @@ namespace ROGraph.Pages
         {
             this.readingOrder.Contents.ReplaceNode(node);
             this.InvalidateVisual();
+        }
+
+        private void DeleteConnector((Guid, Guid) origin, (Guid, Guid) destination)
+        {
+            this.readingOrder.Contents.deleteConnector(origin, destination);
         }
     }
 }

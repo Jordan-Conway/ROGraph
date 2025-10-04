@@ -24,6 +24,21 @@
                 <TextBlock Text="{Binding Name}" />
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="ConnectorDisplay" DataType="{x:Type models:Connector}" >
+            <Line MouseRightButtonDown="OpenConnectorContextMenu" 
+                  Stroke="Black" 
+                  SnapsToDevicePixels="True" 
+                  RenderOptions.EdgeMode="Aliased"
+                  StrokeThickness="10"
+                  >
+                <Line.Tag>
+                    <MultiBinding StringFormat="{}{0} {1}">
+                        <Binding Path="origin" />
+                        <Binding Path="destination" />
+                    </MultiBinding>
+                </Line.Tag>
+            </Line>
+        </DataTemplate>
     </Page.Resources>
     
     <Canvas x:Name="ReadingOrderCanvas">
