@@ -119,10 +119,10 @@ namespace ROGraph.Pages
             int x2 = this.readingOrder.CoordinateTranslator.GetXFromId(connector.destination.Item1).Output;
             int y2 = this.readingOrder.CoordinateTranslator.GetYFromId(connector.destination.Item2).Output;
 
-            display.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
-            display.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
-            display.X2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
-            display.Y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
+            display.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 2);
+            display.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
+            display.X2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 2);
+            display.Y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
             Debug.WriteLine($"X1:{display.X1}, Y1:{display.Y1}, X2:{display.X2}, Y2:{display.Y2}");
 
             ReadingOrderCanvas.Children.Add(display);
@@ -134,8 +134,8 @@ namespace ROGraph.Pages
             UIElement display = (UIElement)((DataTemplate)this.Resources["NodeDisplay"]).LoadContent();
             ((FrameworkElement)display).DataContext = node;
 
-            int x = (columnNumber * IMAGE_SIZE) + (columnNumber * IMAGE_GAP_SIZE);
-            int y = (rowNumber * IMAGE_SIZE) + (rowNumber * (IMAGE_GAP_SIZE / 2));
+            int x = (columnNumber * IMAGE_SIZE) + (columnNumber * IMAGE_GAP_SIZE) + (IMAGE_GAP_SIZE / 2);
+            int y = (rowNumber * IMAGE_SIZE) + (rowNumber * (IMAGE_GAP_SIZE / 2)) + (IMAGE_GAP_SIZE / 4);
 
             Canvas.SetLeft(display, x);
             Canvas.SetTop(display, y);
