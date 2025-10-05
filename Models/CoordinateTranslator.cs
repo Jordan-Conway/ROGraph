@@ -33,10 +33,10 @@ namespace ROGraph.Models
 
         public (int, int) Translate(DrawableNode node)
         {
-            return (this.XIds[node.X], this.XIds[node.Y]);
+            return (this.XIds[node.X], this.YIds[node.Y]);
         }
 
-        public Result<int> GetFromId(Guid id)
+        public Result<int> GetXFromId(Guid id)
         {
             if(this.XIds.ContainsKey(id))
             {
@@ -46,11 +46,31 @@ namespace ROGraph.Models
             return new Result<int>(false, 0);
         }
 
-        public Result<Guid> GetFromInt(int coordinate)
+        public Result<int> GetYFromId(Guid id)
         {
-            if(this.ReversedXIds.ContainsKey(coordinate))
+            if (this.YIds.ContainsKey(id))
+            {
+                return new Result<int>(true, this.YIds[id]);
+            }
+
+            return new Result<int>(false, 0);
+        }
+
+        public Result<Guid> GetXFromInt(int coordinate)
+        {
+            if(this.ReversedXIds.TryGetValue(coordinate, out Guid value))
             { 
-                return new Result<Guid>(true, this.ReversedXIds[coordinate]);
+                return new Result<Guid>(true, value);
+            }
+
+            return new Result<Guid>(false, new Guid(""));
+        }
+
+        public Result<Guid> GetYFromInt(int coordinate)
+        {
+            if (this.ReversedYIds.TryGetValue(coordinate, out Guid value))
+            {
+                return new Result<Guid>(true, value);
             }
 
             return new Result<Guid>(false, new Guid(""));

@@ -48,11 +48,18 @@ namespace ROGraph.Pages
             if (this.readingOrder != null)
             {
                 Debug.WriteLine("Reading order is " + this.readingOrder.Name);
-                PlaceNodes();
+                PlaceContent();
             }
         }
 
-        private void PlaceNodes()
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
+            this.ReadingOrderCanvas.Children.Clear();
+            this.PlaceContent();
+        }
+
+        private void PlaceContent()
         {
             if (this.readingOrder == null)
             {
@@ -83,8 +90,8 @@ namespace ROGraph.Pages
             // Fill in the nodes
             foreach (Node node in this.readingOrder.Contents.Nodes)
             {
-                Result<int> colNumber = this.readingOrder.CoordinateTranslator.GetFromId(node.GetX());
-                Result<int> rowNumber = this.readingOrder.CoordinateTranslator.GetFromId(node.GetY());
+                Result<int> colNumber = this.readingOrder.CoordinateTranslator.GetXFromId(node.GetX());
+                Result<int> rowNumber = this.readingOrder.CoordinateTranslator.GetYFromId(node.GetY());
 
                 if (!(colNumber.Success && rowNumber.Success))
                 {
@@ -107,10 +114,10 @@ namespace ROGraph.Pages
             display.DataContext = connector;
             Debug.WriteLine($"Tag is " + display.Tag);
 
-            int x1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item1).Output;
-            int y1 = this.readingOrder.CoordinateTranslator.GetFromId(connector.origin.Item2).Output;
-            int x2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item1).Output;
-            int y2 = this.readingOrder.CoordinateTranslator.GetFromId(connector.destination.Item2).Output;
+            int x1 = this.readingOrder.CoordinateTranslator.GetXFromId(connector.origin.Item1).Output;
+            int y1 = this.readingOrder.CoordinateTranslator.GetYFromId(connector.origin.Item2).Output;
+            int x2 = this.readingOrder.CoordinateTranslator.GetXFromId(connector.destination.Item1).Output;
+            int y2 = this.readingOrder.CoordinateTranslator.GetYFromId(connector.destination.Item2).Output;
 
             display.X1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2);
             display.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2);
@@ -119,7 +126,7 @@ namespace ROGraph.Pages
             Debug.WriteLine($"X1:{display.X1}, Y1:{display.Y1}, X2:{display.X2}, Y2:{display.Y2}");
 
             ReadingOrderCanvas.Children.Add(display);
-            Debug.WriteLine("Placed a line");
+            Debug.WriteLine("Placed connector");
         }
 
         private void PlaceNode(Node node, int rowNumber, int columnNumber)
@@ -134,7 +141,6 @@ namespace ROGraph.Pages
             Canvas.SetTop(display, y);
 
             ReadingOrderCanvas.Children.Add(display);
-            Debug.WriteLine("Placed a node");
         }
 
         private void GetReadingOrder(Guid readingOrderId)
@@ -185,7 +191,18 @@ namespace ROGraph.Pages
 
         private void OpenConnectorContextMenu(object sender, MouseButtonEventArgs e)
         {
-            throw new NotImplementedException();
+            ContextMenu menu = new ContextMenu();
+            Line line = sender as Line;
+            MenuItem deleteButton = new MenuItem();
+            deleteButton.Header = "Delete";
+            deleteButton.Click += (o, i) =>
+            {
+                ((Guid, Guid), (Guid, Guid)) c = (((Guid, Guid), (Guid, Guid)))line.Tag;
+                DeleteConnector(c.Item1, c.Item2);
+            };
+            menu.Items.Add(deleteButton);
+            ((FrameworkElement)sender).ContextMenu = menu;
+            menu.IsOpen = true;
         }
 
         private void OpenEditNodeDialog(object sender, RoutedEventArgs e)
@@ -226,7 +243,10 @@ namespace ROGraph.Pages
 
         private void DeleteConnector((Guid, Guid) origin, (Guid, Guid) destination)
         {
-            this.readingOrder.Contents.deleteConnector(origin, destination);
+            Debug.WriteLine($"Deleting connector between {origin} and {destination}");
+            bool isDeleted = this.readingOrder.Contents.deleteConnector(origin, destination);
+            Debug.WriteLine($"Connector was deleted: {isDeleted}");
+            this.InvalidateVisual();
         }
     }
 }

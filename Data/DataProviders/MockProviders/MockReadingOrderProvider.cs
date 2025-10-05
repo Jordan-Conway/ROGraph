@@ -20,10 +20,10 @@ namespace ROGraph.Data.DataProviders.MockProviders
             ReadingOrderContents content = new ReadingOrderContents();
             CoordinateTranslator coordinateTranslator = new CoordinateTranslator(2, 2);
 
-            Guid x1 = coordinateTranslator.GetFromInt(0).Output;
-            Guid x2 = coordinateTranslator.GetFromInt(1).Output;
-            Guid y1 = coordinateTranslator.GetFromInt(0).Output;
-            Guid y2 = coordinateTranslator.GetFromInt(1).Output;
+            Guid x1 = coordinateTranslator.GetXFromInt(0).Output;
+            Guid x2 = coordinateTranslator.GetXFromInt(1).Output;
+            Guid y1 = coordinateTranslator.GetYFromInt(0).Output;
+            Guid y2 = coordinateTranslator.GetYFromInt(1).Output;
 
 
             Node node1 = new DrawableNode(new Guid(), "Node 1", new Guid(), DateTime.Now, DateTime.Now, x1, y1, Enums.NodeType.Diamond);

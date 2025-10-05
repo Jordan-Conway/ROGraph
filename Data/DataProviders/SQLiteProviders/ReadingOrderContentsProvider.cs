@@ -54,8 +54,8 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                     {
                         Debug.WriteLine("Processing result");
 
-                        Guid? x = translator.GetFromInt(result.GetInt32(2)).Output;
-                        Guid? y = translator.GetFromInt(result.GetInt32(3)).Output;
+                        Guid? x = translator.GetXFromInt(result.GetInt32(2)).Output;
+                        Guid? y = translator.GetYFromInt(result.GetInt32(3)).Output;
 
                         if (x == null || y == null)
                         {
@@ -108,10 +108,10 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                     {
                         Debug.WriteLine("Processing result");
 
-                        Guid? x1 = translator.GetFromInt(result.GetInt32(0)).Output;
-                        Guid? y1 = translator.GetFromInt(result.GetInt32(1)).Output;
-                        Guid? x2 = translator.GetFromInt(result.GetInt32(2)).Output;
-                        Guid? y2 = translator.GetFromInt(result.GetInt32(3)).Output;
+                        Guid? x1 = translator.GetXFromInt(result.GetInt32(0)).Output;
+                        Guid? y1 = translator.GetYFromInt(result.GetInt32(1)).Output;
+                        Guid? x2 = translator.GetXFromInt(result.GetInt32(2)).Output;
+                        Guid? y2 = translator.GetYFromInt(result.GetInt32(3)).Output;
 
                         if (x1 == null || y1 == null || x2 == null || y2 == null)
                         {
