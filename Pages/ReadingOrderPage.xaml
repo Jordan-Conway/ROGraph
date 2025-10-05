@@ -16,7 +16,7 @@
                 <StackPanel>
                     <Image Width="240" Height="240" MouseRightButtonDown="OpenNodeContextMenu">
                         <Image.Source>
-                            <BitmapImage DecodePixelWidth="240" UriSource="E:\Projects\Tutorials\ROGraph\ROGraph\Images\StarNode.png" />
+                            <BitmapImage DecodePixelWidth="240" UriSource="E:\Projects\Tutorials\ROGraph\ROGraph\Images\star_node_not_completed.png" />
                         </Image.Source>
                         <Image.ContextMenu>
                             <ContextMenu>
