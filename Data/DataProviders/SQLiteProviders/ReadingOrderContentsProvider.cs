@@ -71,7 +71,7 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                             (Guid)x,
                             (Guid)y,
                             (Enums.NodeType)result.GetInt32(4),
-                            (result.GetInt32(5) == 0),
+                            (result.GetInt32(5) != 0),
                             null,
                             result.GetString(6)));
                     }
