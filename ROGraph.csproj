@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\star_node_completed.png" />
+    <None Remove="Images\star_node_not_completed.png" />
+    <None Remove="Images\triangle_node_completed.png" />
+    <None Remove="Images\triangle_node_not_completed.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="bin\Debug\net9.0-windows\.env" />
   </ItemGroup>
 
@@ -16,6 +23,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.2" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\star_node_completed.png" />
+    <Resource Include="Images\star_node_not_completed.png" />
+    <Resource Include="Images\triangle_node_completed.png" />
+    <Resource Include="Images\triangle_node_not_completed.png" />
   </ItemGroup>
 
 </Project>

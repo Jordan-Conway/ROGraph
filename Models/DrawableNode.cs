@@ -41,5 +41,21 @@ namespace ROGraph.Models
         {
             return this.Y;
         }
+
+        public override string GetImagePath()
+        {
+            string baseUrl = "pack://application:,,,/Images/";
+            switch (this.Type)
+            {
+                case NodeType.Triangle:
+                    {
+                        return this.IsCompleted == true ? baseUrl + "triangle_node_completed.png" : baseUrl + "triangle_node_not_completed.png";
+                    }
+                default:
+                    {
+                        return this.IsCompleted == true ? baseUrl + "star_node_completed.png" : baseUrl + "star_node_not_completed.png";
+                    }
+            }
+        }
     }   
 }

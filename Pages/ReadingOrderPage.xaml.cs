@@ -112,7 +112,6 @@ namespace ROGraph.Pages
 
             Line display = (Line)((DataTemplate)this.Resources["ConnectorDisplay"]).LoadContent();
             display.DataContext = connector;
-            Debug.WriteLine($"Tag is " + display.Tag);
 
             int x1 = this.readingOrder.CoordinateTranslator.GetXFromId(connector.origin.Item1).Output;
             int y1 = this.readingOrder.CoordinateTranslator.GetYFromId(connector.origin.Item2).Output;
@@ -123,22 +122,29 @@ namespace ROGraph.Pages
             display.Y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
             display.X2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 2);
             display.Y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
-            Debug.WriteLine($"X1:{display.X1}, Y1:{display.Y1}, X2:{display.X2}, Y2:{display.Y2}");
 
             ReadingOrderCanvas.Children.Add(display);
-            Debug.WriteLine("Placed connector");
         }
 
         private void PlaceNode(Node node, int rowNumber, int columnNumber)
         {
-            UIElement display = (UIElement)((DataTemplate)this.Resources["NodeDisplay"]).LoadContent();
-            ((FrameworkElement)display).DataContext = node;
+            StackPanel display = (StackPanel)((DataTemplate)this.Resources["NodeDisplay"]).LoadContent();
+            display.DataContext = node;
 
             int x = (columnNumber * IMAGE_SIZE) + (columnNumber * IMAGE_GAP_SIZE) + (IMAGE_GAP_SIZE / 2);
             int y = (rowNumber * IMAGE_SIZE) + (rowNumber * (IMAGE_GAP_SIZE / 2)) + (IMAGE_GAP_SIZE / 4);
 
+            Image nodeImage = VisualTreeHelper.GetChild(display, 0) as Image;
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            image.UriSource = new Uri(node.GetImagePath());
+            image.EndInit();
+            nodeImage.Source = image;
+
             Canvas.SetLeft(display, x);
             Canvas.SetTop(display, y);
+
+            Debug.WriteLine($"Node is completed: {node.IsCompleted}");
 
             ReadingOrderCanvas.Children.Add(display);
         }

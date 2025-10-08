@@ -41,5 +41,7 @@ namespace ROGraph.Models
 
         public abstract Guid GetX();
         public abstract Guid GetY();
+
+        public abstract String GetImagePath();
     }
 }
