@@ -73,5 +73,17 @@ namespace ROGraph.Models
 
             return false;
         }
+
+        public bool NodeExistsAtPosition(Guid x, Guid y)
+        {
+            foreach (Node node in this.Nodes)
+            {
+                if(node.GetX() == x && node.GetY() == y)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

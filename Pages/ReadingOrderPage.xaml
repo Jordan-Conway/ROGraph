@@ -41,8 +41,16 @@
             </DataTemplate>
         </ResourceDictionary>
     </Page.Resources>
-    
-    <Canvas x:Name="ReadingOrderCanvas">
-        
+
+    <!-- The canvas background has to be set or OpenDefaultContextMenu won't trigger -->
+    <Canvas x:Name="ReadingOrderCanvas" 
+            MouseRightButtonUp="OpenDefaultContextMenu" 
+            Background="White" >
+        <Canvas.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Add Node" Click="AddNewNode"/>
+                <MenuItem Header="Add Connector" Click="AddNewConnector" />
+            </ContextMenu>
+        </Canvas.ContextMenu>
     </Canvas>
 </Page>

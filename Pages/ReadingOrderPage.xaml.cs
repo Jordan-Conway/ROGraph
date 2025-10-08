@@ -254,5 +254,64 @@ namespace ROGraph.Pages
             Debug.WriteLine($"Connector was deleted: {isDeleted}");
             this.InvalidateVisual();
         }
+
+        private void AddNewNode(object sender, RoutedEventArgs e)
+        {
+            Point position = Mouse.GetPosition(this.ReadingOrderCanvas);
+
+            int colPosition = 0;
+            int rowPosition = 0;
+
+            int nodeWidth = IMAGE_SIZE + IMAGE_GAP_SIZE;
+            int nodeHeight = IMAGE_SIZE + (IMAGE_GAP_SIZE / 2);
+
+            for (int i = (int)position.X; i > nodeWidth; i-= nodeWidth)
+            {
+                colPosition++;
+            }
+
+            for (int i = (int)position.Y; i > nodeHeight; i-= nodeHeight)
+            {
+                rowPosition++;
+            }
+
+            Guid x = this.readingOrder.CoordinateTranslator.GetXFromInt(colPosition);
+            Guid y = this.readingOrder.CoordinateTranslator.GetYFromInt(rowPosition);
+
+            // TODO: Show this to the user
+            if (this.readingOrder.Contents.NodeExistsAtPosition(x, y))
+            {
+                Debug.WriteLine("Only one node can exist at a given position");
+                return;
+            }
+
+            Node node = new DrawableNode(
+                Guid.NewGuid(),
+                "New Node",
+                this.readingOrder.Id,
+                DateTime.Now,
+                DateTime.Now,
+                x,
+                y,
+                Enums.NodeType.Triangle,
+                false);
+
+            this.readingOrder.Contents.Nodes.Add(node);
+            this.InvalidateVisual();
+        }
+
+        private void AddNewConnector(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OpenDefaultContextMenu(object sender, MouseButtonEventArgs e)
+        {
+            Debug.WriteLine("Opening Context Menu");
+            Canvas canvas = sender as Canvas;
+
+            canvas.ContextMenu.PlacementTarget = canvas;
+            canvas.ContextMenu.IsOpen = true;
+        }
     }
 }
