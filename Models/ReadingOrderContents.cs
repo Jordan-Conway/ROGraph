@@ -85,5 +85,10 @@ namespace ROGraph.Models
             }
             return false;
         }
+
+        public bool DeleteNode(Node node)
+        {
+            return this.Nodes.Remove(node);
+        }
     }
 }

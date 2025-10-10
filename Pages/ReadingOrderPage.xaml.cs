@@ -238,12 +238,33 @@ namespace ROGraph.Pages
             MenuItem item = sender as MenuItem;
             Guid id = (Guid)(item.Tag);
             Debug.WriteLine("Deleting node " + id);
-            throw new NotImplementedException();
+
+            Node? node = this.readingOrder.Contents.GetNode(id);
+
+            if (node == null)
+            {
+                Debug.WriteLine("Tried to delete node that was not present");
+                return;
+            }
+
+            Window window = new Window
+            {
+                Title = "Delete Node?",
+                Content = new DeleteNodeDialog(node, this.DeleteNode)
+            };
+
+            window.Show();
         }
          
         private void UpdateNode(Node node)
         {
             this.readingOrder.Contents.ReplaceNode(node);
+            this.InvalidateVisual();
+        }
+
+        private void DeleteNode(Node node)
+        {
+            this.readingOrder.Contents.DeleteNode(node);
             this.InvalidateVisual();
         }
 
