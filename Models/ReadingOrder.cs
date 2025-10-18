@@ -17,7 +17,7 @@ namespace ROGraph.Models
         public ReadingOrder(String name, Guid? guid, ReadingOrderContents? nodes = null, string description = "")
         {
             this.Name = name;
-            
+
             if (guid == null)
             {
                 this.Id = Guid.NewGuid();
@@ -36,7 +36,27 @@ namespace ROGraph.Models
                 this.Contents = nodes;
             }
 
-                this.Description = description;
+            this.Description = description;
+        }
+
+        public void AddColumn(int colNumber)
+        {
+            if (this.CoordinateTranslator == null)
+            {
+                return;
+            }
+
+            this.CoordinateTranslator.AddNewColumn(colNumber);
+        }
+
+        public void AddRow(int rowNumber)
+        {
+            if (this.CoordinateTranslator == null)
+            {
+                return;
+            }
+
+            this.CoordinateTranslator.AddNewRow(rowNumber);
         }
     }
 }

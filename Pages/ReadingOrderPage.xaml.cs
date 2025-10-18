@@ -278,26 +278,10 @@ namespace ROGraph.Pages
 
         private void AddNewNode(object sender, RoutedEventArgs e)
         {
-            Point position = Mouse.GetPosition(this.ReadingOrderCanvas);
+            (int, int) position = this.GetCoordinatesFromMousePosition();
 
-            int colPosition = 0;
-            int rowPosition = 0;
-
-            int nodeWidth = IMAGE_SIZE + IMAGE_GAP_SIZE;
-            int nodeHeight = IMAGE_SIZE + (IMAGE_GAP_SIZE / 2);
-
-            for (int i = (int)position.X; i > nodeWidth; i-= nodeWidth)
-            {
-                colPosition++;
-            }
-
-            for (int i = (int)position.Y; i > nodeHeight; i-= nodeHeight)
-            {
-                rowPosition++;
-            }
-
-            Guid x = this.readingOrder.CoordinateTranslator.GetXFromInt(colPosition);
-            Guid y = this.readingOrder.CoordinateTranslator.GetYFromInt(rowPosition);
+            Guid x = this.readingOrder.CoordinateTranslator.GetXFromInt(position.Item2);
+            Guid y = this.readingOrder.CoordinateTranslator.GetYFromInt(position.Item1);
 
             // TODO: Show this to the user
             if (this.readingOrder.Contents.NodeExistsAtPosition(x, y))
@@ -333,6 +317,47 @@ namespace ROGraph.Pages
 
             canvas.ContextMenu.PlacementTarget = canvas;
             canvas.ContextMenu.IsOpen = true;
+        }
+
+        private void AddNewRow(object sender, RoutedEventArgs e)
+        {
+            (int, int) position = this.GetCoordinatesFromMousePosition();
+
+            this.readingOrder.AddRow(position.Item1);
+
+            this.InvalidateVisual();
+        }
+
+        private void AddNewColumn(object sender, RoutedEventArgs e)
+        {
+            (int, int) position = this.GetCoordinatesFromMousePosition();
+
+            this.readingOrder.AddColumn(position.Item2);
+
+            this.InvalidateVisual();
+        }
+
+        private (int, int) GetCoordinatesFromMousePosition()
+        {
+            Point position = Mouse.GetPosition(this.ReadingOrderCanvas);
+
+            int colPosition = 0;
+            int rowPosition = 0;
+
+            int nodeWidth = IMAGE_SIZE + IMAGE_GAP_SIZE;
+            int nodeHeight = IMAGE_SIZE + (IMAGE_GAP_SIZE / 2);
+
+            for (int i = (int)position.X; i > nodeWidth; i -= nodeWidth)
+            {
+                colPosition++;
+            }
+
+            for (int i = (int)position.Y; i > nodeHeight; i -= nodeHeight)
+            {
+                rowPosition++;
+            }
+
+            return (rowPosition, colPosition);
         }
     }
 }

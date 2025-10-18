@@ -76,8 +76,16 @@ namespace ROGraph.Models
             return this.AddNewRow(coordinate);
         }
 
-        private Guid AddNewRow(int rowNumber)
+        public Guid AddNewRow(int rowNumber)
         {
+            foreach(Guid rowId in this.RowIds.Keys)
+            {
+                if(this.RowIds[rowId] >= rowNumber)
+                {
+                    this.RowIds[rowId] = this.RowIds[rowId] + 1;
+                }
+            }
+
             Guid newGuid = Guid.NewGuid();
             this.RowIds.Add(newGuid, rowNumber);
             this.InvalidateReversedYIds();
@@ -85,8 +93,16 @@ namespace ROGraph.Models
             return newGuid;
         }
 
-        private Guid AddNewColumn(int colNumber)
+        public Guid AddNewColumn(int colNumber)
         {
+            foreach (Guid colId in this.ColumnIds.Keys)
+            {
+                if (this.ColumnIds[colId] >= colNumber)
+                {
+                    this.ColumnIds[colId] = this.ColumnIds[colId] + 1;
+                }
+            }
+
             Guid newGuid = Guid.NewGuid();
             this.ColumnIds.Add(newGuid, colNumber);
             this.InvalidateReversedXIds();

@@ -50,6 +50,8 @@
             <ContextMenu>
                 <MenuItem Header="Add Node" Click="AddNewNode"/>
                 <MenuItem Header="Add Connector" Click="AddNewConnector" />
+                <MenuItem Header="Add New Row" Click="AddNewRow" />
+                <MenuItem Header="Add New Column" Click="AddNewColumn" />
             </ContextMenu>
         </Canvas.ContextMenu>
     </Canvas>
