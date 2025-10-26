@@ -54,13 +54,8 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                     {
                         Debug.WriteLine("Processing result");
 
-                        Guid? x = translator.GetFromInt(result.GetInt32(2)).Output;
-                        Guid? y = translator.GetFromInt(result.GetInt32(3)).Output;
-
-                        if (x == null || y == null)
-                        {
-                            throw new ArgumentException("Integers out of translation range");
-                        }
+                        Guid x = translator.GetXFromInt(result.GetInt32(2));
+                        Guid y = translator.GetYFromInt(result.GetInt32(3));
 
                         nodes.Add(new DrawableNode(
                             result.GetGuid(0),
@@ -68,10 +63,10 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                             result.GetGuid(7),
                             result.GetDateTime(8),
                             result.GetDateTime(9),
-                            (Guid)x,
-                            (Guid)y,
+                            x,
+                            y,
                             (Enums.NodeType)result.GetInt32(4),
-                            (result.GetInt32(5) == 0),
+                            (result.GetInt32(5) != 0),
                             null,
                             result.GetString(6)));
                     }
@@ -108,17 +103,12 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                     {
                         Debug.WriteLine("Processing result");
 
-                        Guid? x1 = translator.GetFromInt(result.GetInt32(0)).Output;
-                        Guid? y1 = translator.GetFromInt(result.GetInt32(1)).Output;
-                        Guid? x2 = translator.GetFromInt(result.GetInt32(2)).Output;
-                        Guid? y2 = translator.GetFromInt(result.GetInt32(3)).Output;
+                        Guid x1 = translator.GetXFromInt(result.GetInt32(0));
+                        Guid y1 = translator.GetYFromInt(result.GetInt32(1));
+                        Guid x2 = translator.GetXFromInt(result.GetInt32(2));
+                        Guid y2 = translator.GetYFromInt(result.GetInt32(3));
 
-                        if (x1 == null || y1 == null || x2 == null || y2 == null)
-                        {
-                            throw new ArgumentException("Integers out of translation range");
-                        }
-
-                        connectors.Add(new Connector((x1.Value, y1.Value), (x2.Value, y2.Value)));
+                        connectors.Add(new Connector((x1, y1), (x2, y2)));
                     }
                 }
             }
