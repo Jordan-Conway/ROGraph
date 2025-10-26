@@ -3,6 +3,7 @@ using ROGraph.Data;
 using ROGraph.Data.DataProviders.Interfaces;
 using ROGraph.Data.DataProviders.MockProviders;
 using ROGraph.Data.DataProviders.SQLiteProviders;
+using ROGraph.Enums;
 using ROGraph.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,6 +35,10 @@ namespace ROGraph.Pages
 
         private const int IMAGE_SIZE = 240;
         private const int IMAGE_GAP_SIZE = 80;
+
+        private InteractionMode interactionMode = InteractionMode.DEFAULT;
+
+        private (int, int) newConnectorOrigin;
 
         public ReadingOrderPage(Guid readingOrderId)
         {
@@ -280,8 +285,8 @@ namespace ROGraph.Pages
         {
             (int, int) position = this.GetCoordinatesFromMousePosition();
 
-            Guid x = this.readingOrder.CoordinateTranslator.GetXFromInt(position.Item2);
-            Guid y = this.readingOrder.CoordinateTranslator.GetYFromInt(position.Item1);
+            Guid x = this.readingOrder.CoordinateTranslator.GetXFromInt(position.Item1);
+            Guid y = this.readingOrder.CoordinateTranslator.GetYFromInt(position.Item2);
 
             // TODO: Show this to the user
             if (this.readingOrder.Contents.NodeExistsAtPosition(x, y))
@@ -307,7 +312,8 @@ namespace ROGraph.Pages
 
         private void AddNewConnector(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            this.newConnectorOrigin = this.GetCoordinatesFromMousePosition();
+            this.interactionMode = InteractionMode.NEW_CONNECTOR;
         }
 
         private void OpenDefaultContextMenu(object sender, MouseButtonEventArgs e)
@@ -323,7 +329,7 @@ namespace ROGraph.Pages
         {
             (int, int) position = this.GetCoordinatesFromMousePosition();
 
-            this.readingOrder.AddRow(position.Item1);
+            this.readingOrder.AddRow(position.Item2);
 
             this.InvalidateVisual();
         }
@@ -332,7 +338,7 @@ namespace ROGraph.Pages
         {
             (int, int) position = this.GetCoordinatesFromMousePosition();
 
-            this.readingOrder.AddColumn(position.Item2);
+            this.readingOrder.AddColumn(position.Item1);
 
             this.InvalidateVisual();
         }
@@ -357,7 +363,28 @@ namespace ROGraph.Pages
                 rowPosition++;
             }
 
-            return (rowPosition, colPosition);
+            return (colPosition, rowPosition);
+        }
+
+        private void PlaceConnectorDestination(object sender, MouseButtonEventArgs e)
+        {
+            if(this.interactionMode != InteractionMode.NEW_CONNECTOR)
+            {
+                return;
+            }
+
+            (int, int) destination = GetCoordinatesFromMousePosition();
+
+            if (this.newConnectorOrigin == destination)
+            {
+                return;
+            }
+
+            this.readingOrder.AddConnector(this.newConnectorOrigin, destination);
+
+            this.interactionMode = InteractionMode.DEFAULT;
+
+            this.InvalidateVisual();
         }
     }
 }

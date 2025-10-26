@@ -86,6 +86,18 @@ namespace ROGraph.Models
             return false;
         }
 
+        public bool ConnectorExistsBetween((Guid, Guid) origin, (Guid, Guid) destination)
+        {
+            foreach (Connector connector in Connectors)
+            {
+                if (connector.origin == origin && connector.destination == destination)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public bool DeleteNode(Node node)
         {
             return this.Nodes.Remove(node);

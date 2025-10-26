@@ -58,5 +58,21 @@ namespace ROGraph.Models
 
             this.CoordinateTranslator.AddNewRow(rowNumber);
         }
+
+        public bool AddConnector((int, int) origin, (int, int) destination)
+        {
+            (Guid, Guid) originId = (this.CoordinateTranslator.GetXFromInt(origin.Item1), this.CoordinateTranslator.GetYFromInt(origin.Item2));
+            (Guid, Guid) destinationId = (this.CoordinateTranslator.GetXFromInt(destination.Item1), this.CoordinateTranslator.GetYFromInt(destination.Item2));
+
+            if(this.Contents.ConnectorExistsBetween(originId, destinationId))
+            {
+                return false;
+            }
+
+            Connector connector = new Connector(originId, destinationId);
+            this.Contents.Connectors.Add(connector);
+
+            return true;
+        }
     }
 }

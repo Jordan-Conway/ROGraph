@@ -14,11 +14,12 @@
             <converter:CoordinateConverter x:Key="CoordinateConverter"></converter:CoordinateConverter>
             <DataTemplate x:Key="NodeDisplay" DataType="{x:Type models:Node}">
                 <StackPanel>
-                    <Image Width="240" Height="240" MouseRightButtonDown="OpenNodeContextMenu" Name="NodeImage">
+                    <Image Width="240" Height="240" MouseRightButtonDown="OpenNodeContextMenu" Name="NodeImage" MouseLeftButtonDown="PlaceConnectorDestination">
                         <Image.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Edit" Click="OpenEditNodeDialog" Tag="{Binding Id}" />
                                 <MenuItem Header="Delete" Click="OpenDeleteNodeDialog" Tag="{Binding Id}" />
+                                <MenuItem Header="Add Connector" Click="AddNewConnector" />
                             </ContextMenu>
                         </Image.ContextMenu>
                     </Image>
@@ -49,7 +50,6 @@
         <Canvas.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="Add Node" Click="AddNewNode"/>
-                <MenuItem Header="Add Connector" Click="AddNewConnector" />
                 <MenuItem Header="Add New Row" Click="AddNewRow" />
                 <MenuItem Header="Add New Column" Click="AddNewColumn" />
             </ContextMenu>
