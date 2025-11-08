@@ -93,6 +93,20 @@ namespace ROGraph.Models
             return newGuid;
         }
 
+        public void DeleteRow(int rowNumber)
+        {
+            Guid toDelete = this.GetYFromInt(rowNumber);
+            this.RowIds.Remove(toDelete);
+            foreach(Guid rowId in this.RowIds.Keys)
+            {
+                if (this.RowIds[rowId] > rowNumber)
+                {
+                    this.RowIds[rowId]--;
+                }
+            }
+            this.InvalidateReversedYIds();
+        }
+
         public Guid AddNewColumn(int colNumber)
         {
             foreach (Guid colId in this.ColumnIds.Keys)
@@ -108,6 +122,20 @@ namespace ROGraph.Models
             this.InvalidateReversedXIds();
 
             return newGuid;
+        }
+
+        public void DeleteColumn(int colNumber)
+        {
+            Guid toDelete = this.GetXFromInt(colNumber);
+            this.ColumnIds.Remove(toDelete);
+            foreach(Guid colId in this.ColumnIds.Keys)
+            {
+                if (this.ColumnIds[colId] > colNumber)
+                {
+                    this.ColumnIds[colId]--;
+                }
+            }
+            this.InvalidateReversedXIds();
         }
 
         private void InvalidateReversedIds()

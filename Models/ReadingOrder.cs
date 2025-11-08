@@ -49,6 +49,17 @@ namespace ROGraph.Models
             this.CoordinateTranslator.AddNewColumn(colNumber);
         }
 
+        public void DeleteColumn(int colNumber)
+        {
+            if (this.CoordinateTranslator == null)
+            {
+                return;
+            }
+
+            this.Contents.DeleteAllContentsInColumn(this.CoordinateTranslator.GetXFromInt(colNumber));
+            this.CoordinateTranslator.DeleteColumn(colNumber);
+        }
+
         public void AddRow(int rowNumber)
         {
             if (this.CoordinateTranslator == null)
@@ -57,6 +68,17 @@ namespace ROGraph.Models
             }
 
             this.CoordinateTranslator.AddNewRow(rowNumber);
+        }
+
+        public void DeleteRow(int rowNumber)
+        {
+            if(this.CoordinateTranslator == null)
+            {
+                return;
+            }
+
+            this.Contents.DeleteAllContentsInRow(this.CoordinateTranslator.GetYFromInt(rowNumber));
+            this.CoordinateTranslator.DeleteRow(rowNumber);
         }
 
         public bool AddConnector((int, int) origin, (int, int) destination)

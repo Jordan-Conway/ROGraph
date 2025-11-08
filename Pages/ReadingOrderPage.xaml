@@ -52,6 +52,8 @@
                 <MenuItem Header="Add Node" Click="AddNewNode"/>
                 <MenuItem Header="Add New Row" Click="AddNewRow" />
                 <MenuItem Header="Add New Column" Click="AddNewColumn" />
+                <MenuItem Header="Delete Row" Click="DeleteRow" />
+                <MenuItem Header="Delete Column" Click="DeleteColumn" />
             </ContextMenu>
         </Canvas.ContextMenu>
     </Canvas>
