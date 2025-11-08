@@ -100,6 +100,8 @@ namespace ROGraph.Models
 
         public bool DeleteNode(Node node)
         {
+            (Guid, Guid) nodePosition = (node.GetX(), node.GetY());
+            this.Connectors.RemoveAll(connector => connector.origin == nodePosition || connector.destination == nodePosition);
             return this.Nodes.Remove(node);
         }
 
