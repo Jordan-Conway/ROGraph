@@ -102,5 +102,25 @@ namespace ROGraph.Models
         {
             return this.Nodes.Remove(node);
         }
+
+        /// <summary>
+        /// Deletes all nodes and connectors in a given row
+        /// </summary>
+        /// <param name="rowId"></param>
+        public void DeleteAllContentsInRow(Guid rowId)
+        {
+            this.Nodes.RemoveAll(node => node.GetY() == rowId);
+            this.Connectors.RemoveAll(connector => connector.origin.Item2 == rowId || connector.destination.Item2 == rowId);
+        }
+
+        /// <summary>
+        /// Deletes all nodes and connectors in a given column
+        /// </summary>
+        /// <param name="colId"></param>
+        public void DeleteAllContentsInColumn(Guid colId)
+        {
+            this.Nodes.RemoveAll(node => node.GetX() == colId);
+            this.Connectors.RemoveAll(connector => connector.origin.Item1 == colId || connector.destination.Item1 == colId);
+        }
     }
 }

@@ -386,5 +386,23 @@ namespace ROGraph.Pages
 
             this.InvalidateVisual();
         }
+
+        private void DeleteRow(object sender, RoutedEventArgs e)
+        {
+            (int, int) position = this.GetCoordinatesFromMousePosition();
+
+            this.readingOrder.DeleteRow(position.Item2);
+
+            this.InvalidateVisual();
+        }
+
+        private void DeleteColumn(object sender, RoutedEventArgs e)
+        {
+            (int, int) position = this.GetCoordinatesFromMousePosition();
+
+            this.readingOrder.DeleteColumn(position.Item1);
+
+            this.InvalidateVisual();
+        }
     }
 }
