@@ -31,7 +31,7 @@ namespace ROGraph.Models
             this.InvalidateReversedIds();
         }
 
-        public (int, int) Translate(DrawableNode node)
+        public (int, int) Translate(Node node)
         {
             return (this.ColumnIds[node.X], this.RowIds[node.Y]);
         }

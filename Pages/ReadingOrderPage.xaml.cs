@@ -95,8 +95,8 @@ namespace ROGraph.Pages
             // Fill in the nodes
             foreach (Node node in this.readingOrder.Contents.Nodes)
             {
-                Result<int> colNumber = this.readingOrder.CoordinateTranslator.GetXFromId(node.GetX());
-                Result<int> rowNumber = this.readingOrder.CoordinateTranslator.GetYFromId(node.GetY());
+                Result<int> colNumber = this.readingOrder.CoordinateTranslator.GetXFromId(node.X);
+                Result<int> rowNumber = this.readingOrder.CoordinateTranslator.GetYFromId(node.Y);
 
                 if (!(colNumber.Success && rowNumber.Success))
                 {
@@ -295,7 +295,7 @@ namespace ROGraph.Pages
                 return;
             }
 
-            Node node = new DrawableNode(
+            Node node = new Node(
                 Guid.NewGuid(),
                 "New Node",
                 this.readingOrder.Id,

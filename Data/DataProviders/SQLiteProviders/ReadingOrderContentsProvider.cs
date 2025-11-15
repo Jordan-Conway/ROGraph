@@ -57,7 +57,7 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                         Guid x = translator.GetXFromInt(result.GetInt32(2));
                         Guid y = translator.GetYFromInt(result.GetInt32(3));
 
-                        nodes.Add(new DrawableNode(
+                        nodes.Add(new Node(
                             result.GetGuid(0),
                             result.GetString(1),
                             result.GetGuid(7),

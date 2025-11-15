@@ -78,7 +78,7 @@ namespace ROGraph.Models
         {
             foreach (Node node in this.Nodes)
             {
-                if(node.GetX() == x && node.GetY() == y)
+                if(node.X == x && node.Y == y)
                 {
                     return true;
                 }
@@ -100,7 +100,7 @@ namespace ROGraph.Models
 
         public bool DeleteNode(Node node)
         {
-            (Guid, Guid) nodePosition = (node.GetX(), node.GetY());
+            (Guid, Guid) nodePosition = node.GetPosition();
             this.Connectors.RemoveAll(connector => connector.origin == nodePosition || connector.destination == nodePosition);
             return this.Nodes.Remove(node);
         }
@@ -111,7 +111,7 @@ namespace ROGraph.Models
         /// <param name="rowId"></param>
         public void DeleteAllContentsInRow(Guid rowId)
         {
-            this.Nodes.RemoveAll(node => node.GetY() == rowId);
+            this.Nodes.RemoveAll(node => node.Y == rowId);
             this.Connectors.RemoveAll(connector => connector.origin.Item2 == rowId || connector.destination.Item2 == rowId);
         }
 
@@ -121,7 +121,7 @@ namespace ROGraph.Models
         /// <param name="colId"></param>
         public void DeleteAllContentsInColumn(Guid colId)
         {
-            this.Nodes.RemoveAll(node => node.GetX() == colId);
+            this.Nodes.RemoveAll(node => node.Y == colId);
             this.Connectors.RemoveAll(connector => connector.origin.Item1 == colId || connector.destination.Item1 == colId);
         }
     }
