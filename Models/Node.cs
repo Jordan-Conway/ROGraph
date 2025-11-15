@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ROGraph.Models
 {
-    public abstract class Node
+    public class Node
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -18,12 +18,19 @@ namespace ROGraph.Models
         public DateTime created { get; set; }
         public DateTime lastModified { get; set; }
 
+        public Guid X { get; set; }
+        public Guid Y { get; set; }
+        public NodeType Type { get; set; }
+
         public Node(
             Guid id,
             string name, 
             Guid origin, 
             DateTime created, 
-            DateTime lastModified, 
+            DateTime lastModified,
+            Guid x,
+            Guid y,
+            NodeType nodeType,
             bool isCompleted = false,
             Checklist? checklist = null,
             string? description = null
@@ -34,14 +41,33 @@ namespace ROGraph.Models
             this.Origin = origin;
             this.created = created;
             this.lastModified = lastModified;
+            this.X = x;
+            this.Y = y;
+            this.Type = nodeType;
             this.IsCompleted = isCompleted;
             this.Checklist = checklist;
             this.Description = description;
         }
 
-        public abstract Guid GetX();
-        public abstract Guid GetY();
+        public (Guid, Guid) GetPosition()
+        {
+            return (this.X, this.Y);
+        }
 
-        public abstract String GetImagePath();
+        public string GetImagePath()
+        {
+            string baseUrl = "pack://application:,,,/Images/";
+            switch (this.Type)
+            {
+                case NodeType.Triangle:
+                    {
+                        return this.IsCompleted == true ? baseUrl + "triangle_node_completed.png" : baseUrl + "triangle_node_not_completed.png";
+                    }
+                default:
+                    {
+                        return this.IsCompleted == true ? baseUrl + "star_node_completed.png" : baseUrl + "star_node_not_completed.png";
+                    }
+            }
+        }
     }
 }

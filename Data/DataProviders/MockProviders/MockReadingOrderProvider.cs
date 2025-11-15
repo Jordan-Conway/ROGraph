@@ -26,9 +26,9 @@ namespace ROGraph.Data.DataProviders.MockProviders
             Guid y2 = coordinateTranslator.GetYFromInt(1);
 
 
-            Node node1 = new DrawableNode(new Guid(), "Node 1", new Guid(), DateTime.Now, DateTime.Now, x1, y1, Enums.NodeType.Diamond);
-            Node node2 = new DrawableNode(new Guid(), "Node 2", new Guid(), DateTime.Now, DateTime.Now, x1, y2, Enums.NodeType.Diamond);
-            Node node3 = new DrawableNode(new Guid(), "Node 3", new Guid(), DateTime.Now, DateTime.Now, x2, y1, Enums.NodeType.Diamond);
+            Node node1 = new Node(new Guid(), "Node 1", new Guid(), DateTime.Now, DateTime.Now, x1, y1, Enums.NodeType.Diamond);
+            Node node2 = new Node(new Guid(), "Node 2", new Guid(), DateTime.Now, DateTime.Now, x1, y2, Enums.NodeType.Diamond);
+            Node node3 = new Node(new Guid(), "Node 3", new Guid(), DateTime.Now, DateTime.Now, x2, y1, Enums.NodeType.Diamond);
 
             content.Nodes.Add(node1);
             content.Nodes.Add(node2);
