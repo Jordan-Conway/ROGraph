@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
-using ROGraph.Data.DataProviders.Interfaces;
-using ROGraph.Models;
-using System.IO;
+using ROGraph.Backend.Data.DataProviders.Interfaces;
+using ROGraph.Shared.Models;
 
-namespace ROGraph.Data.DataProviders.SQLiteProviders
+namespace ROGraph.Backend.Data.DataProviders.SQLiteProviders
 {
     public class ReadingOrderListProvider: IReadingOrderListProvider
     {

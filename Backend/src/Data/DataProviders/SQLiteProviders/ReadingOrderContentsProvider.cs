@@ -1,15 +1,9 @@
-﻿using ROGraph.Models;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using ROGraph.Shared.Models;
+using ROGraph.Shared.Enums;
 using System.Data.SQLite;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
-namespace ROGraph.Data.DataProviders.SQLiteProviders
+namespace ROGraph.Backend.Data.DataProviders.SQLiteProviders
 {
     public class ReadingOrderContentsProvider
     {
@@ -65,7 +59,7 @@ namespace ROGraph.Data.DataProviders.SQLiteProviders
                             result.GetDateTime(9),
                             x,
                             y,
-                            (Enums.NodeType)result.GetInt32(4),
+                            (NodeType)result.GetInt32(4),
                             (result.GetInt32(5) != 0),
                             null,
                             result.GetString(6)));

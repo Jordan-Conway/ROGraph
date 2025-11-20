@@ -1,12 +1,7 @@
-﻿using ROGraph.Data.DataProviders.Interfaces;
-using ROGraph.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ROGraph.Backend.Data.DataProviders.Interfaces;
+using ROGraph.Shared.Models;
 
-namespace ROGraph.Data.DataProviders.MockProviders
+namespace ROGraph.Backend.Data.DataProviders.MockProviders
 {
     public class MockReadingOrderListProvider : IReadingOrderListProvider
     {

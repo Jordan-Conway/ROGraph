@@ -1,12 +1,8 @@
-﻿using ROGraph.Data.DataProviders.Interfaces;
-using ROGraph.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ROGraph.Backend.Data.DataProviders.Interfaces;
+using ROGraph.Shared.Enums;
+using ROGraph.Shared.Models;
 
-namespace ROGraph.Data.DataProviders.MockProviders
+namespace ROGraph.Backend.Data.DataProviders.MockProviders
 {
     public class MockReadingOrderProvider : IReadingOrderProvider
     {
@@ -26,9 +22,9 @@ namespace ROGraph.Data.DataProviders.MockProviders
             Guid y2 = coordinateTranslator.GetYFromInt(1);
 
 
-            Node node1 = new Node(new Guid(), "Node 1", new Guid(), DateTime.Now, DateTime.Now, x1, y1, Enums.NodeType.Diamond);
-            Node node2 = new Node(new Guid(), "Node 2", new Guid(), DateTime.Now, DateTime.Now, x1, y2, Enums.NodeType.Diamond);
-            Node node3 = new Node(new Guid(), "Node 3", new Guid(), DateTime.Now, DateTime.Now, x2, y1, Enums.NodeType.Diamond);
+            Node node1 = new Node(new Guid(), "Node 1", new Guid(), DateTime.Now, DateTime.Now, x1, y1, NodeType.Diamond);
+            Node node2 = new Node(new Guid(), "Node 2", new Guid(), DateTime.Now, DateTime.Now, x1, y2, NodeType.Diamond);
+            Node node3 = new Node(new Guid(), "Node 3", new Guid(), DateTime.Now, DateTime.Now, x2, y1, NodeType.Diamond);
 
             content.Nodes.Add(node1);
             content.Nodes.Add(node2);

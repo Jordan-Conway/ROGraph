@@ -1,11 +1,6 @@
-﻿using ROGraph.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ROGraph.Shared.Models;
 
-namespace ROGraph.Data.DataProviders.Interfaces
+namespace ROGraph.Backend.Data.DataProviders.Interfaces
 {
     public interface IReadingOrderListProvider
     {

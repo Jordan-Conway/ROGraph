@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
-
-namespace ROGraph.Models
+﻿namespace ROGraph.Shared.Models
 {
     public class ReadingOrderContents
     {
@@ -15,8 +8,8 @@ namespace ROGraph.Models
 
         public ReadingOrderContents()
         {
-            this.Nodes = [];
-            this.Connectors = [];
+            this.Nodes = new List<Node>();
+            this.Connectors = new List<Connector>();
         }
 
         public ReadingOrderContents(List<Node> nodes, List<Connector> connectors)

@@ -1,14 +1,9 @@
-﻿using ROGraph.Data.DataProviders.Interfaces;
-using ROGraph.Models;
-using System;
-using System.Collections.Generic;
+﻿using ROGraph.Backend.Data.DataProviders;
+using ROGraph.Backend.Data.DataProviders.Interfaces;
+using ROGraph.Backend.Data.DataProviders.SQLiteProviders;
+using ROGraph.Shared.Models;
 using System.Data.SQLite;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ROGraph.Data.DataProviders.SQLiteProviders
 {
