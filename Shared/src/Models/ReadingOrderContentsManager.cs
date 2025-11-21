@@ -1,18 +1,18 @@
 ﻿namespace ROGraph.Shared.Models
 {
-    public class ReadingOrderContents
+    public class ReadingOrderContentsManager
     {
-        public List<Node> Nodes { get; set; }
+        private List<Node> Nodes { get; set; }
 
-        public List<Connector> Connectors { get; set; }
+        private List<Connector> Connectors { get; set; }
 
-        public ReadingOrderContents()
+        public ReadingOrderContentsManager()
         {
             this.Nodes = new List<Node>();
             this.Connectors = new List<Connector>();
         }
 
-        public ReadingOrderContents(List<Node> nodes, List<Connector> connectors)
+        public ReadingOrderContentsManager(List<Node> nodes, List<Connector> connectors)
         {
             this.Nodes = nodes;
             this.Connectors = connectors;
@@ -29,6 +29,11 @@
             }
 
             return null;
+        }
+
+        public void AddNode(Node node)
+        {
+            this.Nodes.Add(node);
         }
 
         /// <summary>
@@ -53,7 +58,22 @@
             return false;
         }
 
-        public bool deleteConnector((Guid, Guid) orign, (Guid, Guid) destination)
+        /// <summary>
+        /// Gets all connectors that originate from or point to position
+        /// </summary>
+        /// <param name="posiion"></param>
+        /// <returns></returns>
+        public IEnumerable<Connector> GetConnectors((Guid, Guid) posiion)
+        {
+            return this.Connectors.Where(c => c.origin == posiion || c.destination == posiion);
+        }
+
+        public void AddConnector(Connector connector)
+        {
+            this.Connectors.Add(connector);
+        }
+
+        public bool DeleteConnector((Guid, Guid) orign, (Guid, Guid) destination)
         {
             for (int i = 0; i < Connectors.Count; i++)
             {

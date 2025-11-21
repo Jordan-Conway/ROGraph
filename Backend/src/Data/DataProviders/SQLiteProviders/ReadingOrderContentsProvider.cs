@@ -14,17 +14,17 @@ namespace ROGraph.Backend.Data.DataProviders.SQLiteProviders
         private static readonly string GET_CONNECTORS =
             "Select * from @roNum";
 
-        public ReadingOrderContents? GetReadingOrderContents(ReadingOrderOverview overview, CoordinateTranslator translator)
+        public ReadingOrderContentsManager? GetReadingOrderContents(ReadingOrderOverview overview, CoordinateTranslator translator)
         {
             return this.GetReadingOrderContents(overview.Id, translator);
         }
 
-        public ReadingOrderContents? GetReadingOrderContents(Guid id, CoordinateTranslator translator)
+        public ReadingOrderContentsManager? GetReadingOrderContents(Guid id, CoordinateTranslator translator)
         {
             List<Node> nodes = this.GetReadingOrderNodes(id, translator);
             List<Connector> connectors = this.GetReadingOrderConnectors(id, translator);
 
-            return new ReadingOrderContents(nodes, connectors);
+            return new ReadingOrderContentsManager(nodes, connectors);
         }
 
         private List<Node> GetReadingOrderNodes(Guid id, CoordinateTranslator translator)

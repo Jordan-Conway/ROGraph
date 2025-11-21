@@ -13,7 +13,7 @@ namespace ROGraph.Backend.Data.DataProviders.MockProviders
 
         public ReadingOrder? GetReadingOrder(ReadingOrderOverview overview)
         {
-            ReadingOrderContents content = new ReadingOrderContents();
+            ReadingOrderContentsManager content = new ReadingOrderContentsManager();
             CoordinateTranslator coordinateTranslator = new CoordinateTranslator(2, 2);
 
             Guid x1 = coordinateTranslator.GetXFromInt(0);
@@ -26,14 +26,14 @@ namespace ROGraph.Backend.Data.DataProviders.MockProviders
             Node node2 = new Node(new Guid(), "Node 2", new Guid(), DateTime.Now, DateTime.Now, x1, y2, NodeType.Diamond);
             Node node3 = new Node(new Guid(), "Node 3", new Guid(), DateTime.Now, DateTime.Now, x2, y1, NodeType.Diamond);
 
-            content.Nodes.Add(node1);
-            content.Nodes.Add(node2);
+            content.AddNode(node1);
+            content.AddNode(node2);
 
             Connector c1 = new Connector((x1, y1), (x2, y1));
             Connector c2 = new Connector((x1, y2), (x2, y1));
 
-            content.Connectors.Add(c1);
-            content.Connectors.Add(c2);
+            content.AddConnector(c1);
+            content.AddConnector(c2);
 
             ReadingOrder mockReadingOrder = new ReadingOrder("Mock Reading Order", new Guid(), content, "This is a mock reading order");
             mockReadingOrder.CoordinateTranslator = coordinateTranslator;
