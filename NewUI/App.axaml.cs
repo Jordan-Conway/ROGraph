@@ -4,8 +4,8 @@ using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
-using NewUI.ViewModels;
-using NewUI.Views;
+using ROGraph.NewUI.ViewModels;
+using ROGraph.NewUI;
 
 namespace NewUI;
 

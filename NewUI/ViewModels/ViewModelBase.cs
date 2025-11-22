@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace NewUI.ViewModels;
+namespace ROGraph.NewUI.ViewModels;
 
 public abstract class ViewModelBase : ObservableObject
 {

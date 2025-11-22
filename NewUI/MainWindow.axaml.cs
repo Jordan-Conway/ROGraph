@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace NewUI.Views;
+namespace ROGraph.NewUI;
 
 public partial class MainWindow : Window
 {

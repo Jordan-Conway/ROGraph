@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ROGraph.NewUI.Views.ReadingOrderView"
+             x:Class="ROGraph.NewUI.Views.ReadingOrderView.ReadingOrderViewControl"
+             x:DataType="vm:ReadingOrderViewModel">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <ItemsControl ItemsSource="{Binding ReadingOrder}" 
+                    Grid.Row="0"
+                    Grid.Column="1"
+        />
+    </Grid>
+</UserControl>
