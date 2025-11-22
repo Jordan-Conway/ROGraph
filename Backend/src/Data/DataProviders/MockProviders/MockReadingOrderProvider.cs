@@ -28,6 +28,7 @@ namespace ROGraph.Backend.Data.DataProviders.MockProviders
 
             content.AddNode(node1);
             content.AddNode(node2);
+            content.AddNode(node3);
 
             Connector c1 = new Connector((x1, y1), (x2, y1));
             Connector c2 = new Connector((x1, y2), (x2, y1));
