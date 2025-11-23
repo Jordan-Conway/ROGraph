@@ -31,6 +31,11 @@
             return null;
         }
 
+        public List<Node> GetNodes()
+        {
+            return this.Nodes;
+        }
+
         public void AddNode(Node node)
         {
             this.Nodes.Add(node);
