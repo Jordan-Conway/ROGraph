@@ -28,7 +28,12 @@ namespace ROGraph.Shared.Models
 
         public (int, int) Translate(Node node)
         {
-            return (this.ColumnIds[node.X], this.RowIds[node.Y]);
+            return this.Translate(node.GetPosition());
+        }
+
+        public (int, int) Translate((Guid, Guid) posiion)
+        {
+            return (this.ColumnIds[posiion.Item1], this.RowIds[posiion.Item2]);
         }
 
         public Result<int> GetXFromId(Guid id)

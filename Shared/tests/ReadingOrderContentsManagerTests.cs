@@ -27,7 +27,7 @@ public class ReadingOrderContentsTests
         Connector connector = CreateConnector();
         contentsManager.AddConnector(connector);
 
-        Assert.That(contentsManager.GetConnectors(connector.origin).ToArray(), Has.Length.EqualTo(1));
+        Assert.That(contentsManager.GetConnectorsBetweenPositions(connector.origin).ToArray(), Has.Length.EqualTo(1));
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class ReadingOrderContentsTests
 
         contentsManager.DeleteNode(node1);
 
-        List<Connector> connectors = [.. contentsManager.GetConnectors(node1.GetPosition())];
+        List<Connector> connectors = [.. contentsManager.GetConnectorsBetweenPositions(node1.GetPosition())];
 
         Assert.Multiple(() =>
         {
@@ -63,7 +63,7 @@ public class ReadingOrderContentsTests
         contentsManager.AddConnector(connector);
         contentsManager.DeleteConnector(connector.origin, connector.destination);
 
-        Assert.That(contentsManager.GetConnectors(connector.origin).ToArray(), Is.Empty);
+        Assert.That(contentsManager.GetConnectorsBetweenPositions(connector.origin).ToArray(), Is.Empty);
     }
 
     [Test]

@@ -63,12 +63,17 @@
             return false;
         }
 
+        public IEnumerable<Connector> GetConnectors()
+        {
+            return this.Connectors;
+        }
+
         /// <summary>
         /// Gets all connectors that originate from or point to position
         /// </summary>
         /// <param name="posiion"></param>
         /// <returns></returns>
-        public IEnumerable<Connector> GetConnectors((Guid, Guid) posiion)
+        public IEnumerable<Connector> GetConnectorsBetweenPositions((Guid, Guid) posiion)
         {
             return this.Connectors.Where(c => c.origin == posiion || c.destination == posiion);
         }

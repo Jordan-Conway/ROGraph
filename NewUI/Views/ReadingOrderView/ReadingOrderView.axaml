@@ -5,26 +5,43 @@
              x:Class="ROGraph.NewUI.Views.ReadingOrderView.ReadingOrderViewControl"
              x:DataType="vm:ReadingOrderViewModel">
 
-    <ItemsControl ItemsSource="{Binding Nodes}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <Canvas />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
+    <Grid>
+        <ItemsControl ItemsSource="{Binding Connectors}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-        <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="{x:Type md:NodeModel}">
-                <StackPanel>
-                    <Image Source="avares://ROGraph.NewUI/Assets/star_node_completed.png" Height="240" Width="240" />
-                    <TextBlock Text="{Binding Node.Name}" />
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-        <ItemsControl.Styles>
-            <Style Selector="ContentPresenter" x:DataType="md:NodeModel">
-                <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                <Setter Property="Canvas.Top" Value="{Binding Y}"/>
-            </Style>
-        </ItemsControl.Styles>
-    </ItemsControl>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type md:ConnectorModel}">
+                    <Line StartPoint="{Binding Origin}" EndPoint="{Binding Destination}" Stroke="White" StrokeThickness="15" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{Binding Nodes}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type md:NodeModel}">
+                    <StackPanel>
+                        <Image Source="avares://ROGraph.NewUI/Assets/star_node_completed.png" Height="240" Width="240" />
+                        <TextBlock Text="{Binding Node.Name}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+            <ItemsControl.Styles>
+                <Style Selector="ContentPresenter" x:DataType="md:NodeModel">
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </Style>
+            </ItemsControl.Styles>
+        </ItemsControl>
+    </Grid>
 </UserControl>

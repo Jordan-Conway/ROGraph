@@ -17,12 +17,6 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Window.DataTemplates>
-        <DataTemplate DataType="{x:Type models:ReadingOrderOverview}">
-            <TextBlock Text="{Binding Name}" />
-        </DataTemplate>
-    </Window.DataTemplates>
-
-    <ContentPresenter Content="{Binding CurrentPage}" />
+    <ContentPresenter Content="{Binding CurrentPage}"/>
 
 </Window>
