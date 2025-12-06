@@ -1,4 +1,5 @@
-﻿using ROGraph.Shared.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using ROGraph.Shared.Models;
 
 namespace ROGraph.Shared.Models
 {
@@ -88,7 +89,7 @@ namespace ROGraph.Shared.Models
 
             Guid newGuid = Guid.NewGuid();
             this.RowIds.Add(newGuid, rowNumber);
-            this.InvalidateReversedYIds();
+            this.InvalidateReversedRowIds();
 
             return newGuid;
         }
@@ -104,7 +105,7 @@ namespace ROGraph.Shared.Models
                     this.RowIds[rowId]--;
                 }
             }
-            this.InvalidateReversedYIds();
+            this.InvalidateReversedRowIds();
         }
 
         public Guid AddNewColumn(int colNumber)
@@ -119,7 +120,7 @@ namespace ROGraph.Shared.Models
 
             Guid newGuid = Guid.NewGuid();
             this.ColumnIds.Add(newGuid, colNumber);
-            this.InvalidateReversedXIds();
+            this.InvalidateReversedColumnIds();
 
             return newGuid;
         }
@@ -135,21 +136,25 @@ namespace ROGraph.Shared.Models
                     this.ColumnIds[colId]--;
                 }
             }
-            this.InvalidateReversedXIds();
+            this.InvalidateReversedColumnIds();
         }
 
+        [MemberNotNull(nameof(ReversedColumnIds))]
+        [MemberNotNull(nameof(ReversedRowIds))]
         private void InvalidateReversedIds()
         {
-            this.InvalidateReversedXIds();
-            this.InvalidateReversedYIds();
+            this.InvalidateReversedColumnIds();
+            this.InvalidateReversedRowIds();
         }
-
-        private void InvalidateReversedXIds()
+        
+        [MemberNotNull(nameof(ReversedColumnIds))]
+        private void InvalidateReversedColumnIds()
         {
             this.ReversedColumnIds = this.ColumnIds.ToDictionary(x => x.Value, x => x.Key);
         }
 
-        private void InvalidateReversedYIds()
+        [MemberNotNull(nameof(ReversedRowIds))]
+        private void InvalidateReversedRowIds()
         {
             this.ReversedRowIds = this.RowIds.ToDictionary(x => x.Value, x => x.Key);
         }

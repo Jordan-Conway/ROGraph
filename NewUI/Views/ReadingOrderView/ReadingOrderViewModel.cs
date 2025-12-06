@@ -3,7 +3,6 @@ using ROGraph.NewUI.ViewModels;
 using ROGraph.Shared.Models;
 using ROGraph.NewUI.Models;
 using System;
-using System.Collections;
 
 namespace ROGraph.NewUI.Views.ReadingOrderView;
 
@@ -20,6 +19,8 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
     public ReadingOrderViewModel(ReadingOrder readingOrder)
     {
+        ArgumentNullException.ThrowIfNull(readingOrder.CoordinateTranslator, nameof(readingOrder.CoordinateTranslator));
+
         this.ReadingOrder = readingOrder;
 
         var nodes = readingOrder.Contents.GetNodes();

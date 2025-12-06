@@ -10,7 +10,7 @@ namespace ROGraph.Shared.Models
         public CoordinateTranslator? CoordinateTranslator { get; set; }
         public ReadingOrderContentsManager Contents { get; set; }
 
-        public ReadingOrder(String name, Guid? guid, ReadingOrderContentsManager? nodes = null, string description = "")
+        public ReadingOrder(String name, Guid? guid, ReadingOrderContentsManager? contentManager = null, string description = "")
         {
             this.Name = name;
 
@@ -23,13 +23,13 @@ namespace ROGraph.Shared.Models
                 this.Id = (Guid)guid;
             }
 
-            if (nodes == null)
+            if (contentManager == null)
             {
                 this.Contents = new ReadingOrderContentsManager();
             }
             else
             {
-                this.Contents = nodes;
+                this.Contents = contentManager;
             }
 
             this.Description = description;
@@ -79,6 +79,11 @@ namespace ROGraph.Shared.Models
 
         public bool AddConnector((int, int) origin, (int, int) destination)
         {
+            if(this.CoordinateTranslator == null)
+            {
+                return false;
+            }
+
             (Guid, Guid) originId = (this.CoordinateTranslator.GetXFromInt(origin.Item1), this.CoordinateTranslator.GetYFromInt(origin.Item2));
             (Guid, Guid) destinationId = (this.CoordinateTranslator.GetXFromInt(destination.Item1), this.CoordinateTranslator.GetYFromInt(destination.Item2));
 
