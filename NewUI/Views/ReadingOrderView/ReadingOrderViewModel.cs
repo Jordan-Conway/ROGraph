@@ -3,6 +3,10 @@ using ROGraph.NewUI.ViewModels;
 using ROGraph.Shared.Models;
 using ROGraph.NewUI.Models;
 using System;
+using CommunityToolkit.Mvvm.Messaging;
+using ROGraph.NewUI.Messages;
+using DynamicData;
+using System.Linq;
 
 namespace ROGraph.NewUI.Views.ReadingOrderView;
 
@@ -26,6 +30,8 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         var nodes = readingOrder.Contents.GetNodes();
         var connectors = readingOrder.Contents.GetConnectors();
 
+        RegisterMessages();
+
         foreach(Node n in nodes)
         {
             (int, int) position = GetNodePosition(readingOrder.CoordinateTranslator.Translate(n));
@@ -47,6 +53,47 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         }
     }
 
+    private void RegisterMessages()
+    {
+        WeakReferenceMessenger.Default.Register<NodeAddedMessage>(this, (r,m) =>
+        {
+            this.AddNode(m.Value);
+        });
+        WeakReferenceMessenger.Default.Register<NodeDeletedMessage>(this, (r, m) =>
+        {
+            this.DeleteNode(m.Value);
+        });
+        WeakReferenceMessenger.Default.Register<NodeEditedMessage>(this, (r,m) =>
+        {
+            this.EditNode(m.Value);
+        });
+    }
+
+    private void AddNode(Node node)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void DeleteNode(Guid id)
+    {
+        var toRemove = this.Nodes.Where(node => node.Node.Id == id);
+        foreach(var node in toRemove)
+        {
+            Console.WriteLine(node.Node.Id);
+        }
+        this.Nodes.RemoveMany(toRemove);
+    }
+
+    private void EditNode(Node node)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Converts a node's column and row position to pixel positions
+    /// </summary>
+    /// <param name="position">A tuple representing the nodes column and row coordinates</param>
+    /// <returns></returns>
     private static (int, int) GetNodePosition((int, int) position)
     {
         int x = position.Item1;
@@ -58,6 +105,12 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         return (x, y);
     }
 
+    /// <summary>
+    /// Converts and connector's origin and destination coordinates to pixel positions
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="destination"></param>
+    /// <returns></returns>
     private static ((int, int), (int, int)) GetConnectorPositions((int, int) origin, (int, int) destination)
     {
         int x1 = origin.Item1;
