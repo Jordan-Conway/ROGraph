@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
+using CommunityToolkit.Mvvm.Input;
+using ROGraph.NewUI.Dialogs.EditNodeDialog;
 using ROGraph.NewUI.Dispatchers;
 using ROGraph.NewUI.Models;
 using ROGraph.Shared.Models;
@@ -51,7 +53,8 @@ internal partial class ReadingOrderViewControl : UserControl
 
         if(clicked is NodeModel)
         {
-            items = items.Concat(GetNodeContextMenuItems(clicked as NodeModel));
+            var nodeModel = clicked as NodeModel ?? throw new ArgumentNullException(nameof(clicked));
+            items = items.Concat(GetNodeContextMenuItems(nodeModel));
         }
 
         if(items.Any())
@@ -79,7 +82,18 @@ internal partial class ReadingOrderViewControl : UserControl
         Console.WriteLine("Clicked on a node!");
         return
         [
+            new MenuItem{ Header = "Edit Node", Command = this.OpenEditDialogCommand, CommandParameter = node},
             new MenuItem{ Header = "Delete Node", Command = ReadingOrderViewDispatcher.DispatchNodeDeletedCommand, CommandParameter = node.Node.Id}
         ];
+    }
+
+    [RelayCommand]
+    private void OpenEditDialog(NodeModel nodeModel)
+    {
+        Console.WriteLine(nodeModel.Node.Name);
+        var dialog = new EditNodeDialogView(nodeModel);
+        var root = this.VisualRoot as Window;
+        Console.WriteLine(root);
+        dialog.ShowDialog(root!);
     }
 }

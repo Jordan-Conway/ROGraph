@@ -24,6 +24,17 @@ internal partial class ReadingOrderViewDispatcher
         WeakReferenceMessenger.Default.Send(message);
     }
 
+    private static void DispatchNodeEditedMessage(Node? node)
+    {
+        if(node == null)
+        {
+            return;
+        }
+
+        var message = new NodeEditedMessage(node);
+        WeakReferenceMessenger.Default.Send(message);
+    }
+
     private static void DispatchNodeDeletedMessage(Guid id)
     {
         var message = new NodeDeletedMessage(id);

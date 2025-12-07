@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.NewUI.Messages;
 using DynamicData;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace ROGraph.NewUI.Views.ReadingOrderView;
 
@@ -86,7 +87,18 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
     private void EditNode(Node node)
     {
-        throw new NotImplementedException();
+        NodeModel? existing = this.Nodes.Where(n => n.Node.Id == node.Id).FirstOrDefault();
+        if(existing == null)
+        {
+            Console.WriteLine("Tried to edit nonexistant node");
+            return;
+        }
+
+        NodeModel newModel = new NodeModel(node, existing.X, existing.Y);
+        this.DeleteNode(node.Id);
+        this.Nodes.Add(newModel);
+
+        Console.WriteLine("Node has been edited");
     }
 
     /// <summary>
