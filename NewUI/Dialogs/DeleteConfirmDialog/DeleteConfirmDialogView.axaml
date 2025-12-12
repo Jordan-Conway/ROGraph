@@ -5,7 +5,7 @@
     xmlns:dcd="using:ROGraph.NewUI.Dialogs.DeleteConfirmDialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Class="ROGraph.NewUI.Dialogs.DeleteConfirmDialog.DeleteConfirmDialogView"
-    x:DataType="dcd:DeleteConfirmDialogViewControl">
+    x:DataType="dcd:DeleteConfirmDialogViewModel">
     <StackPanel>
         <TextBlock Text="{Binding DisplayName}" />
         <Grid>

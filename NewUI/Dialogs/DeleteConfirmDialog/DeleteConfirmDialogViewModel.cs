@@ -2,11 +2,11 @@ using ROGraph.NewUI.ViewModels;
 
 namespace ROGraph.NewUI.Dialogs.DeleteConfirmDialog;
 
-public class DeleteConfirmDialogViewControl : ViewModelBase
+public class DeleteConfirmDialogViewModel : ViewModelBase
 {
     public string DisplayName { get; set; }
 
-    public DeleteConfirmDialogViewControl(string name)
+    public DeleteConfirmDialogViewModel(string name)
     {
         this.DisplayName = name;
     }

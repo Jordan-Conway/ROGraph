@@ -9,7 +9,7 @@ internal partial class DeleteConfirmDialogView : Window
     {
         InitializeComponent();
 
-        this.DataContext = new DeleteConfirmDialogViewControl(name);
+        this.DataContext = new DeleteConfirmDialogViewModel(name);
     }
 
     public void Cancel(object? sender, RoutedEventArgs e)
