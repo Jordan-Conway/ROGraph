@@ -10,10 +10,7 @@ namespace ROGraph.NewUI.Dispatchers;
 
 internal partial class ReadingOrderViewDispatcher
 {
-    public static ICommand DispatchNodeAddedCommand { get; } = new RelayCommand<Node>(DispatchNodeAddedMessage);
-    public static ICommand DispatchNodeDeletedCommand { get; } = new RelayCommand<Guid>(DispatchNodeDeletedMessage);
-
-    private static void DispatchNodeAddedMessage(Node? node)
+    public static void DispatchNodeAddedMessage(Node? node)
     {
         if(node == null)
         {
@@ -24,7 +21,7 @@ internal partial class ReadingOrderViewDispatcher
         WeakReferenceMessenger.Default.Send(message);
     }
 
-    private static void DispatchNodeEditedMessage(Node? node)
+    public static void DispatchNodeEditedMessage(Node? node)
     {
         if(node == null)
         {
@@ -35,7 +32,7 @@ internal partial class ReadingOrderViewDispatcher
         WeakReferenceMessenger.Default.Send(message);
     }
 
-    private static void DispatchNodeDeletedMessage(Guid id)
+    public static void DispatchNodeDeletedMessage(Guid id)
     {
         var message = new NodeDeletedMessage(id);
         WeakReferenceMessenger.Default.Send(message);

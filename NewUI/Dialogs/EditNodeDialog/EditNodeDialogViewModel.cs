@@ -9,18 +9,18 @@ namespace ROGraph.NewUI.Dialogs.EditNodeDialog;
 
 internal partial class EditNodeDialogViewModel : ViewModelBase
 {
-    private NodeModel _nodeModel {get; set;}
+    private Node _nodeModel {get; set;}
     public string Name {get; set;} = "";
     public string? Description {get; set;} = "";
     public bool IsCompleted {get; set;} = false;
 
-    public EditNodeDialogViewModel(NodeModel nodeModel)
+    public EditNodeDialogViewModel(Node node)
     {
-        this._nodeModel = nodeModel;
+        this._nodeModel = node;
 
-        this.Name = nodeModel.Node.Name;
-        this.Description = nodeModel.Node.Description;
-        this.IsCompleted = nodeModel.Node.IsCompleted;
+        this.Name = node.Name;
+        this.Description = node.Description;
+        this.IsCompleted = node.IsCompleted;
 
         WeakReferenceMessenger.Default.Register<EditNodeDialogClosedMessage>(this, (r,m) =>
         {
@@ -30,7 +30,6 @@ internal partial class EditNodeDialogViewModel : ViewModelBase
                 return;
             }
 
-            Node node = _nodeModel.Node;
             node.Name = Name;
             node.Description = Description;
             node.IsCompleted = IsCompleted;

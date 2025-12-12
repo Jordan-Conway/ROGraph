@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
+using ROGraph.NewUI.Dialogs.DeleteConfirmDialog;
 using ROGraph.NewUI.Dialogs.EditNodeDialog;
 using ROGraph.NewUI.Dispatchers;
 using ROGraph.NewUI.Models;
@@ -43,7 +45,6 @@ internal partial class ReadingOrderViewControl : UserControl
         e.Handled = true;
     }
 
-    // TODO: Remove e if it is unused
     private void OpenContextMenu(object clicked)
     {
         ViewPanel.ContextMenu!.ItemsSource = null;
@@ -82,16 +83,29 @@ internal partial class ReadingOrderViewControl : UserControl
         Console.WriteLine("Clicked on a node!");
         return
         [
-            new MenuItem{ Header = "Edit Node", Command = this.OpenEditDialogCommand, CommandParameter = node},
-            new MenuItem{ Header = "Delete Node", Command = ReadingOrderViewDispatcher.DispatchNodeDeletedCommand, CommandParameter = node.Node.Id}
+            new MenuItem{ Header = "Edit Node", Command = this.OpenEditDialogCommand, CommandParameter = node.Node},
+            new MenuItem{ Header = "Delete Node", Command = this.OpenDeleteDialogCommand, CommandParameter = node.Node}
         ];
     }
 
     [RelayCommand]
-    private void OpenEditDialog(NodeModel nodeModel)
+    private async Task OpenDeleteDialog(Node node)
     {
-        Console.WriteLine(nodeModel.Node.Name);
-        var dialog = new EditNodeDialogView(nodeModel);
+        var dialog = new DeleteConfirmDialogView($"{node.Name}");
+        var root = this.VisualRoot as Window;
+        bool shouldDelete = await dialog.ShowDialog<bool>(root!);
+
+        if(shouldDelete)
+        {
+            ReadingOrderViewDispatcher.DispatchNodeDeletedMessage(node.Id);
+        }
+    }
+
+    [RelayCommand]
+    private void OpenEditDialog(Node node)
+    {
+        Console.WriteLine(node.Name);
+        var dialog = new EditNodeDialogView(node);
         var root = this.VisualRoot as Window;
         Console.WriteLine(root);
         dialog.ShowDialog(root!);

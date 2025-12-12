@@ -10,11 +10,11 @@ namespace ROGraph.NewUI.Dialogs.EditNodeDialog;
 
 internal partial class EditNodeDialogView : Window
 {
-    public EditNodeDialogView(NodeModel nodeModel)
+    public EditNodeDialogView(Node node)
     {
         InitializeComponent();
 
-        this.DataContext = new EditNodeDialogViewModel(nodeModel);
+        this.DataContext = new EditNodeDialogViewModel(node);
     }
 
     private void Confirm(object? sender, RoutedEventArgs e)
