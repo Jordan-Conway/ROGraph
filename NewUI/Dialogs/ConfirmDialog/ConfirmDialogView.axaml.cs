@@ -1,15 +1,15 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace ROGraph.NewUI.Dialogs.DeleteConfirmDialog;
+namespace ROGraph.NewUI.Dialogs.ConfirmDialog;
 
-internal partial class DeleteConfirmDialogView : Window
+internal partial class ConfirmDialogView : Window
 {
-    public DeleteConfirmDialogView(string name)
+    public ConfirmDialogView(string message)
     {
         InitializeComponent();
 
-        this.DataContext = new DeleteConfirmDialogViewModel(name);
+        this.DataContext = new ConfirmDialogViewModel(message);
     }
 
     public void Cancel(object? sender, RoutedEventArgs e)

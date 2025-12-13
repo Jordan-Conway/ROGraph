@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
-using ROGraph.NewUI.Dialogs.DeleteConfirmDialog;
+using ROGraph.NewUI.Dialogs.ConfirmDialog;
 using ROGraph.NewUI.Dialogs.EditNodeDialog;
 using ROGraph.NewUI.Dispatchers;
 using ROGraph.NewUI.Models;
@@ -96,7 +96,7 @@ internal partial class ReadingOrderViewControl : UserControl
     }
 
     [RelayCommand]
-    private void CreateNewNode((int, int) position)
+    private async Task CreateNewNode((int, int) position)
     {
         var node = new Node(
             Guid.NewGuid(), 
@@ -113,13 +113,18 @@ internal partial class ReadingOrderViewControl : UserControl
         NodeModel model = new(node, position.Item1, position.Item2);
         ReadingOrderViewDispatcher.DispatchNodeAddedMessage(model);
 
-        OpenEditDialog(node);
+        bool result = await EditNode(node, true);
+
+        if(!result)
+        {
+            ReadingOrderViewDispatcher.DispatchNodeDeletedMessage(node.Id);
+        }
     }
 
     [RelayCommand]
     private async Task OpenDeleteDialog(Node node)
     {
-        var dialog = new DeleteConfirmDialogView($"{node.Name}");
+        var dialog = new ConfirmDialogView($"Are you sure you want to delete {node.Name}?");
         var root = this.VisualRoot as Window;
         bool shouldDelete = await dialog.ShowDialog<bool>(root!);
 
@@ -130,12 +135,17 @@ internal partial class ReadingOrderViewControl : UserControl
     }
 
     [RelayCommand]
-    private void OpenEditDialog(Node node)
+    private async Task OpenEditDialog(Node node)
     {
-        Console.WriteLine(node.Name);
-        var dialog = new EditNodeDialogView(node);
+        await EditNode(node);
+    }
+
+    private async Task<bool> EditNode(Node node, bool confirmCancel = false)
+    {
+        var dialog = new EditNodeDialogView(node, confirmCancel);
         var root = this.VisualRoot as Window;
-        Console.WriteLine(root);
-        dialog.ShowDialog(root!);
+        bool result = await dialog.ShowDialog<bool>(root!);
+
+        return result;
     }
 }
