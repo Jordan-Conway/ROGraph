@@ -1,11 +1,11 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using ROGraph.Shared.Models;
+using ROGraph.NewUI.Models;
 
 namespace ROGraph.NewUI.Messages;
 
-internal class NodeAddedMessage : ValueChangedMessage<Node>
+internal class NodeAddedMessage : ValueChangedMessage<NodeModel>
 {
-    public NodeAddedMessage(Node node) : base(node)
+    public NodeAddedMessage(NodeModel nodeModel) : base(nodeModel)
     {
 
     }

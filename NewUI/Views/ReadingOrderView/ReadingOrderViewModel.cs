@@ -13,9 +13,6 @@ namespace ROGraph.NewUI.Views.ReadingOrderView;
 
 internal partial class ReadingOrderViewModel : ViewModelBase
 {
-    const int IMAGE_SIZE = 240;
-    const int IMAGE_GAP_SIZE = 80;
-
     public ReadingOrder ReadingOrder { get; set; }
 
     public ObservableCollection<NodeModel> Nodes { get; set; } = [];
@@ -35,10 +32,9 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
         foreach(Node n in nodes)
         {
-            (int, int) position = GetNodePosition(readingOrder.CoordinateTranslator.Translate(n));
+            Console.WriteLine($"{n.X}, {n.Y}");
+            (int, int) position =  CoordinateUtils.GetNodePosition(readingOrder.CoordinateTranslator.Translate(n));
             Nodes.Add(new NodeModel(n, position.Item1, position.Item2));
-
-            Console.WriteLine($"Added Node at {position}");
         }
 
         foreach(Connector c in connectors)
@@ -46,11 +42,9 @@ internal partial class ReadingOrderViewModel : ViewModelBase
             (int, int) origin = this.ReadingOrder.CoordinateTranslator.Translate(c.origin);
             (int, int) destination = this.ReadingOrder.CoordinateTranslator.Translate(c.destination);
 
-            var positions = GetConnectorPositions(origin, destination);
+            var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
 
             Connectors.Add(new ConnectorModel(c, positions.Item1, positions.Item2));
-
-            Console.WriteLine($"Added Connector at {positions}");
         }
     }
 
@@ -70,9 +64,19 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         });
     }
 
-    private void AddNode(Node node)
+    private void AddNode(NodeModel nodeModel)
     {
-        throw new NotImplementedException();
+        if(this.ReadingOrder.CoordinateTranslator == null)
+        {
+            throw new InvalidOperationException("Cannot add node without coordinate translator");
+        }
+
+        nodeModel.Node.Origin = this.ReadingOrder.Id;
+        var gridPosition = CoordinateUtils.GetNodeCoordinates((nodeModel.X, nodeModel.Y));
+        nodeModel.Node.X = this.ReadingOrder.CoordinateTranslator.GetXFromInt(gridPosition.Item1);
+        nodeModel.Node.Y = this.ReadingOrder.CoordinateTranslator.GetYFromInt(gridPosition.Item2);
+
+        this.Nodes.Add(nodeModel);
     }
 
     private void DeleteNode(Guid id)
@@ -87,54 +91,15 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
     private void EditNode(Node node)
     {
-        NodeModel? existing = this.Nodes.Where(n => n.Node.Id == node.Id).FirstOrDefault();
+        NodeModel? existing = this.Nodes.FirstOrDefault(n => n.Node.Id == node.Id);
         if(existing == null)
         {
             Console.WriteLine("Tried to edit nonexistant node");
             return;
         }
 
-        NodeModel newModel = new NodeModel(node, existing.X, existing.Y);
+        NodeModel newModel = new(node, existing.X, existing.Y);
         this.DeleteNode(node.Id);
         this.Nodes.Add(newModel);
-
-        Console.WriteLine("Node has been edited");
-    }
-
-    /// <summary>
-    /// Converts a node's column and row position to pixel positions
-    /// </summary>
-    /// <param name="position">A tuple representing the nodes column and row coordinates</param>
-    /// <returns></returns>
-    private static (int, int) GetNodePosition((int, int) position)
-    {
-        int x = position.Item1;
-        int y = position.Item2;
-
-        x = (x * IMAGE_SIZE) + (x * IMAGE_GAP_SIZE) + (IMAGE_GAP_SIZE / 2);
-        y = (y * IMAGE_SIZE) + (y * (IMAGE_GAP_SIZE / 2)) + (IMAGE_GAP_SIZE / 4);
-
-        return (x, y);
-    }
-
-    /// <summary>
-    /// Converts and connector's origin and destination coordinates to pixel positions
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <param name="destination"></param>
-    /// <returns></returns>
-    private static ((int, int), (int, int)) GetConnectorPositions((int, int) origin, (int, int) destination)
-    {
-        int x1 = origin.Item1;
-        int y1 = origin.Item2;
-        int x2 = destination.Item1;
-        int y2 = destination.Item2;
-
-        x1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 2);
-        y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
-        x2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 2);
-        y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
-
-        return ((x1, y1), (x2, y2));
     }
 }

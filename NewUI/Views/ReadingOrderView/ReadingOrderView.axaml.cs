@@ -9,6 +9,7 @@ using ROGraph.NewUI.Dialogs.DeleteConfirmDialog;
 using ROGraph.NewUI.Dialogs.EditNodeDialog;
 using ROGraph.NewUI.Dispatchers;
 using ROGraph.NewUI.Models;
+using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
 
 namespace ROGraph.NewUI.Views.ReadingOrderView;
@@ -24,10 +25,10 @@ internal partial class ReadingOrderViewControl : UserControl
 
     private void HandleEmptySpaceNodeClick(object sender, PointerPressedEventArgs e)
     {
-        Console.WriteLine("Clicked empty space");
         if(e.Properties.IsRightButtonPressed)
         {
-            OpenContextMenu(sender);
+            var point =  e.GetCurrentPoint(sender as Control);
+            OpenContextMenu(sender, point);
         }
     }
 
@@ -38,14 +39,15 @@ internal partial class ReadingOrderViewControl : UserControl
             Control control = (Control)sender;
             if(control != null && control.DataContext is NodeModel node)
             {
-                OpenContextMenu(node);
+                var point =  e.GetCurrentPoint(sender as Control);
+                OpenContextMenu(node, point);
             }
         }
 
         e.Handled = true;
     }
 
-    private void OpenContextMenu(object clicked)
+    private void OpenContextMenu(object clicked, PointerPoint position)
     {
         ViewPanel.ContextMenu!.ItemsSource = null;
         IEnumerable<MenuItem> items = [];
@@ -56,6 +58,11 @@ internal partial class ReadingOrderViewControl : UserControl
         {
             var nodeModel = clicked as NodeModel ?? throw new ArgumentNullException(nameof(clicked));
             items = items.Concat(GetNodeContextMenuItems(nodeModel));
+        }
+        
+        if(clicked is Grid)
+        {
+            items = items.Concat(GetEmptySpaceContextMenuItems(position));
         }
 
         if(items.Any())
@@ -70,22 +77,43 @@ internal partial class ReadingOrderViewControl : UserControl
         }
     }
 
-    private IEnumerable<MenuItem> GetEmptySpaceContextMenuItems()
+    private IEnumerable<MenuItem> GetEmptySpaceContextMenuItems(PointerPoint position)
     {
+        var nearestNodePosition = CoordinateUtils.GetNearestValidNodePosition((position.Position.X, position.Position.Y));
         return
         [
-            new MenuItem{ Header = "Default"}
+            new MenuItem{ Header = "Add Node", Command = this.CreateNewNodeCommand, CommandParameter = nearestNodePosition}
         ];
     }
 
     private IEnumerable<MenuItem> GetNodeContextMenuItems(NodeModel node)
     {
-        Console.WriteLine("Clicked on a node!");
         return
         [
             new MenuItem{ Header = "Edit Node", Command = this.OpenEditDialogCommand, CommandParameter = node.Node},
             new MenuItem{ Header = "Delete Node", Command = this.OpenDeleteDialogCommand, CommandParameter = node.Node}
         ];
+    }
+
+    [RelayCommand]
+    private void CreateNewNode((int, int) position)
+    {
+        var node = new Node(
+            Guid.NewGuid(), 
+            "New Node", 
+            Guid.Empty, 
+            DateTime.Now, 
+            DateTime.Now, 
+            Guid.Empty,
+            Guid.Empty,
+            NodeType.Triangle,
+            false,
+            null,
+            string.Empty);
+        NodeModel model = new(node, position.Item1, position.Item2);
+        ReadingOrderViewDispatcher.DispatchNodeAddedMessage(model);
+
+        OpenEditDialog(node);
     }
 
     [RelayCommand]

@@ -10,7 +10,7 @@ namespace ROGraph.NewUI.Dispatchers;
 
 internal partial class ReadingOrderViewDispatcher
 {
-    public static void DispatchNodeAddedMessage(Node? node)
+    public static void DispatchNodeAddedMessage(NodeModel? node)
     {
         if(node == null)
         {
