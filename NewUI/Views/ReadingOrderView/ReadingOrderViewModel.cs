@@ -32,7 +32,6 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
         foreach(Node n in nodes)
         {
-            Console.WriteLine($"{n.X}, {n.Y}");
             (int, int) position =  CoordinateUtils.GetNodePosition(readingOrder.CoordinateTranslator.Translate(n));
             Nodes.Add(new NodeModel(n, position.Item1, position.Item2));
         }
@@ -62,6 +61,14 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         {
             this.EditNode(m.Value);
         });
+        WeakReferenceMessenger.Default.Register<ConnectorAddedMessage>(this, (r, m) =>
+        {
+            this.AddConnector(m.Value);
+        });
+        WeakReferenceMessenger.Default.Register<ConnectorDeletedMessage>(this, (r, m) =>
+        {
+            this.DeleteConnector(m.Value);
+        });
     }
 
     private void AddNode(NodeModel nodeModel)
@@ -82,10 +89,6 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     private void DeleteNode(Guid id)
     {
         var toRemove = this.Nodes.Where(node => node.Node.Id == id);
-        foreach(var node in toRemove)
-        {
-            Console.WriteLine(node.Node.Id);
-        }
         this.Nodes.RemoveMany(toRemove);
     }
 
@@ -101,5 +104,26 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         NodeModel newModel = new(node, existing.X, existing.Y);
         this.DeleteNode(node.Id);
         this.Nodes.Add(newModel);
+    }
+
+    private void AddConnector(Connector connector)
+    {
+        if(this.ReadingOrder.CoordinateTranslator == null)
+        {
+            throw new InvalidOperationException("Cannot add connectorwithout coordinate translator");
+        }
+
+        var origin = this.ReadingOrder.CoordinateTranslator.Translate(connector.origin);
+        var destination = this.ReadingOrder.CoordinateTranslator.Translate(connector.destination);
+
+        var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
+
+        this.Connectors.Add(new ConnectorModel(connector, positions.Item1, positions.Item2));
+    }
+
+    private void DeleteConnector(Guid id)
+    {
+        var toRemove = this.Connectors.Where(c => c.Id == id);
+        this.Connectors.RemoveMany(toRemove);
     }
 }

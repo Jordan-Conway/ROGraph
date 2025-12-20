@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
 using ROGraph.NewUI.Dialogs.ConfirmDialog;
 using ROGraph.NewUI.Dialogs.EditNodeDialog;
@@ -16,6 +17,9 @@ namespace ROGraph.NewUI.Views.ReadingOrderView;
 
 internal partial class ReadingOrderViewControl : UserControl
 {
+    private (Guid, Guid) newConnectorOrigin = (Guid.Empty, Guid.Empty);
+    private InteractioMode interactioMode = InteractioMode.DEFAULT;
+
     public ReadingOrderViewControl(ReadingOrder readingOrder)
     {
         InitializeComponent();
@@ -25,6 +29,8 @@ internal partial class ReadingOrderViewControl : UserControl
 
     private void HandleEmptySpaceNodeClick(object sender, PointerPressedEventArgs e)
     {
+        e.Handled = true;
+
         if(e.Properties.IsRightButtonPressed)
         {
             var point =  e.GetCurrentPoint(sender as Control);
@@ -32,8 +38,28 @@ internal partial class ReadingOrderViewControl : UserControl
         }
     }
 
-    private void HandleNodeClick(object sender, PointerPressedEventArgs e)
+    private void HandleNodeLeftClick(object sender, RoutedEventArgs e)
     {
+        if (this.interactioMode != InteractioMode.NEW_CONNECTOR)
+        {
+            return;
+        }
+
+        Control control = (Control)sender;
+        if (control != null && control.DataContext is NodeModel node)
+        {
+            var destination = node.Node.GetPosition();
+            var connector = new Connector(this.newConnectorOrigin, destination);
+            ReadingOrderViewDispatcher.DispatchConnectorAddedMessage(connector);
+            this.interactioMode = InteractioMode.DEFAULT;
+        }
+    }
+
+    private void HandleNodeRightClick(object sender, PointerPressedEventArgs e)
+    {
+        // Has to be explictly marked as handled to prevent bubbling on Linux
+        e.Handled = true;
+
         if(e.Properties.IsRightButtonPressed)
         {
             Control control = (Control)sender;
@@ -42,22 +68,40 @@ internal partial class ReadingOrderViewControl : UserControl
                 var point =  e.GetCurrentPoint(sender as Control);
                 OpenContextMenu(node, point);
             }
+            return;
         }
-
-        e.Handled = true;
     }
 
+    private void HandleConnectorClick(object sender, PointerPressedEventArgs e)
+    {
+        e.Handled = true;
+
+        if(e.Properties.IsRightButtonPressed)
+        {
+            Control control = (Control)sender;
+            if(control != null && control.DataContext is ConnectorModel connector)
+            {
+                var point =  e.GetCurrentPoint(sender as Control);
+                OpenContextMenu(connector, point);
+            }
+            return;
+        }
+    }
+    
     private void OpenContextMenu(object clicked, PointerPoint position)
     {
         ViewPanel.ContextMenu!.ItemsSource = null;
         IEnumerable<MenuItem> items = [];
-        
-        Console.WriteLine(clicked);
 
         if(clicked is NodeModel)
         {
             var nodeModel = clicked as NodeModel ?? throw new ArgumentNullException(nameof(clicked));
             items = items.Concat(GetNodeContextMenuItems(nodeModel));
+        }
+
+        if(clicked is ConnectorModel connectorModel)
+        {
+            items = items.Concat(GetConnectorContextMenuItems(connectorModel));
         }
         
         if(clicked is Grid)
@@ -91,7 +135,16 @@ internal partial class ReadingOrderViewControl : UserControl
         return
         [
             new MenuItem{ Header = "Edit Node", Command = this.OpenEditDialogCommand, CommandParameter = node.Node},
-            new MenuItem{ Header = "Delete Node", Command = this.OpenDeleteDialogCommand, CommandParameter = node.Node}
+            new MenuItem{ Header = "Delete Node", Command = this.OpenDeleteDialogCommand, CommandParameter = node.Node},
+            new MenuItem{ Header = "New Connector", Command = this.SetNewConnectorOriginCommand, CommandParameter = node.Node.GetPosition()}
+        ];
+    }
+
+    private IEnumerable<MenuItem> GetConnectorContextMenuItems(ConnectorModel connectorModel)
+    {
+        return
+        [
+            new MenuItem{ Header = "Delete Connector", Command = this.DeleteConnectorCommand, CommandParameter = connectorModel.Id}
         ];
     }
 
@@ -138,6 +191,19 @@ internal partial class ReadingOrderViewControl : UserControl
     private async Task OpenEditDialog(Node node)
     {
         await EditNode(node);
+    }
+
+    [RelayCommand]
+    private void SetNewConnectorOrigin((Guid, Guid) position)
+    {
+        this.newConnectorOrigin = position;
+        this.interactioMode = InteractioMode.NEW_CONNECTOR;
+    }
+
+    [RelayCommand]
+    private void DeleteConnector(Guid id)
+    {
+        ReadingOrderViewDispatcher.DispatchConnectorDeletedMessage(id);
     }
 
     private async Task<bool> EditNode(Node node, bool confirmCancel = false)

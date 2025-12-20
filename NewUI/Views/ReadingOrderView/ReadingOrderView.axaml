@@ -18,7 +18,13 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type md:ConnectorModel}">
-                        <Line StartPoint="{Binding Origin}" EndPoint="{Binding Destination}" Stroke="White" StrokeThickness="15" />
+                        <Path
+                            Data="{Binding Geometry}"
+                            Stroke="White" 
+                            StrokeThickness="25"
+                            IsHitTestVisible="True"
+                            Fill="Transparent"
+                            PointerPressed="HandleConnectorClick" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -26,13 +32,14 @@
             <ItemsControl x:Name="NodesItemControl" ItemsSource="{Binding Nodes}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Background="Transparent"/>
+                        <!-- Background is null to allow connectors to be clicked -->
+                        <Canvas Background="{x:Null}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type md:NodeModel}">
-                        <Button PointerPressed="HandleNodeClick">
+                        <Button Click="HandleNodeLeftClick" PointerPressed="HandleNodeRightClick">
                             <StackPanel>
                                 <Image Source="avares://ROGraph.NewUI/Assets/star_node_completed.png" Height="240" Width="240" />
                                 <TextBlock Text="{Binding Node.Name}" />
@@ -48,6 +55,7 @@
                     </Style>
                     <Style Selector="Button">
                         <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Padding" Value="0" />
                     </Style>
                 </ItemsControl.Styles>
             </ItemsControl>
