@@ -49,4 +49,28 @@ internal partial class ReadingOrderViewDispatcher
         var message = new ConnectorDeletedMessage(id);
         WeakReferenceMessenger.Default.Send(message);
     }
+
+    public static void DispatchColumnAddedEvent(int index)
+    {
+        var message = new ColumnAddedMessage(index);
+        WeakReferenceMessenger.Default.Send(message); 
+    }
+
+    public static void DispatchColumnDeletedEvent(int index)
+    {
+        var message = new ColumnDeletedMessage(index);
+        WeakReferenceMessenger.Default.Send(message); 
+    }
+
+    public static void DispatchRowAddedEvent(int index)
+    {
+        var message = new RowAddedMessage(index);
+        WeakReferenceMessenger.Default.Send(message);
+    }
+
+    public static void DispatchRowDeletedEvent(int index)
+    {
+        var message = new RowDeletedMessage(index);
+        WeakReferenceMessenger.Default.Send(message); 
+    }
 }

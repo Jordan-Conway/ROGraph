@@ -77,4 +77,32 @@ internal static class CoordinateUtils
 
         return ((x1, y1), (x2, y2));
     }
+
+    /// <summary>
+    /// Gets the column number from an x position
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public static int GetColumnPosition(double position)
+    {
+        int index = (int)Math.Round(position, 0);
+        index -= IMAGE_GAP_SIZE / 2;
+        index /= IMAGE_SIZE + IMAGE_GAP_SIZE;
+
+        return index;
+    }
+
+    /// <summary>
+    /// Gets the row number from a y position
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public static int GetRowPosition(double position)
+    {
+        int index = (int)Math.Round(position, 0);
+        index -= IMAGE_GAP_SIZE / 4;
+        index /= IMAGE_SIZE + (IMAGE_GAP_SIZE / 2);
+
+        return index;
+    }
 }

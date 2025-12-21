@@ -109,6 +109,8 @@ internal partial class ReadingOrderViewControl : UserControl
             items = items.Concat(GetEmptySpaceContextMenuItems(position));
         }
 
+        items = items.Concat(GetDefaultContextMenuItems(position));
+
         if(items.Any())
         {
             ViewPanel.ContextMenu!.ItemsSource = items;
@@ -119,6 +121,19 @@ internal partial class ReadingOrderViewControl : UserControl
             // we close the menu here so it is properly cleared
             ViewPanel.ContextMenu!.Close();
         }
+    }
+
+    private IEnumerable<MenuItem> GetDefaultContextMenuItems(PointerPoint position)
+    {
+        var column = CoordinateUtils.GetColumnPosition(position.Position.X);
+        var row = CoordinateUtils.GetColumnPosition(position.Position.Y);
+        return
+        [
+            new MenuItem{ Header = "Add New Column", Command = this.AddColumnCommand, CommandParameter = column},
+            new MenuItem{ Header = "Add New Row", Command = this.AddRowCommand, CommandParameter = row},
+            new MenuItem{ Header = "Delete Column", Command = this.DeleteColumnCommand, CommandParameter = column},
+            new MenuItem{ Header = "Delete Row", Command = this.DeleteRowCommand, CommandParameter = row}
+        ];
     }
 
     private IEnumerable<MenuItem> GetEmptySpaceContextMenuItems(PointerPoint position)
@@ -213,5 +228,52 @@ internal partial class ReadingOrderViewControl : UserControl
         bool result = await dialog.ShowDialog<bool>(root!);
 
         return result;
+    }
+
+    [RelayCommand]
+    private void AddColumn(int position)
+    {
+        ReadingOrderViewDispatcher.DispatchColumnAddedEvent(position);
+        this.InvalidateVisual();
+    }
+
+    [RelayCommand]
+    private async Task DeleteColumn(int position)
+    {
+        var dialog = new ConfirmDialogView($"Are you sure you want to delete this column?");
+        var root = this.VisualRoot as Window;
+        bool shouldDelete = await dialog.ShowDialog<bool>(root!);
+
+        if(!shouldDelete)
+        {
+            return;
+        }
+
+        Console.WriteLine($"Deleting column {position}");
+        ReadingOrderViewDispatcher.DispatchColumnDeletedEvent(position);
+        this.InvalidateVisual();
+    }
+
+    [RelayCommand]
+    private void AddRow(int position)
+    {
+        ReadingOrderViewDispatcher.DispatchRowAddedEvent(position);
+        this.InvalidateVisual();
+    }
+
+    [RelayCommand]
+    private async Task DeleteRow(int position)
+    {
+        var dialog = new ConfirmDialogView($"Are you sure you want to delete this row?");
+        var root = this.VisualRoot as Window;
+        bool shouldDelete = await dialog.ShowDialog<bool>(root!);
+
+        if(!shouldDelete)
+        {
+            return;
+        }
+
+        ReadingOrderViewDispatcher.DispatchRowDeletedEvent(position);
+        this.InvalidateVisual();
     }
 }

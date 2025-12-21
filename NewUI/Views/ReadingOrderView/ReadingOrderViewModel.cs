@@ -25,26 +25,8 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
         this.ReadingOrder = readingOrder;
 
-        var nodes = readingOrder.Contents.GetNodes();
-        var connectors = readingOrder.Contents.GetConnectors();
-
         RegisterMessages();
-
-        foreach(Node n in nodes)
-        {
-            (int, int) position =  CoordinateUtils.GetNodePosition(readingOrder.CoordinateTranslator.Translate(n));
-            Nodes.Add(new NodeModel(n, position.Item1, position.Item2));
-        }
-
-        foreach(Connector c in connectors)
-        {
-            (int, int) origin = this.ReadingOrder.CoordinateTranslator.Translate(c.origin);
-            (int, int) destination = this.ReadingOrder.CoordinateTranslator.Translate(c.destination);
-
-            var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
-
-            Connectors.Add(new ConnectorModel(c, positions.Item1, positions.Item2));
-        }
+        PlaceContents();
     }
 
     private void RegisterMessages()
@@ -69,6 +51,53 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         {
             this.DeleteConnector(m.Value);
         });
+        WeakReferenceMessenger.Default.Register<ColumnAddedMessage>(this, (r, m) =>
+        {
+           this.AddColumn(m.Value); 
+        });
+        WeakReferenceMessenger.Default.Register<ColumnDeletedMessage>(this, (r, m) =>
+        {
+           this.DeleteColumn(m.Value);
+        });
+        WeakReferenceMessenger.Default.Register<RowAddedMessage>(this, (r,m) =>
+        {
+           this.AddRow(m.Value); 
+        });
+        WeakReferenceMessenger.Default.Register<RowDeletedMessage>(this, (r,m) =>
+        {
+           this.DeleteRow(m.Value); 
+        });
+    }
+
+    private void PlaceContents()
+    {
+        if(this.ReadingOrder.CoordinateTranslator == null)
+        {
+            throw new InvalidOperationException("Cannot place contents without coordinate translator");
+        }
+
+        foreach(Node n in this.ReadingOrder.Contents.GetNodes())
+        {
+            Console.WriteLine(n.Name);
+            (int, int) position =  CoordinateUtils.GetNodePosition(this.ReadingOrder.CoordinateTranslator.Translate(n));
+            Nodes.Add(new NodeModel(n, position.Item1, position.Item2));
+        }
+
+        foreach(Connector c in this.ReadingOrder.Contents.GetConnectors())
+        {
+            (int, int) origin = this.ReadingOrder.CoordinateTranslator.Translate(c.origin);
+            (int, int) destination = this.ReadingOrder.CoordinateTranslator.Translate(c.destination);
+
+            var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
+
+            Connectors.Add(new ConnectorModel(c, positions.Item1, positions.Item2));
+        }
+    }
+
+    private void RemoveAllContents()
+    {
+        this.Nodes.Clear();
+        this.Connectors.Clear();
     }
 
     private void AddNode(NodeModel nodeModel)
@@ -83,13 +112,20 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         nodeModel.Node.X = this.ReadingOrder.CoordinateTranslator.GetXFromInt(gridPosition.Item1);
         nodeModel.Node.Y = this.ReadingOrder.CoordinateTranslator.GetYFromInt(gridPosition.Item2);
 
+        Console.WriteLine($"Added node with x: {nodeModel.Node.X}, y: {nodeModel.Node.Y}");
+
         this.Nodes.Add(nodeModel);
+        this.ReadingOrder.Contents.AddNode(nodeModel.Node);
     }
 
     private void DeleteNode(Guid id)
     {
         var toRemove = this.Nodes.Where(node => node.Node.Id == id);
         this.Nodes.RemoveMany(toRemove);
+        foreach(NodeModel nodeModel in toRemove)
+        {
+            this.ReadingOrder.Contents.DeleteNode(nodeModel.Node);
+        }
     }
 
     private void EditNode(Node node)
@@ -104,6 +140,7 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         NodeModel newModel = new(node, existing.X, existing.Y);
         this.DeleteNode(node.Id);
         this.Nodes.Add(newModel);
+        this.ReadingOrder.Contents.ReplaceNode(node);
     }
 
     private void AddConnector(Connector connector)
@@ -119,11 +156,49 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
 
         this.Connectors.Add(new ConnectorModel(connector, positions.Item1, positions.Item2));
+        this.ReadingOrder.Contents.AddConnector(connector);
     }
 
     private void DeleteConnector(Guid id)
     {
         var toRemove = this.Connectors.Where(c => c.Id == id);
         this.Connectors.RemoveMany(toRemove);
+        foreach(ConnectorModel connectorModel in toRemove)
+        {
+            this.ReadingOrder.Contents.DeleteConnector(connectorModel.Connector.origin, connectorModel.Connector.destination);
+        }
+    }
+
+    private void AddColumn(int position)
+    {
+        this.ReadingOrder.AddColumn(position);
+        this.RefreshContents();
+    }
+
+    private void DeleteColumn(int position)
+    {
+        this.ReadingOrder.DeleteColumn(position);
+        this.RefreshContents();
+    }
+
+    private void AddRow(int position)
+    {
+        this.ReadingOrder.AddRow(position);
+        this.RefreshContents();
+    }
+
+    private void DeleteRow(int position)
+    {
+        this.ReadingOrder.DeleteRow(position);
+        this.RefreshContents();
+    }
+
+    /// <summary>
+    /// Refreshes this classess contents
+    /// </summary>
+    private void RefreshContents()
+    {
+        this.RemoveAllContents();
+        this.PlaceContents();
     }
 }
