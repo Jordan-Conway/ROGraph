@@ -144,8 +144,11 @@
         /// <param name="colId"></param>
         public void DeleteAllContentsInColumn(Guid colId)
         {
-            this.Nodes.RemoveAll(node => node.Y == colId);
+            Console.WriteLine($"Removing all contents in column {colId}");
+            this.Nodes.RemoveAll(node => node.X == colId);
             this.Connectors.RemoveAll(connector => connector.origin.Item1 == colId || connector.destination.Item1 == colId);
+
+            Console.WriteLine($"{this.Nodes.Count} nodes remaining");
         }
     }
 }
