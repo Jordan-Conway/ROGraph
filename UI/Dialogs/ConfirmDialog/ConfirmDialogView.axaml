@@ -1,0 +1,33 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:cd="using:ROGraph.UI.Dialogs.ConfirmDialog"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Class="ROGraph.UI.Dialogs.ConfirmDialog.ConfirmDialogView"
+    x:DataType="cd:ConfirmDialogViewModel">
+    <StackPanel>
+        <TextBlock Text="{Binding Message}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Button
+                Grid.Row="0"
+                Grid.Column="0"
+                Click="Cancel">
+                Cancel
+            </Button>
+            <Button
+                Grid.Row="0"
+                Grid.Column="1"
+                Click="Confirm">
+                Confirm
+            </Button>
+        </Grid>
+    </StackPanel>
+</Window>

@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROGraph.Shared", "Shared\sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROGraph.Shared.Tests", "Shared\tests\ROGraph.Shared.Tests.csproj", "{390DE2A5-E8AE-4F1E-A5E4-4B2B2C5E88CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROGraph.NewUI", "NewUI\ROGraph.NewUI.csproj", "{D7892F2F-8692-463F-876E-53B6334B59DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROGraph.UI", "UI\ROGraph.UI.csproj", "{D7892F2F-8692-463F-876E-53B6334B59DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
