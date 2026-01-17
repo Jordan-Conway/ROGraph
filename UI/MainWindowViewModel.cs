@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ROGraph.UI.Views.ReadingOrderListView;
 using ROGraph.UI.ViewModels;
-using ROGraph.Backend.Data.DataProviders.Interfaces;
-using ROGraph.Backend.Data.DataProviders.MockProviders;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;

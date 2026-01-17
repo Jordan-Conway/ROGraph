@@ -2,20 +2,20 @@ using System;
 using System.Reactive;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
-using ROGraph.Backend.Data.DataProviders.Interfaces;
-using ROGraph.Backend.Data.DataProviders.MockProviders;
 using ROGraph.UI.Views.ReadingOrderView;
 using ROGraph.Shared.Models;
 using ReactiveUI;
 using CommunityToolkit.Mvvm.Messaging;
+using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.DataProviders.MockProviders;
 using ROGraph.UI.Messages;
 
 namespace ROGraph.UI.Views.ReadingOrderListView;
 
 internal partial class ReadingOrderListViewControl : UserControl
 {
-    private static readonly IReadingOrderListProvider listProvider = new MockReadingOrderListProvider();
-    private static readonly IReadingOrderProvider roProvider = new MockReadingOrderProvider();
+    private static readonly IReadingOrderListProvider ListProvider = new MockReadingOrderListProvider();
+    private static readonly IReadingOrderProvider RoProvider = new MockReadingOrderProvider();
 
     public ReactiveCommand<ReadingOrderOverview, Unit> NavigateCommand { get; }
 
@@ -23,7 +23,7 @@ internal partial class ReadingOrderListViewControl : UserControl
     {
         InitializeComponent();
 
-        DataContext = new ReadingOrderListViewModel(listProvider, roProvider);
+        DataContext = new ReadingOrderListViewModel(ListProvider, RoProvider);
 
         NavigateCommand = ReactiveCommand.Create<ReadingOrderOverview>(
             NavigateToReadingOrder,
@@ -32,7 +32,7 @@ internal partial class ReadingOrderListViewControl : UserControl
 
     public void NavigateToReadingOrder(ReadingOrderOverview overview)
     {
-        ReadingOrder? readingOrder = roProvider.GetReadingOrder(overview);
+        var readingOrder = RoProvider.GetReadingOrder(overview);
         ArgumentNullException.ThrowIfNull(readingOrder);
         
         WeakReferenceMessenger.Default.Send(new NavigationMessage(new ReadingOrderViewControl(readingOrder)));
