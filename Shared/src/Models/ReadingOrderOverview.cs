@@ -14,7 +14,7 @@
 
         public ReadingOrderOverview(string? name, Guid id, string? description = null, int maxX = 0, int maxY = 0)
         {
-            this.Name = name == null ? string.Empty : name;
+            this.Name = name ?? string.Empty;
             this.Id = id;
             this.Description = description;
             MaxX = maxX;
