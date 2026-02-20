@@ -4,6 +4,10 @@ using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using ROGraph.Backend;
+using ROGraph.Backend.DataProviders.Interfaces;
 using ROGraph.UI.ViewModels;
 using ROGraph.UI;
 
@@ -18,18 +22,23 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-            DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainWindowViewModel(),
-            };
-        }
+       DisableAvaloniaDataAnnotationValidation();
 
-        base.OnFrameworkInitializationCompleted();
+       var collection = new ServiceCollection();
+       BackendDependencyLoader.AddDependencies(collection);
+       AddDependencies(collection);
+       
+       var services = collection.BuildServiceProvider();
+
+       var dataSourceCreator = services.GetRequiredService<IReadingOrderDataSourceCreator>();
+       dataSourceCreator.CreateDataSource();
+
+       if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+       {
+           desktop.MainWindow = new MainWindow();
+       }
+
+       base.OnFrameworkInitializationCompleted();
     }
 
     private void DisableAvaloniaDataAnnotationValidation()
@@ -43,5 +52,10 @@ public partial class App : Application
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
+    }
+
+    private void AddDependencies(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddSingleton<ILoggerFactory, LoggerFactory>();
     }
 }
