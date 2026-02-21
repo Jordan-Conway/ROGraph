@@ -4,13 +4,13 @@ namespace ROGraph.Backend.DataProviders.Interfaces;
 
 public interface IReadingOrderProvider
 {
-    public abstract List<ReadingOrderOverview> GetReadingOrders();
+    public List<ReadingOrderOverview> GetReadingOrders();
     
-    public abstract ReadingOrder? GetReadingOrder(Guid id);
+    public ReadingOrder? GetReadingOrder(Guid id);
 
-    public abstract ReadingOrderOverview? GetReadingOrderOverview(Guid id);
+    public ReadingOrderOverview? GetReadingOrderOverview(Guid id);
     
-    public abstract bool CreateReadingOrder(string name, string? description);
+    public bool CreateReadingOrder(string name, string? description);
     
-    public abstract bool UpdateReadingOrder(ReadingOrder readingOrder);
+    public bool UpdateReadingOrder(ReadingOrder readingOrder);
 }
