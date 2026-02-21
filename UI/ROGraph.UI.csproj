@@ -29,6 +29,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
     <PackageReference Include="ReactiveUI" Version="22.2.1" />
+    <PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
     <PackageReference Include="system.reactive" Version="6.1.0" />
   </ItemGroup>
 

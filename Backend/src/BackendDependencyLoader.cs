@@ -10,7 +10,6 @@ public static class BackendDependencyLoader
     public static void AddDependencies (IServiceCollection services)
     {
         services.AddSingleton<IReadingOrderDataSourceCreator, SqlDataSourceCreator>();
-        services.AddSingleton<IReadingOrderListProvider, MockReadingOrderListProvider>();
-        services.AddSingleton<IReadingOrderProvider, MockReadingOrderProvider>();
+        services.AddSingleton<IReadingOrderProvider, ReadingOrderListProvider>();
     }
 }

@@ -57,6 +57,8 @@ END;
 CREATE TABLE IF NOT EXISTS ReadingOrders_Nodes (
     readingOrderId TEXT NOT NULL,
     nodeId TEXT NOT NULL,
+    x INTEGER,
+    y INTEGER,
     
     FOREIGN KEY (readingOrderId)
         REFERENCES ReadingOrders (id),
@@ -64,7 +66,7 @@ CREATE TABLE IF NOT EXISTS ReadingOrders_Nodes (
         REFERENCES Nodes (id)
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS ReadingOrders_Nodes_ROId_Index ON ReadingOrders_Nodes (readingOrderId);
+CREATE INDEX IF NOT EXISTS ReadingOrders_Nodes_ROId_Index ON ReadingOrders_Nodes (readingOrderId);
 
 CREATE TABLE IF NOT EXISTS Connectors (
     x1 INTEGER,
@@ -77,4 +79,4 @@ CREATE TABLE IF NOT EXISTS Connectors (
         REFERENCES ReadingOrders (id)
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS Connectors_ReadingOrder_Index ON Connectors (readingOrderId);
+CREATE INDEX IF NOT EXISTS Connectors_ReadingOrder_Index ON Connectors (readingOrderId);

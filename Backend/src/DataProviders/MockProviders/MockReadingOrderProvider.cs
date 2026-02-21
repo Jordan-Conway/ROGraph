@@ -11,7 +11,7 @@ public class MockReadingOrderProvider : IReadingOrderProvider
         return true;
     }
 
-    public ReadingOrder? GetReadingOrder(ReadingOrderOverview overview)
+    public ReadingOrder? GetReadingOrder(Guid id)
     {
         ReadingOrderContentsManager content = new ReadingOrderContentsManager();
         CoordinateTranslator coordinateTranslator = new CoordinateTranslator(2, 2);
@@ -22,9 +22,9 @@ public class MockReadingOrderProvider : IReadingOrderProvider
         Guid y2 = coordinateTranslator.GetYFromInt(1);
 
 
-        Node node1 = new Node(Guid.NewGuid(), "Node 1", new Guid(), DateTime.Now, DateTime.Now, x1, y1, NodeType.Diamond);
-        Node node2 = new Node(Guid.NewGuid(), "Node 2", new Guid(), DateTime.Now, DateTime.Now, x1, y2, NodeType.Diamond);
-        Node node3 = new Node(Guid.NewGuid(), "Node 3", new Guid(), DateTime.Now, DateTime.Now, x2, y1, NodeType.Diamond);
+        Node node1 = new Node(Guid.NewGuid(), "Node 1", Guid.NewGuid(), DateTime.Now, DateTime.Now, x1, y1, NodeType.Diamond);
+        Node node2 = new Node(Guid.NewGuid(), "Node 2", Guid.NewGuid(), DateTime.Now, DateTime.Now, x1, y2, NodeType.Diamond);
+        Node node3 = new Node(Guid.NewGuid(), "Node 3", Guid.NewGuid(), DateTime.Now, DateTime.Now, x2, y1, NodeType.Diamond);
 
         content.AddNode(node1);
         content.AddNode(node2);
@@ -36,9 +36,25 @@ public class MockReadingOrderProvider : IReadingOrderProvider
         content.AddConnector(c1);
         content.AddConnector(c2);
 
-        ReadingOrder mockReadingOrder = new ReadingOrder("Mock Reading Order", new Guid(), content, "This is a mock reading order");
+        var mockReadingOrder = new ReadingOrder("Mock Reading Order", Guid.NewGuid(), content, "This is a mock reading order");
         mockReadingOrder.CoordinateTranslator = coordinateTranslator;
 
         return mockReadingOrder;
+    }
+    
+    public List<ReadingOrderOverview> GetReadingOrders()
+    {
+        var list = new List<ReadingOrderOverview>
+        {
+            new ReadingOrderOverview("Reading Order 1", Guid.NewGuid()),
+            new ReadingOrderOverview("Reading Order 2", Guid.NewGuid()),
+        };
+
+        return list;
+    }
+
+    public ReadingOrderOverview? GetReadingOrderOverview(Guid id)
+    {
+        return new ReadingOrderOverview("Reading Order 1", Guid.NewGuid());
     }
 }

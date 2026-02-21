@@ -5,15 +5,33 @@ namespace ROGraph.Backend.Scripts;
 internal static class ScriptReader
 {
     private const string CreateDatabaseScriptName = "CreateDatabase.sql";
+    private const string GetAllReadingOrdersScriptName = "GetAllReadingOrders.sql";
+    private const string GetReadingOrderScriptName = "GetReadingOrderScript.sql";
+    private const string GetReadingOrderNodesScriptName = "GetReadingOrderNodes.sql";
 
     public static string GetCreateDatabaseScript()
     {
-        var assembly = Assembly.GetAssembly(typeof(ScriptReader)) ?? throw new InvalidOperationException("Cannot find backend assembly");
-        return ReadResource(CreateDatabaseScriptName, assembly);
+        return ReadResource(CreateDatabaseScriptName);
     }
 
-    private static string ReadResource(string fileName, Assembly assembly)
+    public static string GetAllReadingOrdersScript()
     {
+        return ReadResource(GetAllReadingOrdersScriptName);
+    }
+
+    public static string GetReadingOrderScript()
+    {
+        return ReadResource(GetReadingOrderScriptName);
+    }
+
+    public static string GetReadingOrderNodesScript()
+    {
+        return ReadResource(GetReadingOrderNodesScriptName);
+    }
+
+    private static string ReadResource(string fileName)
+    {
+        var assembly = Assembly.GetAssembly(typeof(ScriptReader)) ?? throw new InvalidOperationException("Cannot find backend assembly");
         var resourceName = GetResourceName(fileName, assembly);
         using var stream = assembly.GetManifestResourceStream(resourceName) ?? 
                            throw new InvalidOperationException($"Cannot load resource stream {fileName}");
