@@ -6,5 +6,9 @@ public interface IReadingOrderProvider
 {
     public abstract bool CreateReadingOrder(string name, string? description);
 
-    public abstract ReadingOrder? GetReadingOrder(ReadingOrderOverview overview);
+    public abstract ReadingOrder? GetReadingOrder(Guid id);
+    
+    public abstract List<ReadingOrderOverview> GetReadingOrders();
+
+    public abstract ReadingOrderOverview? GetReadingOrderOverview(Guid id);
 }
