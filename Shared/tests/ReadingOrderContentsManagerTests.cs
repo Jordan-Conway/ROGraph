@@ -1,33 +1,33 @@
-﻿using ROGraph.Shared.Models;
-using ROGraph.Shared.Enums;
+﻿using ROGraph.Shared.Enums;
+using ROGraph.Shared.Models;
 
-namespace tests;
+namespace ROGraph.Shared.Tests;
 
 public class ReadingOrderContentsTests
 {
-    private ReadingOrderContentsManager contentsManager;
+    private ReadingOrderContentsManager _contentsManager;
 
     [SetUp]
     public void Setup()
     {
-        contentsManager = new ReadingOrderContentsManager();
+        _contentsManager = new ReadingOrderContentsManager();
     }
 
     [Test]
     public void TestAddNode()
     {
         Node node = CreateNode();
-        contentsManager.AddNode(node);
-        Assert.That(node, Is.EqualTo(contentsManager.GetNode(node.Id)));
+        _contentsManager.AddNode(node);
+        Assert.That(node, Is.EqualTo(_contentsManager.GetNode(node.Id)));
     }
 
     [Test]
     public void TestAddConnector()
     {
         Connector connector = CreateConnector();
-        contentsManager.AddConnector(connector);
+        _contentsManager.AddConnector(connector);
 
-        Assert.That(contentsManager.GetConnectorsBetweenPositions(connector.origin).ToArray(), Has.Length.EqualTo(1));
+        Assert.That(_contentsManager.GetConnectorsBetweenPositions(connector.Origin).ToArray(), Has.Length.EqualTo(1));
     }
 
     [Test]
@@ -60,10 +60,10 @@ public class ReadingOrderContentsTests
     public void TestDeleteConnector()
     {
         Connector connector = CreateConnector();
-        contentsManager.AddConnector(connector);
-        contentsManager.DeleteConnector(connector.origin, connector.destination);
+        _contentsManager.AddConnector(connector);
+        _contentsManager.DeleteConnector(connector.Origin, connector.Destination);
 
-        Assert.That(contentsManager.GetConnectorsBetweenPositions(connector.origin).ToArray(), Is.Empty);
+        Assert.That(_contentsManager.GetConnectorsBetweenPositions(connector.Origin).ToArray(), Is.Empty);
     }
 
     [Test]
@@ -73,20 +73,20 @@ public class ReadingOrderContentsTests
         Node node2 = CreateNode();
         node2.Id = node1.Id;
 
-        contentsManager.AddNode(node1);
-        contentsManager.ReplaceNode(node2);
+        _contentsManager.AddNode(node1);
+        _contentsManager.ReplaceNode(node2);
 
         Assert.Multiple(() =>
         {
-            Assert.That(contentsManager.GetNode(node1.Id), Is.EqualTo(node2));
-            Assert.That(contentsManager.GetNode(node1.Id), Is.Not.EqualTo(node1));
+            Assert.That(_contentsManager.GetNode(node1.Id), Is.EqualTo(node2));
+            Assert.That(_contentsManager.GetNode(node1.Id), Is.Not.EqualTo(node1));
         });
     }
 
     private static Node CreateNode()
     {
         Guid id = Guid.NewGuid();
-        Node node = new Node(id, "New Node", Guid.NewGuid(), DateTime.Now, DateTime.Now, Guid.NewGuid(), Guid.NewGuid(), NodeType.Triangle);
+        Node node = new Node(id, "New Node", Guid.NewGuid(), DateTime.Now, DateTime.Now, Guid.NewGuid(), Guid.NewGuid(), NodeType.TRIANGLE);
 
         return node;
     }

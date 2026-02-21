@@ -1,27 +1,26 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using ROGraph.Shared.Models;
 
 namespace ROGraph.Shared.Models
 {
     public class CoordinateTranslator
     {
-        private Dictionary<Guid, int> ColumnIds;
-        private Dictionary<Guid, int> RowIds;
-        private Dictionary<int, Guid> ReversedColumnIds;
-        private Dictionary<int, Guid> ReversedRowIds;
+        private readonly Dictionary<Guid, int> _columnIds;
+        private readonly Dictionary<Guid, int> _rowIds;
+        private Dictionary<int, Guid> _reversedColumnIds;
+        private Dictionary<int, Guid> _reversedRowIds;
         public CoordinateTranslator(int maxX, int maxY)
         {
-            this.ColumnIds = new Dictionary<Guid, int>();
-            this.RowIds = new Dictionary<Guid, int>();
+            this._columnIds = new Dictionary<Guid, int>();
+            this._rowIds = new Dictionary<Guid, int>();
 
             for (int i = 0; i < maxX; i++)
             {
-                this.ColumnIds.Add(Guid.NewGuid(), i);
+                this._columnIds.Add(Guid.NewGuid(), i);
             }
 
             for (int i = 0; i < maxY; i++)
             {
-                this.RowIds.Add(Guid.NewGuid(), i);
+                this._rowIds.Add(Guid.NewGuid(), i);
             }
 
             this.InvalidateReversedIds();
@@ -32,34 +31,24 @@ namespace ROGraph.Shared.Models
             return this.Translate(node.GetPosition());
         }
 
-        public (int, int) Translate((Guid, Guid) posiion)
+        public (int, int) Translate((Guid, Guid) position)
         {
-            return (this.ColumnIds[posiion.Item1], this.RowIds[posiion.Item2]);
+            return (this._columnIds[position.Item1], this._rowIds[position.Item2]);
         }
 
         public Result<int> GetXFromId(Guid id)
         {
-            if (this.ColumnIds.ContainsKey(id))
-            {
-                return new Result<int>(true, this.ColumnIds[id]);
-            }
-
-            return new Result<int>(false, 0);
+            return this._columnIds.TryGetValue(id, out var columnId) ? new Result<int>(true, columnId) : new Result<int>(false, 0);
         }
 
         public Result<int> GetYFromId(Guid id)
         {
-            if (this.RowIds.ContainsKey(id))
-            {
-                return new Result<int>(true, this.RowIds[id]);
-            }
-
-            return new Result<int>(false, 0);
+            return this._rowIds.TryGetValue(id, out var rowId) ? new Result<int>(true, rowId) : new Result<int>(false, 0);
         }
 
         public Guid GetXFromInt(int coordinate)
         {
-            if (this.ReversedColumnIds.TryGetValue(coordinate, out Guid value))
+            if (this._reversedColumnIds.TryGetValue(coordinate, out Guid value))
             {
                 return value;
             }
@@ -69,7 +58,7 @@ namespace ROGraph.Shared.Models
 
         public Guid GetYFromInt(int coordinate)
         {
-            if (this.ReversedRowIds.TryGetValue(coordinate, out Guid value))
+            if (this._reversedRowIds.TryGetValue(coordinate, out Guid value))
             {
                 return value;
             }
@@ -79,16 +68,16 @@ namespace ROGraph.Shared.Models
 
         public Guid AddNewRow(int rowNumber)
         {
-            foreach(Guid rowId in this.RowIds.Keys)
+            foreach(Guid rowId in this._rowIds.Keys)
             {
-                if(this.RowIds[rowId] >= rowNumber)
+                if(this._rowIds[rowId] >= rowNumber)
                 {
-                    this.RowIds[rowId] = this.RowIds[rowId] + 1;
+                    this._rowIds[rowId] = this._rowIds[rowId] + 1;
                 }
             }
 
             Guid newGuid = Guid.NewGuid();
-            this.RowIds.Add(newGuid, rowNumber);
+            this._rowIds.Add(newGuid, rowNumber);
             this.InvalidateReversedRowIds();
 
             return newGuid;
@@ -97,12 +86,12 @@ namespace ROGraph.Shared.Models
         public void DeleteRow(int rowNumber)
         {
             Guid toDelete = this.GetYFromInt(rowNumber);
-            this.RowIds.Remove(toDelete);
-            foreach(Guid rowId in this.RowIds.Keys)
+            this._rowIds.Remove(toDelete);
+            foreach(Guid rowId in this._rowIds.Keys)
             {
-                if (this.RowIds[rowId] > rowNumber)
+                if (this._rowIds[rowId] > rowNumber)
                 {
-                    this.RowIds[rowId]--;
+                    this._rowIds[rowId]--;
                 }
             }
             this.InvalidateReversedRowIds();
@@ -110,16 +99,16 @@ namespace ROGraph.Shared.Models
 
         public Guid AddNewColumn(int colNumber)
         {
-            foreach (Guid colId in this.ColumnIds.Keys)
+            foreach (Guid colId in this._columnIds.Keys)
             {
-                if (this.ColumnIds[colId] >= colNumber)
+                if (this._columnIds[colId] >= colNumber)
                 {
-                    this.ColumnIds[colId] = this.ColumnIds[colId] + 1;
+                    this._columnIds[colId] = this._columnIds[colId] + 1;
                 }
             }
 
             Guid newGuid = Guid.NewGuid();
-            this.ColumnIds.Add(newGuid, colNumber);
+            this._columnIds.Add(newGuid, colNumber);
             this.InvalidateReversedColumnIds();
 
             return newGuid;
@@ -128,38 +117,38 @@ namespace ROGraph.Shared.Models
         public void DeleteColumn(int colNumber)
         {
             Guid toDelete = this.GetXFromInt(colNumber);
-            this.ColumnIds.Remove(toDelete);
-            foreach(Guid colId in this.ColumnIds.Keys)
+            this._columnIds.Remove(toDelete);
+            foreach(Guid colId in this._columnIds.Keys)
             {
-                if (this.ColumnIds[colId] > colNumber)
+                if (this._columnIds[colId] > colNumber)
                 {
-                    this.ColumnIds[colId]--;
+                    this._columnIds[colId]--;
                 }
             }
             this.InvalidateReversedColumnIds();
         }
 
-        [MemberNotNull(nameof(ReversedColumnIds))]
-        [MemberNotNull(nameof(ReversedRowIds))]
+        [MemberNotNull(nameof(_reversedColumnIds))]
+        [MemberNotNull(nameof(_reversedRowIds))]
         private void InvalidateReversedIds()
         {
             this.InvalidateReversedColumnIds();
             this.InvalidateReversedRowIds();
         }
         
-        [MemberNotNull(nameof(ReversedColumnIds))]
+        [MemberNotNull(nameof(_reversedColumnIds))]
         private void InvalidateReversedColumnIds()
         {
-            this.ReversedColumnIds = this.ColumnIds.ToDictionary(x => x.Value, x => x.Key);
+            this._reversedColumnIds = this._columnIds.ToDictionary(x => x.Value, x => x.Key);
         }
 
-        [MemberNotNull(nameof(ReversedRowIds))]
+        [MemberNotNull(nameof(_reversedRowIds))]
         private void InvalidateReversedRowIds()
         {
-            this.ReversedRowIds = this.RowIds.ToDictionary(x => x.Value, x => x.Key);
+            this._reversedRowIds = this._rowIds.ToDictionary(x => x.Value, x => x.Key);
         }
     }
-    public struct Result<T>(bool success, T output)
+    public readonly struct Result<T>(bool success, T output)
     {
         public bool Success { get;} = success;
         public T? Output { get;} = output;

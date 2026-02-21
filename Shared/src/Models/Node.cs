@@ -1,9 +1,4 @@
 ﻿using ROGraph.Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ROGraph.Shared.Models
 {
@@ -15,8 +10,8 @@ namespace ROGraph.Shared.Models
         public bool IsCompleted { get; set; }
         public Checklist? Checklist { get; set; }
         public Guid Origin { get; set; }
-        public DateTime created { get; set; }
-        public DateTime lastModified { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime LastModified { get; set; }
 
         public Guid X { get; set; }
         public Guid Y { get; set; }
@@ -39,8 +34,8 @@ namespace ROGraph.Shared.Models
             this.Id = id;
             this.Name = name;
             this.Origin = origin;
-            this.created = created;
-            this.lastModified = lastModified;
+            this.Created = created;
+            this.LastModified = lastModified;
             this.X = x;
             this.Y = y;
             this.Type = nodeType;
@@ -56,18 +51,16 @@ namespace ROGraph.Shared.Models
 
         public string GetImagePath()
         {
-            string baseUrl = "pack://application:,,,/Images/";
-            switch (this.Type)
+            const string baseUrl = "pack://application:,,,/Images/";
+            return this.Type switch
             {
-                case NodeType.Triangle:
-                    {
-                        return this.IsCompleted == true ? baseUrl + "triangle_node_completed.png" : baseUrl + "triangle_node_not_completed.png";
-                    }
-                default:
-                    {
-                        return this.IsCompleted == true ? baseUrl + "star_node_completed.png" : baseUrl + "star_node_not_completed.png";
-                    }
-            }
+                NodeType.TRIANGLE => this.IsCompleted
+                    ? baseUrl + "triangle_node_completed.png"
+                    : baseUrl + "triangle_node_not_completed.png",
+                _ => IsCompleted
+                    ? baseUrl + "star_node_completed.png"
+                    : baseUrl + "star_node_not_completed.png"
+            };
         }
     }
 }

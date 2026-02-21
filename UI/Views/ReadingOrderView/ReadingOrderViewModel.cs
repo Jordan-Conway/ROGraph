@@ -89,8 +89,8 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
         foreach(Connector c in this.ReadingOrder.Contents.GetConnectors())
         {
-            (int, int) origin = this.ReadingOrder.CoordinateTranslator.Translate(c.origin);
-            (int, int) destination = this.ReadingOrder.CoordinateTranslator.Translate(c.destination);
+            (int, int) origin = this.ReadingOrder.CoordinateTranslator.Translate(c.Origin);
+            (int, int) destination = this.ReadingOrder.CoordinateTranslator.Translate(c.Destination);
 
             var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
 
@@ -154,8 +154,8 @@ internal partial class ReadingOrderViewModel : ViewModelBase
             throw new InvalidOperationException("Cannot add connectorwithout coordinate translator");
         }
 
-        var origin = this.ReadingOrder.CoordinateTranslator.Translate(connector.origin);
-        var destination = this.ReadingOrder.CoordinateTranslator.Translate(connector.destination);
+        var origin = this.ReadingOrder.CoordinateTranslator.Translate(connector.Origin);
+        var destination = this.ReadingOrder.CoordinateTranslator.Translate(connector.Destination);
 
         var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
 
@@ -169,7 +169,7 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         this.Connectors.RemoveMany(toRemove);
         foreach(ConnectorModel connectorModel in toRemove)
         {
-            this.ReadingOrder.Contents.DeleteConnector(connectorModel.Connector.origin, connectorModel.Connector.destination);
+            this.ReadingOrder.Contents.DeleteConnector(connectorModel.Connector.Origin, connectorModel.Connector.Destination);
         }
     }
 
