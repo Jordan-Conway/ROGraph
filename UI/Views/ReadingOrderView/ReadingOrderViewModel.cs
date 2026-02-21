@@ -3,11 +3,13 @@ using ROGraph.UI.ViewModels;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Models;
 using System;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using DynamicData;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ROGraph.UI.Dispatchers;
 
@@ -196,9 +198,17 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     }
     
     [RelayCommand]
-    private void Save()
+    private async Task Save()
     {
-        ReadingOrderViewDispatcher.DispatchSaveReadingOrderEvent(ReadingOrder);
+        var result = await ReadingOrderViewDispatcher.DispatchSaveReadingOrderEvent(ReadingOrder);
+        if (!result)
+        {
+            Debug.WriteLine("Failed to save reading order");
+        }
+        else
+        {
+            Debug.WriteLine("Successfully saved reading order");
+        }
     }
 
     /// <summary>
