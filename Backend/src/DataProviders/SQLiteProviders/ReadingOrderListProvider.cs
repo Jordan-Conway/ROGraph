@@ -162,4 +162,48 @@ public class ReadingOrderListProvider : IReadingOrderProvider
             throw;
         }
     }
+
+    public bool UpdateReadingOrder(ReadingOrder readingOrder)
+    {
+        try
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            var nodes = readingOrder.Contents.GetNodes();
+
+            foreach (var node in nodes)
+            {
+                var x = readingOrder.CoordinateTranslator?.GetXFromId(node.X) ?? throw new InvalidOperationException("Cannot add node without translator");
+                var y = readingOrder.CoordinateTranslator?.GetYFromId(node.Y) ?? throw new InvalidOperationException("Cannot add node without translator");
+
+                if (!x.Success || !y.Success)
+                {
+                    Debug.WriteLine("Cannot save node with x and y coordiantes");
+                }
+                
+                var addNodeCommand = connection.CreateCommand();
+                addNodeCommand.CommandText = ScriptReader.GetAddNodeScript();
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@nodeId", node.Id.ToString()));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@name", node.Name));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@description", node.Description));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@isCompleted", node.IsCompleted));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@checkListId", null));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@origin", node.Origin.ToString()));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@type", node.Type));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@readingOrderId", readingOrder.Id.ToString()));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@x", x.Output));
+                addNodeCommand.Parameters.Add(new SQLiteParameter("@y", y.Output));
+
+                addNodeCommand.ExecuteNonQuery();
+            }
+        }
+        catch (SQLiteException ex)
+        {
+            Debug.WriteLine(ex.Message);
+            throw;
+        }
+
+        return true;
+    }
 }

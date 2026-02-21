@@ -71,4 +71,10 @@ internal partial class ReadingOrderViewDispatcher
         var message = new RowDeletedMessage(index);
         WeakReferenceMessenger.Default.Send(message); 
     }
+
+    public static void DispatchSaveReadingOrderEvent(ReadingOrder readingOrder)
+    {
+        var message = new SaveReadingOrderMessage(readingOrder);
+        WeakReferenceMessenger.Default.Send(message);
+    }
 }
