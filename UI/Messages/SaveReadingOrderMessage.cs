@@ -3,10 +3,11 @@ using ROGraph.Shared.Models;
 
 namespace ROGraph.UI.Messages;
 
-public class SaveReadingOrderMessage : ValueChangedMessage<ReadingOrder>
-{
-    public SaveReadingOrderMessage(ReadingOrder readingOrder) : base(readingOrder)
+public class SaveReadingOrderMessage : AsyncRequestMessage<bool>
+{  
+    public ReadingOrder ReadingOrder { get; }
+    public SaveReadingOrderMessage(ReadingOrder readingOrder)
     {
-        
+        ReadingOrder = readingOrder;
     }
 }

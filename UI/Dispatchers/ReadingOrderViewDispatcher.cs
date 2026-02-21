@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using ROGraph.UI.Models;
@@ -72,9 +73,9 @@ internal partial class ReadingOrderViewDispatcher
         WeakReferenceMessenger.Default.Send(message); 
     }
 
-    public static void DispatchSaveReadingOrderEvent(ReadingOrder readingOrder)
+    public static async Task<bool> DispatchSaveReadingOrderEvent(ReadingOrder readingOrder)
     {
         var message = new SaveReadingOrderMessage(readingOrder);
-        WeakReferenceMessenger.Default.Send(message);
+        return await WeakReferenceMessenger.Default.Send(message);
     }
 }

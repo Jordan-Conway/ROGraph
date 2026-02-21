@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using System;
+using System.Data.SQLite;
 using ROGraph.Backend.DataProviders.Interfaces;
 
 namespace ROGraph.UI;
@@ -31,7 +32,15 @@ public partial class MainWindowViewModel : ViewModelBase
         });
         WeakReferenceMessenger.Default.Register<SaveReadingOrderMessage>(this, (r, m) =>
         {
-            _readingOrderProvider.UpdateReadingOrder(m.Value);
+            try
+            {
+                _readingOrderProvider.UpdateReadingOrder(m.ReadingOrder);
+                m.Reply(true);
+            }
+            catch (SQLiteException)
+            {
+                m.Reply(false);
+            }
         });
     }
 
