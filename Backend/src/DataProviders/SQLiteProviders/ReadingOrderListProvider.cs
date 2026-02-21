@@ -99,7 +99,6 @@ public class ReadingOrderListProvider : IReadingOrderProvider
             getNodesCommand.Parameters.Add("@roId", DbType.String).Value = id.ToString();
             
             List<Node> nodes = [];
-            List<Connector> connectors = [];
             var nodesReader =  getNodesCommand.ExecuteReader();
             while (nodesReader.HasRows && nodesReader.Read())
             {
@@ -126,6 +125,25 @@ public class ReadingOrderListProvider : IReadingOrderProvider
                     type,
                     isCompleted,
                     description: description
+                    ));
+            }
+            
+            var getConnectorsCommand = connection.CreateCommand();
+            getConnectorsCommand.CommandText = ScriptReader.GetReadingOrderConnectorsScript();
+            getConnectorsCommand.Parameters.Add("@roId", DbType.String).Value = id.ToString();
+            
+            List<Connector> connectors = [];
+            var connectorsReader = getConnectorsCommand.ExecuteReader();
+            while (connectorsReader.HasRows && connectorsReader.Read())
+            {
+                var x1 = connectorsReader.GetInt32(0);
+                var y1 = connectorsReader.GetInt32(1);
+                var x2 = connectorsReader.GetInt32(2);
+                var y2 = connectorsReader.GetInt32(3);
+                
+                connectors.Add(new Connector(
+                    (coordinateTranslator.GetXFromInt(x1), coordinateTranslator.GetYFromInt(y1)),
+                    (coordinateTranslator.GetXFromInt(x2), coordinateTranslator.GetYFromInt(y2))
                     ));
             }
             
