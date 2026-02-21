@@ -57,4 +57,9 @@ public class MockReadingOrderProvider : IReadingOrderProvider
     {
         return new ReadingOrderOverview("Reading Order 1", Guid.NewGuid());
     }
+    
+    public bool UpdateReadingOrder(ReadingOrder readingOrder)
+    {
+        return true;
+    }
 }

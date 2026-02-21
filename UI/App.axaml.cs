@@ -32,10 +32,10 @@ public partial class App : Application
 
        var dataSourceCreator = services.GetRequiredService<IReadingOrderDataSourceCreator>();
        dataSourceCreator.CreateDataSource();
-
+       
        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
        {
-           desktop.MainWindow = new MainWindow();
+           desktop.MainWindow = services.GetRequiredService<MainWindow>();
        }
 
        base.OnFrameworkInitializationCompleted();
@@ -57,5 +57,6 @@ public partial class App : Application
     private void AddDependencies(IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<ILoggerFactory, LoggerFactory>();
+        serviceCollection.AddSingleton<MainWindow, MainWindow>();
     }
 }

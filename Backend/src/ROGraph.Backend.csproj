@@ -42,6 +42,10 @@
     <EmbeddedResource Include="Scripts\GetReadingOrderConnectors.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Remove="Scripts\AddNode.sql" />
+    <EmbeddedResource Include="Scripts\AddNode.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

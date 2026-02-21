@@ -8,6 +8,8 @@ using ROGraph.UI.Messages;
 using DynamicData;
 using System.Linq;
 using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.Input;
+using ROGraph.UI.Dispatchers;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
 
@@ -192,9 +194,15 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         this.ReadingOrder.DeleteRow(position);
         this.RefreshContents();
     }
+    
+    [RelayCommand]
+    private void Save()
+    {
+        ReadingOrderViewDispatcher.DispatchSaveReadingOrderEvent(ReadingOrder);
+    }
 
     /// <summary>
-    /// Refreshes this classess contents
+    /// Refreshes this classes contents
     /// </summary>
     private void RefreshContents()
     {
