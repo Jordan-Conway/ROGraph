@@ -8,6 +8,7 @@ internal static class ScriptReader
     private const string GetAllReadingOrdersScriptName = "GetAllReadingOrders.sql";
     private const string GetReadingOrderScriptName = "GetReadingOrderScript.sql";
     private const string GetReadingOrderNodesScriptName = "GetReadingOrderNodes.sql";
+    private const string GetReadingOrderConnectorsScriptName = "GetReadingOrderConnectors.sql";
 
     public static string GetCreateDatabaseScript()
     {
@@ -27,6 +28,11 @@ internal static class ScriptReader
     public static string GetReadingOrderNodesScript()
     {
         return ReadResource(GetReadingOrderNodesScriptName);
+    }
+
+    public static string GetReadingOrderConnectorsScript()
+    {
+        return ReadResource(GetReadingOrderConnectorsScriptName);
     }
 
     private static string ReadResource(string fileName)
