@@ -174,7 +174,7 @@ internal partial class ReadingOrderViewControl : UserControl
             DateTime.Now, 
             Guid.Empty,
             Guid.Empty,
-            NodeType.Triangle,
+            NodeType.TRIANGLE,
             false,
             null,
             string.Empty);

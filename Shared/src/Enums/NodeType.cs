@@ -2,8 +2,8 @@
 {
     public enum NodeType
     {
-        Circle =0,
-        Diamond =1,
-        Triangle =2,
+        CIRCLE =0,
+        DIAMOND =1,
+        TRIANGLE =2,
     }
 }

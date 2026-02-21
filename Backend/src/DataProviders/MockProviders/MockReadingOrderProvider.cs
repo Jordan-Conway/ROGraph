@@ -22,9 +22,9 @@ public class MockReadingOrderProvider : IReadingOrderProvider
         var y2 = coordinateTranslator.GetYFromInt(1);
 
 
-        var node1 = new Node(Guid.NewGuid(), "Node 1", Guid.NewGuid(), DateTime.Now, DateTime.Now, x1, y1, NodeType.Diamond);
-        var node2 = new Node(Guid.NewGuid(), "Node 2", Guid.NewGuid(), DateTime.Now, DateTime.Now, x1, y2, NodeType.Diamond);
-        var node3 = new Node(Guid.NewGuid(), "Node 3", Guid.NewGuid(), DateTime.Now, DateTime.Now, x2, y1, NodeType.Diamond);
+        var node1 = new Node(Guid.NewGuid(), "Node 1", Guid.NewGuid(), DateTime.Now, DateTime.Now, x1, y1, NodeType.DIAMOND);
+        var node2 = new Node(Guid.NewGuid(), "Node 2", Guid.NewGuid(), DateTime.Now, DateTime.Now, x1, y2, NodeType.DIAMOND);
+        var node3 = new Node(Guid.NewGuid(), "Node 3", Guid.NewGuid(), DateTime.Now, DateTime.Now, x2, y1, NodeType.DIAMOND);
 
         content.AddNode(node1);
         content.AddNode(node2);

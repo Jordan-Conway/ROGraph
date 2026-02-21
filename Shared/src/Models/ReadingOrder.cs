@@ -1,6 +1,4 @@
-﻿using ROGraph.Shared.Models;
-
-namespace ROGraph.Shared.Models
+﻿namespace ROGraph.Shared.Models
 {
     public class ReadingOrder
     {
@@ -10,29 +8,21 @@ namespace ROGraph.Shared.Models
         public CoordinateTranslator? CoordinateTranslator { get; set; }
         public ReadingOrderContentsManager Contents { get; set; }
 
-        public ReadingOrder(String name, Guid? guid, ReadingOrderContentsManager? contentManager = null, string description = "")
+        public ReadingOrder(string name, Guid? guid, ReadingOrderContentsManager? contentManager = null, string description = "")
         {
             this.Name = name;
 
             if (guid == null)
             {
-                this.Id = Guid.NewGuid();
+                Id = Guid.NewGuid();
             }
             else
             {
-                this.Id = (Guid)guid;
+                Id = (Guid)guid;
             }
 
-            if (contentManager == null)
-            {
-                this.Contents = new ReadingOrderContentsManager();
-            }
-            else
-            {
-                this.Contents = contentManager;
-            }
-
-            this.Description = description;
+            Contents = contentManager ?? new ReadingOrderContentsManager();
+            Description = description;
         }
 
         public void AddColumn(int colNumber)

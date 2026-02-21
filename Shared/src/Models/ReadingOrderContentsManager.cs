@@ -8,14 +8,14 @@
 
         public ReadingOrderContentsManager()
         {
-            this.Nodes = new List<Node>();
-            this.Connectors = new List<Connector>();
+            Nodes = [];
+            Connectors = [];
         }
 
         public ReadingOrderContentsManager(List<Node> nodes, List<Connector> connectors)
         {
-            this.Nodes = nodes;
-            this.Connectors = connectors;
+            Nodes = nodes;
+            Connectors = connectors;
         }
 
         public Node? GetNode(Guid id)
@@ -33,12 +33,12 @@
 
         public List<Node> GetNodes()
         {
-            return this.Nodes;
+            return Nodes;
         }
 
         public void AddNode(Node node)
         {
-            this.Nodes.Add(node);
+            Nodes.Add(node);
         }
 
         /// <summary>
@@ -65,33 +65,35 @@
 
         public IEnumerable<Connector> GetConnectors()
         {
-            return this.Connectors;
+            return Connectors;
         }
 
         /// <summary>
         /// Gets all connectors that originate from or point to position
         /// </summary>
-        /// <param name="posiion"></param>
+        /// <param name="position"></param>
         /// <returns></returns>
-        public IEnumerable<Connector> GetConnectorsBetweenPositions((Guid, Guid) posiion)
+        public IEnumerable<Connector> GetConnectorsBetweenPositions((Guid, Guid) position)
         {
-            return this.Connectors.Where(c => c.origin == posiion || c.destination == posiion);
+            return Connectors.Where(c => c.Origin == position || c.Destination == position);
         }
 
         public void AddConnector(Connector connector)
         {
-            this.Connectors.Add(connector);
+            Connectors.Add(connector);
         }
 
-        public bool DeleteConnector((Guid, Guid) orign, (Guid, Guid) destination)
+        public bool DeleteConnector((Guid, Guid) origin, (Guid, Guid) destination)
         {
-            for (int i = 0; i < Connectors.Count; i++)
+            for (var i = 0; i < Connectors.Count; i++)
             {
-                if (Connectors[i].origin == orign && Connectors[i].destination == destination)
+                if (Connectors[i].Origin != origin || Connectors[i].Destination != destination)
                 {
-                    Connectors.RemoveAt(i);
-                    return true;
+                    continue;
                 }
+                
+                Connectors.RemoveAt(i);
+                return true;
             }
 
             return false;
@@ -99,21 +101,14 @@
 
         public bool NodeExistsAtPosition(Guid x, Guid y)
         {
-            foreach (Node node in this.Nodes)
-            {
-                if(node.X == x && node.Y == y)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return Nodes.Any(node => node.X == x && node.Y == y);
         }
 
         public bool ConnectorExistsBetween((Guid, Guid) origin, (Guid, Guid) destination)
         {
             foreach (Connector connector in Connectors)
             {
-                if (connector.origin == origin && connector.destination == destination)
+                if (connector.Origin == origin && connector.Destination == destination)
                 {
                     return true;
                 }
@@ -124,8 +119,8 @@
         public bool DeleteNode(Node node)
         {
             (Guid, Guid) nodePosition = node.GetPosition();
-            this.Connectors.RemoveAll(connector => connector.origin == nodePosition || connector.destination == nodePosition);
-            return this.Nodes.Remove(node);
+            Connectors.RemoveAll(connector => connector.Origin == nodePosition || connector.Destination == nodePosition);
+            return Nodes.Remove(node);
         }
 
         /// <summary>
@@ -134,8 +129,8 @@
         /// <param name="rowId"></param>
         public void DeleteAllContentsInRow(Guid rowId)
         {
-            this.Nodes.RemoveAll(node => node.Y == rowId);
-            this.Connectors.RemoveAll(connector => connector.origin.Item2 == rowId || connector.destination.Item2 == rowId);
+            Nodes.RemoveAll(node => node.Y == rowId);
+            Connectors.RemoveAll(connector => connector.Origin.Item2 == rowId || connector.Destination.Item2 == rowId);
         }
 
         /// <summary>
@@ -145,10 +140,10 @@
         public void DeleteAllContentsInColumn(Guid colId)
         {
             Console.WriteLine($"Removing all contents in column {colId}");
-            this.Nodes.RemoveAll(node => node.X == colId);
-            this.Connectors.RemoveAll(connector => connector.origin.Item1 == colId || connector.destination.Item1 == colId);
+            Nodes.RemoveAll(node => node.X == colId);
+            Connectors.RemoveAll(connector => connector.Origin.Item1 == colId || connector.Destination.Item1 == colId);
 
-            Console.WriteLine($"{this.Nodes.Count} nodes remaining");
+            Console.WriteLine($"{Nodes.Count} nodes remaining");
         }
     }
 }
