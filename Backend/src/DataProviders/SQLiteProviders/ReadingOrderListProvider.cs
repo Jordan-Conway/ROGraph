@@ -84,7 +84,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         throw new NotImplementedException();
     }
 
-    public ReadingOrder? GetReadingOrder(Guid id)
+    public ReadingOrder GetReadingOrder(Guid id)
     {
         var overview = GetReadingOrderOverview(id) ?? throw new InvalidOperationException($"No reading order with id {id.ToString()}");
         var coordinateTranslator = new CoordinateTranslator(overview.MaxX, overview.MaxY);
@@ -151,8 +151,10 @@ public class ReadingOrderListProvider : IReadingOrderProvider
                 overview.Name,
                 overview.Id,
                 new ReadingOrderContentsManager(nodes, connectors),
-                overview.Description ?? string.Empty);
-            readingOrder.CoordinateTranslator = coordinateTranslator;
+                overview.Description ?? string.Empty)
+            {
+                CoordinateTranslator = coordinateTranslator
+            };
 
             return readingOrder;
         }
@@ -179,7 +181,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
                 if (!x.Success || !y.Success)
                 {
-                    Debug.WriteLine("Cannot save node with x and y coordiantes");
+                    Debug.WriteLine("Cannot save node with x and y coordinates");
                 }
                 
                 var addNodeCommand = connection.CreateCommand();
