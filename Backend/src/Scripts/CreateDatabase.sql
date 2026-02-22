@@ -80,3 +80,4 @@ CREATE TABLE IF NOT EXISTS Connectors (
 );
 
 CREATE INDEX IF NOT EXISTS Connectors_ReadingOrder_Index ON Connectors (readingOrderId);
+CREATE UNIQUE INDEX IF NOT EXISTS Connectors_ReadingOrder_Unique_Index on Connectors (readingOrderId, x1, y1, x2, y2);

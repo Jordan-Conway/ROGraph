@@ -22,7 +22,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\Connectors\GetReadingOrderConnectors.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\Nodes\AddNode.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\Nodes\GetReadingOrderNodes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Remove="Scripts\CreateDatabase.sql" />
+    <EmbeddedResource Include="Scripts\Connectors\AddConnector.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Scripts\CreateDatabase.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -31,19 +43,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <None Remove="Scripts\GetReadingOrderNodes.sql" />
-    <EmbeddedResource Include="Scripts\GetReadingOrderNodes.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <None Remove="Scripts\GetReadingOrder.sql" />
     <EmbeddedResource Include="Scripts\GetReadingOrder.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <None Remove="Scripts\GetReadingOrderConnectors.sql" />
-    <EmbeddedResource Include="Scripts\GetReadingOrderConnectors.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <None Remove="Scripts\AddNode.sql" />
-    <EmbeddedResource Include="Scripts\AddNode.sql">
+    <None Remove="Scripts\AddConnector.sql" />
+    <None Remove="Scripts\Connectors\DeleteConnector.sql" />
+    <EmbeddedResource Include="Scripts\Connectors\DeleteConnector.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
