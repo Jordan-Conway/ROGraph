@@ -10,7 +10,7 @@ using ROGraph.Backend.DataProviders.Interfaces;
 
 namespace ROGraph.UI;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
     private UserControl _currentPage;

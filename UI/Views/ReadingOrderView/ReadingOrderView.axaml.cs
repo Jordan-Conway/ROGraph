@@ -19,6 +19,9 @@ internal partial class ReadingOrderViewControl : UserControl
 {
     private (Guid, Guid) _newConnectorOrigin = (Guid.Empty, Guid.Empty);
     private InteractionMode _interactionMode = InteractionMode.DEFAULT;
+    
+    public int ImageWidth => Sizes.ImageSize;
+    public int ImageHeight => Sizes.ImageSize;
 
     public ReadingOrderViewControl(ReadingOrder readingOrder)
     {

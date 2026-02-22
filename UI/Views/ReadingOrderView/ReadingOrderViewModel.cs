@@ -10,6 +10,7 @@ using DynamicData;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
+using ReactiveUI;
 using ROGraph.UI.Dispatchers;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
@@ -21,6 +22,9 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     public ObservableCollection<NodeModel> Nodes { get; set; } = [];
 
     public ObservableCollection<ConnectorModel> Connectors { get; set; } = [];
+    
+    public int CanvasWidth => (ReadingOrder.CoordinateTranslator!.GetNumberOfColumns() + 2) * Sizes.ColumnWidth;
+    public int CanvasHeight => (ReadingOrder.CoordinateTranslator!.GetNumberOfRows() +1) * Sizes.ColumnWidth;
 
     public ReadingOrderViewModel(ReadingOrder readingOrder)
     {
@@ -119,6 +123,7 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
         Nodes.Add(nodeModel);
         ReadingOrder.Contents.AddNode(nodeModel.Node);
+        UpdateCanvasSize();
     }
 
     private void DeleteNode(Guid id)
@@ -175,24 +180,28 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     private void AddColumn(int position)
     {
         ReadingOrder.AddColumn(position);
+        UpdateCanvasSize();
         RefreshContents();
     }
 
     private void DeleteColumn(int position)
     {
         ReadingOrder.DeleteColumn(position);
+        UpdateCanvasSize();
         RefreshContents();
     }
 
     private void AddRow(int position)
     {
         ReadingOrder.AddRow(position);
+        UpdateCanvasSize();
         RefreshContents();
     }
 
     private void DeleteRow(int position)
     {
         ReadingOrder.DeleteRow(position);
+        UpdateCanvasSize();
         RefreshContents();
     }
     
@@ -210,5 +219,12 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     {
         RemoveAllContents();
         PlaceContents();
+    }
+
+    private void UpdateCanvasSize()
+    {
+        IReactiveObject reactiveObject =  this;
+        reactiveObject.RaisePropertyChanged(nameof(CanvasWidth));
+        reactiveObject.RaisePropertyChanged(nameof(CanvasHeight));
     }
 }
