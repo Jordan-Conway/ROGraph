@@ -93,59 +93,9 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         {
             using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
-        
-            var getNodesCommand = connection.CreateCommand();
-            getNodesCommand.CommandText = ScriptReader.GetReadingOrderNodesScript();
-            getNodesCommand.Parameters.Add("@roId", DbType.String).Value = id.ToString();
-            
-            List<Node> nodes = [];
-            var nodesReader =  getNodesCommand.ExecuteReader();
-            while (nodesReader.HasRows && nodesReader.Read())
-            {
-                var guid = nodesReader.GetGuid(0);
-                var name = nodesReader.GetString(1);
-                var origin = nodesReader.GetGuid(5);
-                var created = nodesReader.GetDateTime(7);
-                var lastModified = nodesReader.GetDateTime(8);
-                var x = nodesReader.GetInt32(11);
-                var y = nodesReader.GetInt32(12);
-                var typeInt = nodesReader.GetInt32(6);
-                var type = (NodeType)typeInt;
-                var isCompleted = nodesReader.GetBoolean(3);
-                var description = nodesReader.GetString(2);
 
-                nodes.Add(new Node(
-                    guid,
-                    name,
-                    origin,
-                    created,
-                    lastModified,
-                    coordinateTranslator.GetXFromInt(x),
-                    coordinateTranslator.GetYFromInt(y),
-                    type,
-                    isCompleted,
-                    description: description
-                    ));
-            }
-            
-            var getConnectorsCommand = connection.CreateCommand();
-            getConnectorsCommand.CommandText = ScriptReader.GetReadingOrderConnectorsScript();
-            getConnectorsCommand.Parameters.Add("@roId", DbType.String).Value = id.ToString();
-            
-            List<Connector> connectors = [];
-            var connectorsReader = getConnectorsCommand.ExecuteReader();
-            while (connectorsReader.HasRows && connectorsReader.Read())
-            {
-                var x1 = connectorsReader.GetInt32(0);
-                var y1 = connectorsReader.GetInt32(1);
-                var x2 = connectorsReader.GetInt32(2);
-                var y2 = connectorsReader.GetInt32(3);
-                
-                connectors.Add(new Connector(
-                    (coordinateTranslator.GetXFromInt(x1), coordinateTranslator.GetYFromInt(y1)),
-                    (coordinateTranslator.GetXFromInt(x2), coordinateTranslator.GetYFromInt(y2))
-                    ));
-            }
+            var nodes = GetReadingOrderNodes(id, coordinateTranslator, connection);
+            var connectors = GetReadingOrderConnectors(id, coordinateTranslator, connection);
             
             var readingOrder = new ReadingOrder(
                 overview.Name,
@@ -173,7 +123,19 @@ public class ReadingOrderListProvider : IReadingOrderProvider
             connection.Open();
 
             var nodes = readingOrder.Contents.GetNodes();
+            var existingNodes = GetReadingOrderNodes(readingOrder.Id, readingOrder.CoordinateTranslator!, connection);
+            var nodesToDelete = existingNodes.Where(n => !nodes.Contains(n, new NodeComparer()));
 
+            foreach (var node in nodesToDelete)
+            {
+                var deleteNodeCommand = connection.CreateCommand();
+                deleteNodeCommand.CommandText = ScriptReader.GetDeleteNodeScript();
+                deleteNodeCommand.Parameters.Add(new SQLiteParameter("@nodeId", node.Id.ToString()));
+                deleteNodeCommand.Parameters.Add(new SQLiteParameter("@roId", readingOrder.Id.ToString()));
+
+                deleteNodeCommand.ExecuteNonQuery();
+            }
+            
             foreach (var node in nodes)
             {
                 var x = readingOrder.CoordinateTranslator?.GetXFromId(node.X) ?? throw new InvalidOperationException("Cannot add node without translator");
@@ -250,6 +212,45 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return true;
     }
 
+    private static List<Node> GetReadingOrderNodes(Guid id, CoordinateTranslator coordinateTranslator, SQLiteConnection connection)
+    {
+        var getNodesCommand = connection.CreateCommand();
+        getNodesCommand.CommandText = ScriptReader.GetReadingOrderNodesScript();
+        getNodesCommand.Parameters.Add("@roId", DbType.String).Value = id.ToString();
+            
+        List<Node> nodes = [];
+        var nodesReader =  getNodesCommand.ExecuteReader();
+        while (nodesReader.HasRows && nodesReader.Read())
+        {
+            var guid = nodesReader.GetGuid(0);
+            var name = nodesReader.GetString(1);
+            var origin = nodesReader.GetGuid(5);
+            var created = nodesReader.GetDateTime(7);
+            var lastModified = nodesReader.GetDateTime(8);
+            var x = nodesReader.GetInt32(11);
+            var y = nodesReader.GetInt32(12);
+            var typeInt = nodesReader.GetInt32(6);
+            var type = (NodeType)typeInt;
+            var isCompleted = nodesReader.GetBoolean(3);
+            var description = nodesReader.GetString(2);
+
+            nodes.Add(new Node(
+                guid,
+                name,
+                origin,
+                created,
+                lastModified,
+                coordinateTranslator.GetXFromInt(x),
+                coordinateTranslator.GetYFromInt(y),
+                type,
+                isCompleted,
+                description: description
+            ));
+        }
+
+        return nodes;
+    }
+    
     private static List<Connector> GetReadingOrderConnectors(Guid id, CoordinateTranslator coordinateTranslator, SQLiteConnection connection)
     {
         var getConnectorsCommand = connection.CreateCommand();
