@@ -10,6 +10,7 @@ internal static class ScriptReader
     private const string GetReadingOrderNodesScriptName = "GetReadingOrderNodes.sql";
     private const string GetReadingOrderConnectorsScriptName = "GetReadingOrderConnectors.sql";
     private const string AddNodeScriptName = "AddNode.sql";
+    private const string DeleteNodeScriptName = "DeleteNode.sql";
     private const string AddConnectorScriptName = "AddConnector.sql";
     private const string DeleteConnectorScriptName = "DeleteConnector.sql";
 
@@ -41,6 +42,11 @@ internal static class ScriptReader
     public static string GetAddNodeScript()
     {
         return ReadResource(AddNodeScriptName);
+    }
+
+    public static string GetDeleteNodeScript()
+    {
+        return ReadResource(DeleteNodeScriptName);
     }
 
     public static string GetAddConnectorScript()

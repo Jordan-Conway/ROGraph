@@ -54,6 +54,10 @@
     <EmbeddedResource Include="Scripts\Connectors\DeleteConnector.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Remove="Scripts\Nodes\DeleteNode.sql" />
+    <EmbeddedResource Include="Scripts\Nodes\DeleteNode.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
