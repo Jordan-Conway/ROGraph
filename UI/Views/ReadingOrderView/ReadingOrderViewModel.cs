@@ -143,7 +143,7 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         NodeModel newModel = new(node, existing.X, existing.Y);
         DeleteNode(node.Id);
         Nodes.Add(newModel);
-        ReadingOrder.Contents.ReplaceNode(node);
+        ReadingOrder.Contents.AddNode(newModel.Node);
     }
 
     private void AddConnector(Connector connector)
