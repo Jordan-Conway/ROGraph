@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using ROGraph.UI.Dialogs.ConfirmDialog;
 using ROGraph.UI.Dialogs.EditNodeDialog;
 using ROGraph.UI.Dispatchers;
@@ -17,8 +17,8 @@ namespace ROGraph.UI.Views.ReadingOrderView;
 
 internal partial class ReadingOrderViewControl : UserControl
 {
-    private (Guid, Guid) newConnectorOrigin = (Guid.Empty, Guid.Empty);
-    private InteractioMode interactioMode = InteractioMode.DEFAULT;
+    private (Guid, Guid) _newConnectorOrigin = (Guid.Empty, Guid.Empty);
+    private InteractionMode _interactionMode = InteractionMode.DEFAULT;
 
     public ReadingOrderViewControl(ReadingOrder readingOrder)
     {
@@ -31,87 +31,82 @@ internal partial class ReadingOrderViewControl : UserControl
     {
         e.Handled = true;
 
-        if(e.Properties.IsRightButtonPressed)
-        {
-            var point =  e.GetCurrentPoint(sender as Control);
-            OpenContextMenu(sender, point);
-        }
+        if (!e.Properties.IsRightButtonPressed) return;
+        
+        var point =  e.GetCurrentPoint(sender as Control);
+        OpenContextMenu(sender, point);
     }
 
     private void HandleNodeLeftClick(object sender, RoutedEventArgs e)
     {
-        if (this.interactioMode != InteractioMode.NEW_CONNECTOR)
+        if (this._interactionMode != InteractionMode.NEW_CONNECTOR)
         {
             return;
         }
 
-        Control control = (Control)sender;
-        if (control != null && control.DataContext is NodeModel node)
-        {
-            var destination = node.Node.GetPosition();
-            var connector = new Connector(this.newConnectorOrigin, destination);
-            ReadingOrderViewDispatcher.DispatchConnectorAddedMessage(connector);
-            this.interactioMode = InteractioMode.DEFAULT;
-        }
+        var control = (Control)sender;
+        if (control is not { DataContext: NodeModel node }) return;
+        
+        var destination = node.Node.GetPosition();
+        var connector = new Connector(this._newConnectorOrigin, destination);
+        ReadingOrderViewDispatcher.DispatchConnectorAddedMessage(connector);
+        this._interactionMode = InteractionMode.DEFAULT;
     }
 
     private void HandleNodeRightClick(object sender, PointerPressedEventArgs e)
     {
-        // Has to be explictly marked as handled to prevent bubbling on Linux
+        // Has to be explicitly marked as handled to prevent bubbling on Linux
         e.Handled = true;
 
-        if(e.Properties.IsRightButtonPressed)
-        {
-            Control control = (Control)sender;
-            if(control != null && control.DataContext is NodeModel node)
-            {
-                var point =  e.GetCurrentPoint(sender as Control);
-                OpenContextMenu(node, point);
-            }
-            return;
-        }
+        if (!e.Properties.IsRightButtonPressed) return;
+        
+        var control = (Control)sender;
+        if (control is not { DataContext: NodeModel node }) return;
+        
+        var point =  e.GetCurrentPoint(sender as Control);
+        OpenContextMenu(node, point);
     }
 
     private void HandleConnectorClick(object sender, PointerPressedEventArgs e)
     {
         e.Handled = true;
 
-        if(e.Properties.IsRightButtonPressed)
-        {
-            Control control = (Control)sender;
-            if(control != null && control.DataContext is ConnectorModel connector)
-            {
-                var point =  e.GetCurrentPoint(sender as Control);
-                OpenContextMenu(connector, point);
-            }
-            return;
-        }
+        if (!e.Properties.IsRightButtonPressed) return;
+        
+        var control = (Control)sender;
+        if (control is not { DataContext: ConnectorModel connector }) return;
+        
+        var point =  e.GetCurrentPoint(sender as Control);
+        OpenContextMenu(connector, point);
     }
     
     private void OpenContextMenu(object clicked, PointerPoint position)
     {
         ViewPanel.ContextMenu!.ItemsSource = null;
-        IEnumerable<MenuItem> items = [];
+        IList<MenuItem> items = [];
 
-        if(clicked is NodeModel)
+        switch (clicked)
         {
-            var nodeModel = clicked as NodeModel ?? throw new ArgumentNullException(nameof(clicked));
-            items = items.Concat(GetNodeContextMenuItems(nodeModel));
+            case NodeModel model:
+            {
+                items.AddRange(GetNodeContextMenuItems(model));
+                break;
+            }
+            case ConnectorModel connectorModel:
+            {
+                items.AddRange(GetConnectorContextMenuItems(connectorModel));
+                break;
+            }
+            case Grid:
+            {
+                items.AddRange(GetEmptySpaceContextMenuItems(position));
+                break;
+            }
         }
 
-        if(clicked is ConnectorModel connectorModel)
-        {
-            items = items.Concat(GetConnectorContextMenuItems(connectorModel));
-        }
-        
-        if(clicked is Grid)
-        {
-            items = items.Concat(GetEmptySpaceContextMenuItems(position));
-        }
+        items.AddRange(GetDefaultContextMenuItems(position));
 
-        items = items.Concat(GetDefaultContextMenuItems(position));
-
-        if(items.Any())
+        if(items.Count > 0)
         {
             ViewPanel.ContextMenu!.ItemsSource = items;
         }
@@ -181,7 +176,7 @@ internal partial class ReadingOrderViewControl : UserControl
         NodeModel model = new(node, position.Item1, position.Item2);
         ReadingOrderViewDispatcher.DispatchNodeAddedMessage(model);
 
-        bool result = await EditNode(node, true);
+        var result = await EditNode(node, true);
 
         if(!result)
         {
@@ -194,7 +189,7 @@ internal partial class ReadingOrderViewControl : UserControl
     {
         var dialog = new ConfirmDialogView($"Are you sure you want to delete {node.Name}?");
         var root = this.VisualRoot as Window;
-        bool shouldDelete = await dialog.ShowDialog<bool>(root!);
+        var shouldDelete = await dialog.ShowDialog<bool>(root!);
 
         if(shouldDelete)
         {
@@ -211,8 +206,8 @@ internal partial class ReadingOrderViewControl : UserControl
     [RelayCommand]
     private void SetNewConnectorOrigin((Guid, Guid) position)
     {
-        this.newConnectorOrigin = position;
-        this.interactioMode = InteractioMode.NEW_CONNECTOR;
+        this._newConnectorOrigin = position;
+        this._interactionMode = InteractionMode.NEW_CONNECTOR;
     }
 
     [RelayCommand]
@@ -225,7 +220,7 @@ internal partial class ReadingOrderViewControl : UserControl
     {
         var dialog = new EditNodeDialogView(node, confirmCancel);
         var root = this.VisualRoot as Window;
-        bool result = await dialog.ShowDialog<bool>(root!);
+        var result = await dialog.ShowDialog<bool>(root!);
 
         return result;
     }
@@ -242,7 +237,7 @@ internal partial class ReadingOrderViewControl : UserControl
     {
         var dialog = new ConfirmDialogView($"Are you sure you want to delete this column?");
         var root = this.VisualRoot as Window;
-        bool shouldDelete = await dialog.ShowDialog<bool>(root!);
+        var shouldDelete = await dialog.ShowDialog<bool>(root!);
 
         if(!shouldDelete)
         {
@@ -266,7 +261,7 @@ internal partial class ReadingOrderViewControl : UserControl
     {
         var dialog = new ConfirmDialogView($"Are you sure you want to delete this row?");
         var root = this.VisualRoot as Window;
-        bool shouldDelete = await dialog.ShowDialog<bool>(root!);
+        var shouldDelete = await dialog.ShowDialog<bool>(root!);
 
         if(!shouldDelete)
         {

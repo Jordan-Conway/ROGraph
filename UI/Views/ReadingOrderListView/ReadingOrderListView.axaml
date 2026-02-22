@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:ROGraph.UI.Views.ReadingOrderListView"
-             xmlns:view="using:ROGraph.UI.Views.ReadingOrderListView"
              x:Class="ROGraph.UI.Views.ReadingOrderListView.ReadingOrderListViewControl"
              x:DataType="vm:ReadingOrderListViewModel">
 

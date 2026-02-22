@@ -1,21 +1,9 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:endv="using:ROGraph.UI.Dialogs.EditNodeDialog"
         x:Class="ROGraph.UI.Dialogs.EditNodeDialog.EditNodeDialogView"
         x:DataType="endv:EditNodeDialogViewModel">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*,*">
 
         <TextBlock Text="Name" Grid.Row="0" Grid.Column="0"/>
         <TextBox Text="{Binding Name}" Grid.Row="0" Grid.Column="1"/>

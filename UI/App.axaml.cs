@@ -1,17 +1,14 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ROGraph.Backend;
 using ROGraph.Backend.DataProviders.Interfaces;
-using ROGraph.UI.ViewModels;
-using ROGraph.UI;
 
-namespace UI;
+namespace ROGraph.UI;
 
 public partial class App : Application
 {

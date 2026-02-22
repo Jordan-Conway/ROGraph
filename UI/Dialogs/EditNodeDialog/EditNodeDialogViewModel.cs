@@ -1,7 +1,6 @@
 using System;
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
-using ROGraph.UI.Models;
 using ROGraph.UI.ViewModels;
 using ROGraph.Shared.Models;
 
@@ -9,14 +8,14 @@ namespace ROGraph.UI.Dialogs.EditNodeDialog;
 
 internal partial class EditNodeDialogViewModel : ViewModelBase
 {
-    private Node _nodeModel {get; set;}
-    public string Name {get; set;} = "";
-    public string? Description {get; set;} = "";
-    public bool IsCompleted {get; set;} = false;
+    private Node NodeModel {get; set;}
+    public string Name {get; set;}
+    public string? Description {get; set;}
+    public bool IsCompleted {get; set;}
 
     public EditNodeDialogViewModel(Node node)
     {
-        this._nodeModel = node;
+        this.NodeModel = node;
 
         this.Name = node.Name;
         this.Description = node.Description;

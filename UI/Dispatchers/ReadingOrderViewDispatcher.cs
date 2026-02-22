@@ -7,7 +7,7 @@ using ROGraph.Shared.Models;
 
 namespace ROGraph.UI.Dispatchers;
 
-internal partial class ReadingOrderViewDispatcher
+internal static partial class ReadingOrderViewDispatcher
 {
     public static void DispatchNodeAddedMessage(NodeModel? node)
     {

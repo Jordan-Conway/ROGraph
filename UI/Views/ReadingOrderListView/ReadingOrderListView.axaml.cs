@@ -24,8 +24,8 @@ internal partial class ReadingOrderListViewControl : UserControl
 
         NavigateCommand = ReactiveCommand.Create<Guid>(NavigateToReadingOrder);
     }
-    
-    public void NavigateToReadingOrder(Guid id)
+
+    private static void NavigateToReadingOrder(Guid id)
     {
         var readingOrder = RoProvider.GetReadingOrder(id);
         ArgumentNullException.ThrowIfNull(readingOrder);
