@@ -4,8 +4,8 @@ namespace ROGraph.UI.Views.ReadingOrderView;
 
 internal static class CoordinateUtils
 {
-    private static readonly int IMAGE_SIZE = 240;
-    private static readonly int IMAGE_GAP_SIZE = 80;
+    private const int ImageSize = 240;
+    private const int ImageGapSize = 80;
 
     /// <summary>
     /// Converts a node's column and row position to pixel positions
@@ -14,11 +14,11 @@ internal static class CoordinateUtils
     /// <returns></returns>
     public static (int, int) GetNodePosition((int, int) position)
     {
-        int x = position.Item1;
-        int y = position.Item2;
+        var x = position.Item1;
+        var y = position.Item2;
 
-        x = (x * IMAGE_SIZE) + (x * IMAGE_GAP_SIZE) + (IMAGE_GAP_SIZE / 2);
-        y = (y * IMAGE_SIZE) + (y * (IMAGE_GAP_SIZE / 2)) + (IMAGE_GAP_SIZE / 4);
+        x = (x * ImageSize) + (x * ImageGapSize) + (ImageGapSize / 2);
+        y = (y * ImageSize) + (y * (ImageGapSize / 2)) + (ImageGapSize / 4);
 
         return (x, y);
     }
@@ -30,8 +30,8 @@ internal static class CoordinateUtils
     /// <returns></returns>
     public static (int, int) GetNearestValidNodePosition((double, double) position)
     {
-        int x = (int)Math.Round(position.Item1, 0);
-        int y = (int)Math.Round(position.Item2, 0);
+        var x = (int)Math.Round(position.Item1, 0);
+        var y = (int)Math.Round(position.Item2, 0);
 
         var coordinates = GetNodeCoordinates((x, y));
 
@@ -39,20 +39,20 @@ internal static class CoordinateUtils
     }
 
     /// <summary>
-    /// Gets the column and row of a node from it's position
+    /// Gets the column and row of a node from its position
     /// </summary>
     /// <param name="position"></param>
     /// <returns></returns>
     public static (int, int) GetNodeCoordinates((int, int) position)
     {
-        int x = position.Item1;
-        int y = position.Item2;
+        var x = position.Item1;
+        var y = position.Item2;
 
-        x -= IMAGE_GAP_SIZE / 2;
-        x /= IMAGE_SIZE + IMAGE_GAP_SIZE;
+        x -= ImageGapSize / 2;
+        x /= ImageSize + ImageGapSize;
 
-        y -= IMAGE_GAP_SIZE / 4;
-        y /= IMAGE_SIZE + (IMAGE_GAP_SIZE / 2);
+        y -= ImageGapSize / 4;
+        y /= ImageSize + (ImageGapSize / 2);
 
         return (x, y);
     }
@@ -65,15 +65,15 @@ internal static class CoordinateUtils
     /// <returns></returns>
     public static ((int, int), (int, int)) GetConnectorPositions((int, int) origin, (int, int) destination)
     {
-        int x1 = origin.Item1;
-        int y1 = origin.Item2;
-        int x2 = destination.Item1;
-        int y2 = destination.Item2;
+        var x1 = origin.Item1;
+        var y1 = origin.Item2;
+        var x2 = destination.Item1;
+        var y2 = destination.Item2;
 
-        x1 = (x1 * IMAGE_SIZE) + (x1 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 2);
-        y1 = (y1 * IMAGE_SIZE) + (y1 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
-        x2 = (x2 * IMAGE_SIZE) + (x2 * IMAGE_GAP_SIZE) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 2);
-        y2 = (y2 * IMAGE_SIZE) + (y2 * (IMAGE_GAP_SIZE / 2)) + (IMAGE_SIZE / 2) + (IMAGE_GAP_SIZE / 4);
+        x1 = (x1 * ImageSize) + (x1 * ImageGapSize) + (ImageSize / 2) + (ImageGapSize / 2);
+        y1 = (y1 * ImageSize) + (y1 * (ImageGapSize / 2)) + (ImageSize / 2) + (ImageGapSize / 4);
+        x2 = (x2 * ImageSize) + (x2 * ImageGapSize) + (ImageSize / 2) + (ImageGapSize / 2);
+        y2 = (y2 * ImageSize) + (y2 * (ImageGapSize / 2)) + (ImageSize / 2) + (ImageGapSize / 4);
 
         return ((x1, y1), (x2, y2));
     }
@@ -85,9 +85,9 @@ internal static class CoordinateUtils
     /// <returns></returns>
     public static int GetColumnPosition(double position)
     {
-        int index = (int)Math.Round(position, 0);
-        index -= IMAGE_GAP_SIZE / 2;
-        index /= IMAGE_SIZE + IMAGE_GAP_SIZE;
+        var index = (int)Math.Round(position, 0);
+        index -= ImageGapSize / 2;
+        index /= ImageSize + ImageGapSize;
 
         return index;
     }
@@ -99,9 +99,9 @@ internal static class CoordinateUtils
     /// <returns></returns>
     public static int GetRowPosition(double position)
     {
-        int index = (int)Math.Round(position, 0);
-        index -= IMAGE_GAP_SIZE / 4;
-        index /= IMAGE_SIZE + (IMAGE_GAP_SIZE / 2);
+        var index = (int)Math.Round(position, 0);
+        index -= ImageGapSize / 4;
+        index /= ImageSize + (ImageGapSize / 2);
 
         return index;
     }

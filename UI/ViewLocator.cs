@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using ROGraph.UI.ViewModels;
 
-namespace UI;
+namespace ROGraph.UI;
 
 /// <summary>
 /// Given a view model, returns the corresponding view if possible.

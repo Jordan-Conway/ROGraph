@@ -1,6 +1,6 @@
 namespace ROGraph.UI.Views.ReadingOrderView;
 
-internal enum InteractioMode
+internal enum InteractionMode
 {
     DEFAULT = 0,
     NEW_CONNECTOR = 1

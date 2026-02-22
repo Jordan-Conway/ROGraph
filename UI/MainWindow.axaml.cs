@@ -8,6 +8,6 @@ public partial class MainWindow : Window
     public MainWindow(IReadingOrderProvider readingOrderProvider)
     {
         InitializeComponent();
-        this.DataContext = new MainWindowViewModel(readingOrderProvider);
+        DataContext = new MainWindowViewModel(readingOrderProvider);
     }
 }

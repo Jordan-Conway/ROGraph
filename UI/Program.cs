@@ -1,8 +1,8 @@
-﻿using Avalonia;
-using System;
+﻿using System;
+using Avalonia;
 using ReactiveUI.Avalonia;
 
-namespace UI;
+namespace ROGraph.UI;
 
 sealed class Program
 {

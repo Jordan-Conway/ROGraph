@@ -1,12 +1,12 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="UI.App"
-             xmlns:local="using:UI"
+             xmlns:ui="clr-namespace:ROGraph.UI"
+             x:Class="ROGraph.UI.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <ui:ViewLocator/>
     </Application.DataTemplates>
   
     <Application.Styles>

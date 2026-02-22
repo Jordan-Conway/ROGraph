@@ -14,7 +14,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty]
     private UserControl _currentPage;
-    private IReadingOrderProvider _readingOrderProvider;
+    private readonly IReadingOrderProvider _readingOrderProvider;
 
     public MainWindowViewModel(IReadingOrderProvider readingOrderProvider)
     {
@@ -44,7 +44,7 @@ public partial class MainWindowViewModel : ViewModelBase
         });
     }
 
-    public void ChangeView(UserControl userControl)
+    private void ChangeView(UserControl userControl)
     {
         Console.WriteLine("Moving to new view");
         CurrentPage = userControl;
