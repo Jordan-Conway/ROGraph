@@ -147,6 +147,16 @@ namespace ROGraph.Shared.Models
         {
             this._reversedRowIds = this._rowIds.ToDictionary(x => x.Value, x => x.Key);
         }
+        
+        public int GetNumberOfRows()
+        {
+            return _reversedRowIds.Keys.Max();
+        }
+
+        public int GetNumberOfColumns()
+        {
+            return _reversedColumnIds.Keys.Max();
+        }
     }
     public readonly struct Result<T>(bool success, T output)
     {

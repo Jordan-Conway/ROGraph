@@ -4,9 +4,6 @@ namespace ROGraph.UI.Views.ReadingOrderView;
 
 internal static class CoordinateUtils
 {
-    private const int ImageSize = 240;
-    private const int ImageGapSize = 80;
-
     /// <summary>
     /// Converts a node's column and row position to pixel positions
     /// </summary>
@@ -17,8 +14,8 @@ internal static class CoordinateUtils
         var x = position.Item1;
         var y = position.Item2;
 
-        x = (x * ImageSize) + (x * ImageGapSize) + (ImageGapSize / 2);
-        y = (y * ImageSize) + (y * (ImageGapSize / 2)) + (ImageGapSize / 4);
+        x = (x * Sizes.ImageSize) + (x * Sizes.ImageGapSize) + (Sizes.ImageGapSize / 2);
+        y = (y * Sizes.ImageSize) + (y * (Sizes.ImageGapSize / 2)) + (Sizes.ImageGapSize / 4);
 
         return (x, y);
     }
@@ -48,11 +45,11 @@ internal static class CoordinateUtils
         var x = position.Item1;
         var y = position.Item2;
 
-        x -= ImageGapSize / 2;
-        x /= ImageSize + ImageGapSize;
+        x -= Sizes.ImageGapSize / 2;
+        x /= Sizes.ImageSize + Sizes.ImageGapSize;
 
-        y -= ImageGapSize / 4;
-        y /= ImageSize + (ImageGapSize / 2);
+        y -= Sizes.ImageGapSize / 4;
+        y /= Sizes.ImageSize + (Sizes.ImageGapSize / 2);
 
         return (x, y);
     }
@@ -70,10 +67,10 @@ internal static class CoordinateUtils
         var x2 = destination.Item1;
         var y2 = destination.Item2;
 
-        x1 = (x1 * ImageSize) + (x1 * ImageGapSize) + (ImageSize / 2) + (ImageGapSize / 2);
-        y1 = (y1 * ImageSize) + (y1 * (ImageGapSize / 2)) + (ImageSize / 2) + (ImageGapSize / 4);
-        x2 = (x2 * ImageSize) + (x2 * ImageGapSize) + (ImageSize / 2) + (ImageGapSize / 2);
-        y2 = (y2 * ImageSize) + (y2 * (ImageGapSize / 2)) + (ImageSize / 2) + (ImageGapSize / 4);
+        x1 = (x1 * Sizes.ImageSize) + (x1 * Sizes.ImageGapSize) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 2);
+        y1 = (y1 * Sizes.ImageSize) + (y1 * (Sizes.ImageGapSize / 2)) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 4);
+        x2 = (x2 * Sizes.ImageSize) + (x2 * Sizes.ImageGapSize) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 2);
+        y2 = (y2 * Sizes.ImageSize) + (y2 * (Sizes.ImageGapSize / 2)) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 4);
 
         return ((x1, y1), (x2, y2));
     }
@@ -86,8 +83,8 @@ internal static class CoordinateUtils
     public static int GetColumnPosition(double position)
     {
         var index = (int)Math.Round(position, 0);
-        index -= ImageGapSize / 2;
-        index /= ImageSize + ImageGapSize;
+        index -= Sizes.ImageGapSize / 2;
+        index /= Sizes.ImageSize + Sizes.ImageGapSize;
 
         return index;
     }
@@ -100,8 +97,8 @@ internal static class CoordinateUtils
     public static int GetRowPosition(double position)
     {
         var index = (int)Math.Round(position, 0);
-        index -= ImageGapSize / 4;
-        index /= ImageSize + (ImageGapSize / 2);
+        index -= Sizes.ImageGapSize / 4;
+        index /= Sizes.ImageSize + (Sizes.ImageGapSize / 2);
 
         return index;
     }

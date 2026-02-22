@@ -2,76 +2,88 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:ROGraph.UI.Views.ReadingOrderView"
              xmlns:md="using:ROGraph.UI.Models"
+             x:Name="Root"
              x:Class="ROGraph.UI.Views.ReadingOrderView.ReadingOrderViewControl"
              x:DataType="vm:ReadingOrderViewModel">
-    <Grid 
-        x:Name="ViewPanel" 
-        PointerPressed="HandleEmptySpaceNodeClick" 
-        RowDefinitions="Auto, *">
-            <Grid.ContextMenu>
-                <ContextMenu />
-            </Grid.ContextMenu>
+    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+        <Grid 
+            x:Name="ViewPanel" 
+            PointerPressed="HandleEmptySpaceNodeClick" 
+            RowDefinitions="Auto, Auto">
+                <Grid.ContextMenu>
+                    <ContextMenu />
+                </Grid.ContextMenu>
 
-        <Button 
-            Grid.Row="0"
-            Command="{Binding SaveCommand}">
-            Save
-        </Button>
-        
-        <ItemsControl 
-            ItemsSource="{Binding Connectors}"
-            Grid.Row="1">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Background="Transparent"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type md:ConnectorModel}">
-                        <Path
-                            Data="{Binding Geometry}"
-                            Stroke="White" 
-                            StrokeThickness="25"
-                            IsHitTestVisible="True"
-                            Fill="Transparent"
-                            PointerPressed="HandleConnectorClick" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
+            <Button 
+                Grid.Row="0"
+                Command="{Binding SaveCommand}">
+                Save
+            </Button>
+            
             <ItemsControl 
-                x:Name="NodesItemControl" 
-                ItemsSource="{Binding Nodes}"
+                ItemsSource="{Binding Connectors}"
                 Grid.Row="1">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <!-- Background is null to allow connectors to be clicked -->
-                        <Canvas Background="{x:Null}"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Background="Transparent"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type md:NodeModel}">
-                        <Button Click="HandleNodeLeftClick" PointerPressed="HandleNodeRightClick">
-                            <StackPanel>
-                                <Image Source="avares://ROGraph.UI/Assets/star_node_completed.png" Height="240" Width="240" />
-                                <TextBlock Text="{Binding Node.Name}" />
-                            </StackPanel>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type md:ConnectorModel}">
+                            <Path
+                                Data="{Binding Geometry}"
+                                Stroke="White" 
+                                StrokeThickness="15"
+                                IsHitTestVisible="True"
+                                Fill="Transparent"
+                                PointerPressed="HandleConnectorClick" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                <ItemsControl.Styles>
-                    <Style Selector="ContentPresenter" x:DataType="md:NodeModel">
-                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
-                    </Style>
-                    <Style Selector="Button">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Padding" Value="0" />
-                    </Style>
-                </ItemsControl.Styles>
-            </ItemsControl>
-    </Grid>
+                <ItemsControl 
+                    x:Name="NodesItemControl" 
+                    ItemsSource="{Binding Nodes}"
+                    Grid.Row="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <!-- Background is null to allow connectors to be clicked -->
+                            <Canvas Background="{x:Null}"
+                                    Width="{Binding CanvasWidth}"
+                                    Height="{Binding CanvasHeight}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type md:NodeModel}">
+                            <Button Click="HandleNodeLeftClick" PointerPressed="HandleNodeRightClick">
+                                <StackPanel>
+                                    <Image 
+                                        Source="avares://ROGraph.UI/Assets/star_node_completed.png" 
+                                        Height="{Binding #Root.ImageHeight}" 
+                                        Width="{Binding #Root.ImageWidth}" />
+                                    <TextBlock 
+                                        Text="{Binding Node.Name}" 
+                                        TextWrapping="Wrap"
+                                        TextAlignment="Center"
+                                        Width="120" Height="40"/>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                    <ItemsControl.Styles>
+                        <Style Selector="ContentPresenter" x:DataType="md:NodeModel">
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ItemsControl.Styles>
+                </ItemsControl>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
