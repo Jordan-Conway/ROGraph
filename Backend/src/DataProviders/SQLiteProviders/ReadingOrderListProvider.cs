@@ -79,9 +79,29 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return overviews;
     }
 
-    public bool CreateReadingOrder(string name, string? description)
+    public bool CreateReadingOrder(ReadingOrderOverview overview)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = ScriptReader.CreateReadingOrderScript();
+            command.Parameters.Add(new SQLiteParameter("@id", overview.Id == Guid.Empty ? overview.ToString() : Guid.NewGuid().ToString()));
+            command.Parameters.Add(new SQLiteParameter("@name", overview.Name));
+            command.Parameters.Add(new SQLiteParameter("@description", overview.Description ?? string.Empty));
+            command.Parameters.Add(new SQLiteParameter("@maxX", value: 0));
+            command.Parameters.Add(new SQLiteParameter("@maxY", value: 0));
+            
+            command.ExecuteNonQuery();
+        }
+        catch (SQLiteException ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return false;
+        }
+
+        return true;
     }
 
     public ReadingOrder GetReadingOrder(Guid id)
