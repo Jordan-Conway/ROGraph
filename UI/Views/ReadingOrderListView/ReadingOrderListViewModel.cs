@@ -27,7 +27,7 @@ internal partial class ReadingOrderListViewModel : ObservableObject
     public ReadingOrderListViewModel(IReadingOrderProvider roProvider)
     {
         _readingOrderProvider = roProvider;
-        Overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders());
+        _overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders());
         RegisterMessages();
     }
 
