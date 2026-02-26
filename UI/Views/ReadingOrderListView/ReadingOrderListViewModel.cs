@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -28,6 +29,13 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         _readingOrderProvider = roProvider;
         Overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders());
         RegisterMessages();
+    }
+
+    [RelayCommand]
+    public void DeleteReadingOrder(Guid id)
+    {
+        _readingOrderProvider.DeleteReadingOrder(id);
+        Overviews.Remove(Overviews.First(x => x.Id == id));
     }
     
     private void RefreshReadingOrders()

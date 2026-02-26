@@ -62,6 +62,10 @@
     <EmbeddedResource Include="Scripts\ReadingOrders\CreateReadingOrder.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Remove="Scripts\ReadingOrders\DeleteReadingOrder.sql" />
+    <EmbeddedResource Include="Scripts\ReadingOrders\DeleteReadingOrder.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

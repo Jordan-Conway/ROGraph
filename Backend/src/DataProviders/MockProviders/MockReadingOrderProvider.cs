@@ -64,4 +64,9 @@ public class MockReadingOrderProvider : IReadingOrderProvider
     {
         return true;
     }
+
+    public bool DeleteReadingOrder(Guid id)
+    {
+        return true;
+    }
 }

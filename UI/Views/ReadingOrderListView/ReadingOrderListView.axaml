@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:ROGraph.UI.Views.ReadingOrderListView"
              x:Class="ROGraph.UI.Views.ReadingOrderListView.ReadingOrderListViewControl"
-             x:DataType="vm:ReadingOrderListViewModel">
+             x:DataType="vm:ReadingOrderListViewModel"
+             x:Name="Root">
     <StackPanel>
         <Button Command="{Binding CreateReadingOrder, RelativeSource={RelativeSource AncestorType=vm:ReadingOrderListViewControl}}">
             New
@@ -10,13 +11,23 @@
         <ItemsControl ItemsSource="{Binding Overviews}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Margin="0,10,0,0"
-                            Command="{Binding NavigateCommand, RelativeSource={RelativeSource AncestorType=vm:ReadingOrderListViewControl}}">
-                        <StackPanel>
-                            <TextBlock Text="{Binding Name}" />
-                            <TextBlock Text="{Binding Description}" />
-                        </StackPanel>
-                    </Button>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Margin="0,10,0,0">
+                        <Button 
+                            Command="{Binding NavigateCommand, RelativeSource={RelativeSource AncestorType=vm:ReadingOrderListViewControl}}"
+                            CommandParameter="{Binding Id}">
+                            <TextBlock>
+                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding Description}" />
+                            </TextBlock>
+                        </Button>
+                        <Button 
+                            Command="{Binding #Root.((vm:ReadingOrderListViewModel)DataContext).DeleteReadingOrder}"
+                            CommandParameter="{Binding Id}">
+                            X
+                        </Button>
+                    </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

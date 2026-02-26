@@ -13,4 +13,6 @@ public interface IReadingOrderProvider
     public bool CreateReadingOrder(ReadingOrderOverview overview);
     
     public bool UpdateReadingOrder(ReadingOrder readingOrder);
+    
+    public bool DeleteReadingOrder(Guid id);
 }

@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="Dialogs\EditReadingOrderDialog\" />
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
     <AvaloniaResource Include="Messages\**" />
     <AvaloniaResource Include="**\*.xaml" />

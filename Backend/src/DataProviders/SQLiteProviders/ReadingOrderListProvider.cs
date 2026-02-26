@@ -232,6 +232,40 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return true;
     }
 
+    public bool DeleteReadingOrder(Guid id)
+    {
+        if (id == Guid.Empty)
+        {
+            return false;
+        }
+
+        try
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+            
+            var command = connection.CreateCommand();
+            command.CommandText = ScriptReader.DeleteReadingOrderScript();
+            command.Parameters.Add(new SQLiteParameter("@id", id.ToString()));
+            
+            var rowsUpdated = command.ExecuteNonQuery();
+
+            switch (rowsUpdated)
+            {
+                case 0: Debug.WriteLine($"Tried to delete reading order with id {id.ToString()}, but it was not found"); break;
+                case 1: break;
+                default: Debug.WriteLine($"Deleted multiple reading orders with  id {id.ToString()}"); break;
+            }
+        }
+        catch (SQLiteException ex )
+        {
+            Debug.WriteLine(ex.Message);
+            return false;
+        }
+
+        return true;
+    }
+
     private static List<Node> GetReadingOrderNodes(Guid id, CoordinateTranslator coordinateTranslator, SQLiteConnection connection)
     {
         var getNodesCommand = connection.CreateCommand();
