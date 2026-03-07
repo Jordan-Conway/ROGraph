@@ -39,7 +39,6 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         EditReadingOrderCommand = ReactiveCommand.CreateFromTask<Guid>(EditReadingOrder);
         EditReadingOrderCommand.ThrownExceptions.Subscribe(ex =>
         {
-            Debug.WriteLine("ENCOUNTERED ERROR ON EDIT");
             Debug.WriteLine(ex);
         });
         RegisterMessages();
@@ -62,8 +61,7 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         }
         
         Overviews.Replace(original, overview);
-        var updated = _readingOrderProvider.UpdateReadingOrderOverview(overview);
-        Debug.WriteLine(updated);
+        _readingOrderProvider.UpdateReadingOrderOverview(overview);
     }
 
     [RelayCommand]
