@@ -49,7 +49,7 @@ internal partial class ReadingOrderListViewControl : UserControl
 
     private void RegisterMessages()
     {
-        WeakReferenceMessenger.Default.Register<EditReadingOrderMessage>(this, (r, m) =>
+        WeakReferenceMessenger.Default.Register<EditReadingOrderMessage>(this,  (r, m) =>
         {
             var dialog = new EditReadingOrderDialog(m.Overview);
             var root = this.VisualRoot as Window;

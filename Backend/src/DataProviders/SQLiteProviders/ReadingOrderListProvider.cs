@@ -44,6 +44,42 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return null;
     }
 
+    public bool UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview)
+    {
+        try
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = ScriptReader.GetUpdateReadingOrderScript();
+            command.Parameters.Add(new SQLiteParameter("@id", readingOrderOverview.Id.ToString()));
+            command.Parameters.Add(new SQLiteParameter("@name", readingOrderOverview.Name));
+            command.Parameters.Add(new SQLiteParameter("@description", readingOrderOverview.Description ?? string.Empty));
+
+            var rowCount = command.ExecuteNonQuery();
+
+            if (rowCount == 0)
+            {
+                Debug.WriteLine("No rows were updated");
+                return false;
+            }
+
+            if (rowCount > 2)
+            {
+                Debug.WriteLine("Updated multiple rows, but should have been 1");
+            }
+            
+        }
+        catch (SQLiteException ex)
+        {
+            Debug.WriteLine("Exception while updating overview");
+            Debug.WriteLine(ex.Message);
+            return false;
+        }
+
+        return true;
+    }
+
     public List<ReadingOrderOverview> GetReadingOrders()
     {
         List<ReadingOrderOverview> overviews = [];

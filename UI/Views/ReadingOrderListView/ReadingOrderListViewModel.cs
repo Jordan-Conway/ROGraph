@@ -2,13 +2,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
+using ReactiveUI;
 using ROGraph.Backend.DataProviders.Interfaces;
-using ROGraph.UI.ViewModels;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Messages;
 
@@ -25,15 +26,25 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         get => _overviews;
         set => SetProperty(ref _overviews, value);
     }
+    
+    public ReactiveCommand<Guid, Unit> EditReadingOrderCommand { get; set; }
 
     public ReadingOrderListViewModel(IReadingOrderProvider roProvider)
     {
+        ArgumentNullException.ThrowIfNull(roProvider);
+        Debug.WriteLine(roProvider.GetType());
+        
         _readingOrderProvider = roProvider;
         _overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders());
+        EditReadingOrderCommand = ReactiveCommand.CreateFromTask<Guid>(EditReadingOrder);
+        EditReadingOrderCommand.ThrownExceptions.Subscribe(ex =>
+        {
+            Debug.WriteLine("ENCOUNTERED ERROR ON EDIT");
+            Debug.WriteLine(ex);
+        });
         RegisterMessages();
     }
-
-    [RelayCommand]
+    
     public async Task EditReadingOrder(Guid id)
     {
         var original = Overviews.FirstOrDefault(x => x.Id == id);
@@ -51,6 +62,8 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         }
         
         Overviews.Replace(original, overview);
+        var updated = _readingOrderProvider.UpdateReadingOrderOverview(overview);
+        Debug.WriteLine(updated);
     }
 
     [RelayCommand]

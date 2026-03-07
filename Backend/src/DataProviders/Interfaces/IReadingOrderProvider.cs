@@ -10,6 +10,8 @@ public interface IReadingOrderProvider
 
     public ReadingOrderOverview? GetReadingOrderOverview(Guid id);
     
+    public bool UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview);
+    
     public bool CreateReadingOrder(ReadingOrderOverview overview);
     
     public bool UpdateReadingOrder(ReadingOrder readingOrder);
