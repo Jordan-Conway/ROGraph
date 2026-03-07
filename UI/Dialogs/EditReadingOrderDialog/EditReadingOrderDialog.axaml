@@ -1,0 +1,24 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ROGraph.UI.Dialogs.EditReadingOrderDialog"
+        x:Class="ROGraph.UI.Dialogs.EditReadingOrderDialog.EditReadingOrderDialog"
+        x:DataType="vm:EditReadingOrderDialogViewModel">
+    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto">
+        <TextBlock Grid.Row="0" Grid.Column="0" >
+            Name:
+        </TextBlock>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
+        
+        <TextBlock Grid.Row="1" Grid.Column="0" >
+            Description:
+        </TextBlock>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Description}" />
+        
+        <Button Grid.Row="2" Grid.Column="0" Command="{Binding CancelChangesCommand}">
+            Close 
+        </Button>
+        <Button Grid.Row="2" Grid.Column="1" Command="{Binding SaveChangesCommand}">
+            Save
+        </Button>
+    </Grid>
+</Window>

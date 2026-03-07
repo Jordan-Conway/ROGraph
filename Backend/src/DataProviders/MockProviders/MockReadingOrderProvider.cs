@@ -6,7 +6,7 @@ namespace ROGraph.Backend.DataProviders.MockProviders;
 
 public class MockReadingOrderProvider : IReadingOrderProvider
 {
-    public bool CreateReadingOrder(string name, string? description)
+    public bool CreateReadingOrder(ReadingOrderOverview overview)
     {
         return true;
     }
@@ -59,8 +59,18 @@ public class MockReadingOrderProvider : IReadingOrderProvider
     {
         return new ReadingOrderOverview("Reading Order 1", Guid.NewGuid());
     }
-    
+
+    public bool UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview)
+    {
+        return true;
+    }
+
     public bool UpdateReadingOrder(ReadingOrder readingOrder)
+    {
+        return true;
+    }
+
+    public bool DeleteReadingOrder(Guid id)
     {
         return true;
     }

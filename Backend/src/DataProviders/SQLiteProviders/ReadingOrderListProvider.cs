@@ -44,6 +44,42 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return null;
     }
 
+    public bool UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview)
+    {
+        try
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = ScriptReader.GetUpdateReadingOrderScript();
+            command.Parameters.Add(new SQLiteParameter("@id", readingOrderOverview.Id.ToString()));
+            command.Parameters.Add(new SQLiteParameter("@name", readingOrderOverview.Name));
+            command.Parameters.Add(new SQLiteParameter("@description", readingOrderOverview.Description ?? string.Empty));
+
+            var rowCount = command.ExecuteNonQuery();
+
+            if (rowCount == 0)
+            {
+                Debug.WriteLine("No rows were updated");
+                return false;
+            }
+
+            if (rowCount > 2)
+            {
+                Debug.WriteLine("Updated multiple rows, but should have been 1");
+            }
+            
+        }
+        catch (SQLiteException ex)
+        {
+            Debug.WriteLine("Exception while updating overview");
+            Debug.WriteLine(ex.Message);
+            return false;
+        }
+
+        return true;
+    }
+
     public List<ReadingOrderOverview> GetReadingOrders()
     {
         List<ReadingOrderOverview> overviews = [];
@@ -79,9 +115,29 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return overviews;
     }
 
-    public bool CreateReadingOrder(string name, string? description)
+    public bool CreateReadingOrder(ReadingOrderOverview overview)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = ScriptReader.CreateReadingOrderScript();
+            command.Parameters.Add(new SQLiteParameter("@id", overview.Id == Guid.Empty ? overview.ToString() : Guid.NewGuid().ToString()));
+            command.Parameters.Add(new SQLiteParameter("@name", overview.Name));
+            command.Parameters.Add(new SQLiteParameter("@description", overview.Description ?? string.Empty));
+            command.Parameters.Add(new SQLiteParameter("@maxX", value: 0));
+            command.Parameters.Add(new SQLiteParameter("@maxY", value: 0));
+            
+            command.ExecuteNonQuery();
+        }
+        catch (SQLiteException ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return false;
+        }
+
+        return true;
     }
 
     public ReadingOrder GetReadingOrder(Guid id)
@@ -207,6 +263,40 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         {
             Debug.WriteLine(ex.Message);
             throw;
+        }
+
+        return true;
+    }
+
+    public bool DeleteReadingOrder(Guid id)
+    {
+        if (id == Guid.Empty)
+        {
+            return false;
+        }
+
+        try
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+            
+            var command = connection.CreateCommand();
+            command.CommandText = ScriptReader.DeleteReadingOrderScript();
+            command.Parameters.Add(new SQLiteParameter("@id", id.ToString()));
+            
+            var rowsUpdated = command.ExecuteNonQuery();
+
+            switch (rowsUpdated)
+            {
+                case 0: Debug.WriteLine($"Tried to delete reading order with id {id.ToString()}, but it was not found"); break;
+                case 1: break;
+                default: Debug.WriteLine($"Deleted multiple reading orders with  id {id.ToString()}"); break;
+            }
+        }
+        catch (SQLiteException ex )
+        {
+            Debug.WriteLine(ex.Message);
+            return false;
         }
 
         return true;
