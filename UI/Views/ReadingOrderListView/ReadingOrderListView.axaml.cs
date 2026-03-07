@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.Backend.DataProviders.Interfaces;
 using ROGraph.Backend.DataProviders.SQLiteProviders;
 using ROGraph.Shared.Models;
+using ROGraph.UI.Dialogs.EditReadingOrderDialog;
 using ROGraph.UI.Dispatchers;
 using ROGraph.UI.Messages;
 
@@ -26,6 +27,8 @@ internal partial class ReadingOrderListViewControl : UserControl
         DataContext = new ReadingOrderListViewModel(RoProvider);
 
         NavigateCommand = ReactiveCommand.Create<Guid>(NavigateToReadingOrder);
+        
+        RegisterMessages();
     }
 
     [RelayCommand]
@@ -42,5 +45,15 @@ internal partial class ReadingOrderListViewControl : UserControl
         ArgumentNullException.ThrowIfNull(readingOrder);
         
         WeakReferenceMessenger.Default.Send(new NavigationMessage(new ReadingOrderViewControl(readingOrder)));
+    }
+
+    private void RegisterMessages()
+    {
+        WeakReferenceMessenger.Default.Register<EditReadingOrderMessage>(this, (r, m) =>
+        {
+            var dialog = new EditReadingOrderDialog(m.Overview);
+            var root = this.VisualRoot as Window;
+            m.Reply(dialog.ShowDialog<ReadingOrderOverview?>(root!));
+        });
     }
 }

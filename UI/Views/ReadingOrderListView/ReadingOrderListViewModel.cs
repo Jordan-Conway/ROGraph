@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -29,6 +31,26 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         _readingOrderProvider = roProvider;
         _overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders());
         RegisterMessages();
+    }
+
+    [RelayCommand]
+    public async Task EditReadingOrder(Guid id)
+    {
+        var original = Overviews.FirstOrDefault(x => x.Id == id);
+        
+        if (original == null)
+        {
+            return;
+        }
+        
+        var overview = await WeakReferenceMessenger.Default.Send(new EditReadingOrderMessage(original));
+
+        if (overview == null)
+        {
+            return;
+        }
+        
+        Overviews.Replace(original, overview);
     }
 
     [RelayCommand]
