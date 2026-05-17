@@ -3,15 +3,20 @@ using ROGraph.UI.ViewModels;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Models;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using DynamicData;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
+using ROGraph.UI.Components.Toolbar;
 using ROGraph.UI.Dispatchers;
+using ROGraph.UI.Views.ReadingOrderListView;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
 
@@ -26,11 +31,14 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     public int CanvasWidth => (ReadingOrder.CoordinateTranslator!.GetNumberOfColumns() + 2) * Sizes.ColumnWidth;
     public int CanvasHeight => (ReadingOrder.CoordinateTranslator!.GetNumberOfRows() +1) * Sizes.ColumnWidth;
 
+    public ToolbarContent ToolbarContent { get; init; }
+
     public ReadingOrderViewModel(ReadingOrder readingOrder)
     {
         ArgumentNullException.ThrowIfNull(readingOrder.CoordinateTranslator, nameof(readingOrder.CoordinateTranslator));
 
         ReadingOrder = readingOrder;
+        ToolbarContent = GetToolbarContent();
 
         RegisterMessages();
         PlaceContents();
@@ -205,11 +213,15 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         RefreshContents();
     }
     
-    [RelayCommand]
     private async Task Save()
     {
         var result = await ReadingOrderViewDispatcher.DispatchSaveReadingOrderEvent(ReadingOrder);
         Debug.WriteLine(!result ? "Failed to save reading order" : "Successfully saved reading order");
+    }
+
+    private void NavigateToReadingOrderList()
+    {
+        WeakReferenceMessenger.Default.Send(new NavigationMessage(new ReadingOrderListViewControl()));
     }
 
     /// <summary>
@@ -226,5 +238,18 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         IReactiveObject reactiveObject =  this;
         reactiveObject.RaisePropertyChanged(nameof(CanvasWidth));
         reactiveObject.RaisePropertyChanged(nameof(CanvasHeight));
+    }
+
+    private ToolbarContent GetToolbarContent()
+    {
+        IEnumerable<ToolbarItem> leftItems = [
+            new("Save", async () => { await Save(); })
+        ];
+        IEnumerable<ToolbarItem> middleItems = [];
+        IEnumerable<ToolbarItem> rightItems = [
+            new("<-", () => { NavigateToReadingOrderList(); return Task.CompletedTask; })
+        ];
+        
+        return new ToolbarContent(leftItems, middleItems, rightItems);
     }
 }

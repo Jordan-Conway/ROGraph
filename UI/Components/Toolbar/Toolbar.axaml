@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ns="using:ROGraph.UI.Components.Toolbar"
+             x:Class="ROGraph.UI.Components.Toolbar.Toolbar"
+             x:DataType="ns:ToolbarViewModel">
+    <UserControl.Styles>
+        <Style Selector="StackPanel.ItemSection">
+            
+        </Style>
+        <Style Selector="StackPanel.LeftItemSection">
+            
+        </Style>
+        <Style Selector="StackPanel.MiddleItemSection">
+            
+        </Style>
+        <Style Selector="StackPanel.RightItemSection">
+            
+        </Style>
+    </UserControl.Styles>
+    <UserControl.DataTemplates>
+        <DataTemplate x:DataType="ns:ToolbarItem">
+            <Button 
+                Command="{Binding InvokeAction}">
+                <TextBlock Text="{Binding Label}"></TextBlock>
+            </Button>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+    <StackPanel>
+        <StackPanel
+            Classes="ItemSection LeftItemSection">
+            <ItemsControl ItemsSource="{Binding $parent[ns:Toolbar].Content.LeftItems}">
+                
+            </ItemsControl>
+        </StackPanel>
+        <StackPanel
+            Classes="ItemSection MiddleItemSection">
+            <ItemsControl ItemsSource="{Binding $parent[ns:Toolbar].Content.MiddleItems}">
+                
+            </ItemsControl>
+        </StackPanel>
+        <StackPanel
+            Classes="ItemSection RightItemSection">
+            <ItemsControl ItemsSource="{Binding $parent[ns:Toolbar].Content.RightItems}">
+                
+            </ItemsControl>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
