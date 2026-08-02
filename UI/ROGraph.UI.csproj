@@ -37,4 +37,14 @@
     <ProjectReference Include="..\Shared\src\ROGraph.Shared.csproj" />
     <ProjectReference Include="..\Backend\src\ROGraph.Backend.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Dialogs\ChecklistDialog\ChecklistDialog.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\ChecklistDialog\ChecklistDialog.axaml.cs">
+      <DependentUpon>ChecklistDialog.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

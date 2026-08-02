@@ -8,7 +8,7 @@ public class Node
     public string Name { get; set; }
     public string? Description { get; set; }
     public bool IsCompleted { get; set; }
-    public Checklist? Checklist { get; set; }
+    public Checklist.Checklist? Checklist { get; set; }
     public Guid Origin { get; set; }
     public DateTime Created { get; set; }
     public DateTime LastModified { get; set; }
@@ -27,7 +27,7 @@ public class Node
         Guid y,
         NodeType nodeType,
         bool isCompleted = false,
-        Checklist? checklist = null,
+        Checklist.Checklist? checklist = null,
         string? description = null
     )
     {

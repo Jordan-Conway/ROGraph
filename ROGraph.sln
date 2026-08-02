@@ -21,6 +21,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.Props = Directory.Packages.Props
 		global.json = global.json
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+		.gitignore = .gitignore
+		.env.example = .env.example
+		.env = .env
 	EndProjectSection
 EndProject
 Global

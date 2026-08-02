@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using ROGraph.UI.Dialogs.ConfirmDialog;
 using ROGraph.UI.Dialogs.EditNodeDialog;
@@ -12,6 +13,8 @@ using ROGraph.UI.Dispatchers;
 using ROGraph.UI.Models;
 using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
+using ROGraph.Shared.Models.Checklist;
+using ROGraph.UI.Dialogs.ChecklistDialog;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
 
@@ -28,6 +31,11 @@ internal partial class ReadingOrderViewControl : UserControl
         InitializeComponent();
 
         DataContext = new ReadingOrderViewModel(readingOrder);
+        
+        WeakReferenceMessenger.Default.Register<ShowChecklistCommand>(this, async void (_, m) =>
+        {
+            await this.ShowChecklist(m.ReadingOrderId);
+        });
     }
 
     private void HandleEmptySpaceNodeClick(object sender, PointerPressedEventArgs e)
@@ -42,13 +50,14 @@ internal partial class ReadingOrderViewControl : UserControl
 
     private void HandleNodeLeftClick(object sender, RoutedEventArgs e)
     {
-        if (this._interactionMode != InteractionMode.NEW_CONNECTOR)
-        {
-            return;
-        }
-
         var control = (Control)sender;
         if (control is not { DataContext: NodeModel node }) return;
+
+        if (this._interactionMode != InteractionMode.NEW_CONNECTOR)
+        {
+            WeakReferenceMessenger.Default.Send(new ShowChecklistCommand(node.Node.Id));
+            return;
+        }
         
         var destination = node.Node.GetPosition();
         var connector = new Connector(this._newConnectorOrigin, destination);
@@ -273,5 +282,13 @@ internal partial class ReadingOrderViewControl : UserControl
 
         ReadingOrderViewDispatcher.DispatchRowDeletedEvent(position);
         this.InvalidateVisual();
+    }
+    
+    private async Task ShowChecklist(Guid readingOrderId)
+    {
+        var checklist = new Checklist();
+        var dialog = new ChecklistDialog(checklist);
+        var root = this.VisualRoot as Window;
+        await dialog.ShowDialog(root!);
     }
 }
