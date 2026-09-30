@@ -1,4 +1,6 @@
-﻿namespace ROGraph.Shared.Models
+﻿using System;
+
+namespace ROGraph.Shared.Models
 {
     public class ReadingOrder
     {
