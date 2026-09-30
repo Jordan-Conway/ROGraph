@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.Linq;
 using ROGraph.Backend.DataProviders.Interfaces;
 using ROGraph.Backend.Scripts;
 using ROGraph.Shared.Enums;

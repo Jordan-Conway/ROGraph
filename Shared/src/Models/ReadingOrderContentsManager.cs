@@ -1,4 +1,8 @@
-﻿namespace ROGraph.Shared.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ROGraph.Shared.Models
 {
     public class ReadingOrderContentsManager
     {

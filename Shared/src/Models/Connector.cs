@@ -1,4 +1,7 @@
-﻿namespace ROGraph.Shared.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace ROGraph.Shared.Models;
 
 public class Connector
 {

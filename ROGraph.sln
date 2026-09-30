@@ -19,8 +19,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROGraph.UI", "UI\ROGraph.UI
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{FB47C8C0-B639-4A40-A295-9D1442F095B1}"
 	ProjectSection(SolutionItems) = preProject
-		Directory.Packages.Props = Directory.Packages.Props
 		global.json = global.json
+		Directory.Packages.props = Directory.Packages.props
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Global
