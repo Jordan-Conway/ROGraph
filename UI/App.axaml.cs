@@ -6,7 +6,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ROGraph.Backend;
-using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.Contracts;
 
 namespace ROGraph.UI;
 

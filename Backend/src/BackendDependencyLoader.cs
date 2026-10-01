@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.Contracts;
 using ROGraph.Backend.DataProviders.SQLiteProviders;
 
 namespace ROGraph.Backend;

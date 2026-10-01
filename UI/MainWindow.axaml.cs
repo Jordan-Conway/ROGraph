@@ -1,5 +1,5 @@
 using Avalonia.Controls;
-using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.Contracts;
 
 namespace ROGraph.UI;
 

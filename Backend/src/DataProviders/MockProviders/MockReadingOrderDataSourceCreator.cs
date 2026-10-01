@@ -1,4 +1,4 @@
-using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.Contracts;
 
 namespace ROGraph.Backend.DataProviders.MockProviders;
 

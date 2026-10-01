@@ -9,7 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using ReactiveUI;
-using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.Contracts;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Messages;
 

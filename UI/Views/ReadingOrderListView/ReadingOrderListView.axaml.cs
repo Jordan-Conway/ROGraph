@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using ROGraph.UI.Views.ReadingOrderView;
 using ReactiveUI;
 using CommunityToolkit.Mvvm.Messaging;
-using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.Contracts;
 using ROGraph.Backend.DataProviders.SQLiteProviders;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Dialogs.EditReadingOrderDialog;

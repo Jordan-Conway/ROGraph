@@ -1,4 +1,4 @@
-namespace ROGraph.Backend.DataProviders.Interfaces;
+namespace ROGraph.Backend.Contracts;
 
 public interface IReadingOrderDataSourceCreator
 {

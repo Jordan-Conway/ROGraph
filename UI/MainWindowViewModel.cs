@@ -5,8 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using System;
 using System.Data.SQLite;
-using System.Threading.Tasks;
-using ROGraph.Backend.DataProviders.Interfaces;
+using ROGraph.Backend.Contracts;
 
 namespace ROGraph.UI;
 

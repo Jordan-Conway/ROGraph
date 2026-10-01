@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ROGraph.Shared.Models;
 
-namespace ROGraph.Backend.DataProviders.Interfaces;
+namespace ROGraph.Backend.Contracts;
 
 public interface IReadingOrderProvider
 {
