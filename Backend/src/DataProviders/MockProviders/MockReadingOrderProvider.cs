@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using ROGraph.Backend.DataProviders.Interfaces;
 using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
@@ -67,9 +69,9 @@ public class MockReadingOrderProvider : IReadingOrderProvider
         return true;
     }
 
-    public bool UpdateReadingOrder(ReadingOrder readingOrder)
+    public Task<bool> UpdateReadingOrder(ReadingOrder readingOrder, CancellationToken token = default)
     {
-        return true;
+        return Task.FromResult(true);
     }
 
     public bool DeleteReadingOrder(Guid id)

@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS ReadingOrders_Nodes (
 CREATE UNIQUE INDEX IF NOT EXISTS ReadingOrders_Nodes_ROId_Index ON ReadingOrders_Nodes (readingOrderId, nodeId);
 
 CREATE TABLE IF NOT EXISTS Connectors (
+    id TEXT NOT NULL,
     x1 INTEGER,
     y1 INTEGER,
     x2 INTEGER,

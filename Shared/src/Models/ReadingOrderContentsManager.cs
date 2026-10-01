@@ -67,7 +67,7 @@ namespace ROGraph.Shared.Models
             return false;
         }
 
-        public IEnumerable<Connector> GetConnectors()
+        public IList<Connector> GetConnectors()
         {
             return Connectors;
         }

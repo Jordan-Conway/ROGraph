@@ -4,6 +4,10 @@ using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using ROGraph.Backend.DatabaseModels;
 using ROGraph.Backend.DataProviders.Interfaces;
 using ROGraph.Backend.Scripts;
 using ROGraph.Shared.Enums;
@@ -13,7 +17,7 @@ namespace ROGraph.Backend.DataProviders.SQLiteProviders;
 
 public class ReadingOrderListProvider : IReadingOrderProvider
 {
-    private static readonly string ConnectionString = "Data Source = " + FilePathProvider.GetDatabaseFilePath(); 
+    private static readonly string ConnectionString = "Data Source = " + FilePathProvider.GetDatabaseFilePath();
 
     public ReadingOrderOverview? GetReadingOrderOverview(Guid id)
     {
@@ -174,15 +178,21 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         }
     }
 
-    public bool UpdateReadingOrder(ReadingOrder readingOrder)
+    public async Task<bool> UpdateReadingOrder(ReadingOrder readingOrder, CancellationToken token)
     {
         try
         {
-            using var connection = new SQLiteConnection(ConnectionString);
+            var context = new ReadingOrderContext();
+            var translator = readingOrder.CoordinateTranslator ??
+                             throw new InvalidOperationException(
+                                 "Cannot add update reading order without coordinate translator");
+            ;
+
+            await using var connection = new SQLiteConnection(ConnectionString);
             connection.Open();
 
             var nodes = readingOrder.Contents.GetNodes();
-            var existingNodes = GetReadingOrderNodes(readingOrder.Id, readingOrder.CoordinateTranslator!, connection);
+            var existingNodes = GetReadingOrderNodes(readingOrder.Id, translator, connection);
             var nodesToDelete = existingNodes.Where(n => !nodes.Contains(n, new NodeComparer()));
 
             foreach (var node in nodesToDelete)
@@ -194,17 +204,17 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
                 deleteNodeCommand.ExecuteNonQuery();
             }
-            
+
             foreach (var node in nodes)
             {
-                var x = readingOrder.CoordinateTranslator?.GetXFromId(node.X) ?? throw new InvalidOperationException("Cannot add node without translator");
-                var y = readingOrder.CoordinateTranslator?.GetYFromId(node.Y) ?? throw new InvalidOperationException("Cannot add node without translator");
+                var x = translator.GetXFromId(node.X);
+                var y = translator.GetYFromId(node.Y);
 
                 if (!x.Success || !y.Success)
                 {
                     Debug.WriteLine("Cannot save node with x and y coordinates");
                 }
-                
+
                 var addNodeCommand = connection.CreateCommand();
                 addNodeCommand.CommandText = ScriptReader.GetAddNodeScript();
                 addNodeCommand.Parameters.Add(new SQLiteParameter("@nodeId", node.Id.ToString()));
@@ -222,47 +232,42 @@ public class ReadingOrderListProvider : IReadingOrderProvider
             }
 
             var connectors = readingOrder.Contents.GetConnectors();
-            var existingConnectors = GetReadingOrderConnectors(readingOrder.Id, readingOrder.CoordinateTranslator!, connection);
-            var connectorsToDelete = existingConnectors.Where(x => !connectors.Contains(x, new ConnectorComparer()));
+            var existingConnectors = GetReadingOrderConnectors(readingOrder.Id, translator, connection);
+            var connectorComparer = new ConnectorComparer();
+            var connectorsToCreate = connectors.Except(existingConnectors, connectorComparer);
+            var connectorsToDelete = existingConnectors.Where(x => !connectors.Contains(x, connectorComparer)).Select(c => c.Id);
 
-            foreach (var connector in connectorsToDelete)
+            await context.Connectors.Where(c => connectorsToDelete.Contains(c.Id)).ExecuteDeleteAsync(token);
+
+            foreach (var connector in connectorsToCreate)
             {
-                var x1 = readingOrder.CoordinateTranslator?.GetXFromId(connector.Origin.Item1)  ?? throw new InvalidOperationException("Cannot save connector without translator");
-                var y1 = readingOrder.CoordinateTranslator?.GetYFromId(connector.Origin.Item2)  ?? throw new InvalidOperationException("Cannot save connector without translator");
-                var x2 = readingOrder.CoordinateTranslator?.GetXFromId(connector.Destination.Item1) ??  throw new InvalidOperationException("Cannot save connector without translator");
-                var y2 = readingOrder.CoordinateTranslator?.GetYFromId(connector.Destination.Item2) ?? throw new InvalidOperationException("Cannot save connector without translator");
-                
-                var deleteConnectorCommand = connection.CreateCommand();
-                deleteConnectorCommand.CommandText = ScriptReader.GetDeleteConnectorScript();
-                deleteConnectorCommand.Parameters.Add(new SQLiteParameter("@x1", x1.Success ? x1.Output : throw new  InvalidOperationException("Cannot delete connector without x1")));
-                deleteConnectorCommand.Parameters.Add(new SQLiteParameter("@y1", y1.Success ? y1.Output : throw new  InvalidOperationException("Cannot delete connector without y1")));
-                deleteConnectorCommand.Parameters.Add(new SQLiteParameter("@x2", x2.Success ? x2.Output : throw new  InvalidOperationException("Cannot delete connector without x2")));
-                deleteConnectorCommand.Parameters.Add(new SQLiteParameter("@y2", y2.Success ? y2.Output : throw new  InvalidOperationException("Cannot delete connector without y2")));
-                deleteConnectorCommand.Parameters.Add(new SQLiteParameter("@roId", readingOrder.Id.ToString()));
-                
-                deleteConnectorCommand.ExecuteNonQuery();
+                var x1 = translator.GetXFromId(connector.Origin.Item1);
+                var y1 = translator.GetYFromId(connector.Origin.Item2);
+                var x2 = translator.GetXFromId(connector.Destination.Item1);
+                var y2 = translator.GetYFromId(connector.Destination.Item2);
+
+                var connectorDbModel = new ConnectorDbModel
+                {
+                    X1 = x1.Success
+                        ? x1.Output
+                        : throw new InvalidOperationException("Cannot save connector without x1"),
+                    Y1 = y1.Success
+                        ? y1.Output
+                        : throw new InvalidOperationException("Cannot save connector without y1"),
+                    X2 = x2.Success
+                        ? x2.Output
+                        : throw new InvalidOperationException("Cannot save connector withotu x2"),
+                    Y2 = y2.Success
+                        ? y2.Output
+                        : throw new InvalidOperationException("Cannot save connector without y2")
+                };
+                context.Connectors.Add(connectorDbModel);
             }
-            
-            foreach (var connector in connectors)
-            {
-                var x1 = readingOrder.CoordinateTranslator?.GetXFromId(connector.Origin.Item1)  ?? throw new InvalidOperationException("Cannot save connector without translator");
-                var y1 = readingOrder.CoordinateTranslator?.GetYFromId(connector.Origin.Item2)  ?? throw new InvalidOperationException("Cannot save connector without translator");
-                var x2 = readingOrder.CoordinateTranslator?.GetXFromId(connector.Destination.Item1) ??  throw new InvalidOperationException("Cannot save connector without translator");
-                var y2 = readingOrder.CoordinateTranslator?.GetYFromId(connector.Destination.Item2) ?? throw new InvalidOperationException("Cannot save connector without translator");
-                
-                var addConnectorsCommand = connection.CreateCommand();
-                addConnectorsCommand.CommandText = ScriptReader.GetAddConnectorScript();
-                addConnectorsCommand.Parameters.Add(new SQLiteParameter("@x1", x1.Success ? x1.Output : throw new  InvalidOperationException("Cannot save connector without x1")));
-                addConnectorsCommand.Parameters.Add(new SQLiteParameter("@y1", y1.Success ? y1.Output : throw new  InvalidOperationException("Cannot save connector without y1")));
-                addConnectorsCommand.Parameters.Add(new SQLiteParameter("@x2", x2.Success ? x2.Output : throw new  InvalidOperationException("Cannot save connector without x2")));
-                addConnectorsCommand.Parameters.Add(new SQLiteParameter("@y2", y2.Success ? y2.Output : throw new  InvalidOperationException("Cannot save connector without y2")));
-                addConnectorsCommand.Parameters.Add(new SQLiteParameter("@roId", readingOrder.Id.ToString()));
-                
-                addConnectorsCommand.ExecuteNonQuery();
-            }
+
+            await context.SaveChangesAsync(token);
 
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             throw;
@@ -346,26 +351,21 @@ public class ReadingOrderListProvider : IReadingOrderProvider
     
     private static List<Connector> GetReadingOrderConnectors(Guid id, CoordinateTranslator coordinateTranslator, SQLiteConnection connection)
     {
-        var getConnectorsCommand = connection.CreateCommand();
-        getConnectorsCommand.CommandText = ScriptReader.GetReadingOrderConnectorsScript();
-        getConnectorsCommand.Parameters.Add("@roId", DbType.String).Value = id.ToString();
-            
-        List<Connector> connectors = [];
-        var reader = getConnectorsCommand.ExecuteReader();
-        
-        while (reader.HasRows && reader.Read())
+        var context = new ReadingOrderContext();
+
+        var dbConnectors = context.Connectors.Where(c => c.ReadingOrderId == id).ToList();
+
+        return dbConnectors.Select(c =>
         {
-            var x1 = reader.GetInt32(0);
-            var y1 = reader.GetInt32(1);
-            var x2 = reader.GetInt32(2);
-            var y2 = reader.GetInt32(3);
-                
-            connectors.Add(new Connector(
-                (coordinateTranslator.GetXFromInt(x1), coordinateTranslator.GetYFromInt(y1)),
-                (coordinateTranslator.GetXFromInt(x2), coordinateTranslator.GetYFromInt(y2))
-            ));
-        }
-        
-        return connectors;
+            var translatedX1 = coordinateTranslator.GetXFromInt(c.X1);
+            var translatedY1 = coordinateTranslator.GetYFromInt(c.Y1);
+            var translatedX2 = coordinateTranslator.GetXFromInt(c.X2);
+            var translatedY2 = coordinateTranslator.GetYFromInt(c.Y2);
+
+            return new Connector((translatedX1, translatedY1), (translatedX2, translatedY2))
+            {
+                Id = c.Id
+            };
+        }).ToList();
     }
 }

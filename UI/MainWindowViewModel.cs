@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using System;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 using ROGraph.Backend.DataProviders.Interfaces;
 
 namespace ROGraph.UI;
@@ -33,8 +34,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             try
             {
-                _readingOrderProvider.UpdateReadingOrder(m.ReadingOrder);
-                m.Reply(true);
+                m.Reply(_readingOrderProvider.UpdateReadingOrder(m.ReadingOrder));
             }
             catch (SQLiteException)
             {

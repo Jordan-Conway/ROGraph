@@ -14,11 +14,8 @@ internal static class ScriptReader
     private const string UpdateReadingOrderScriptName = "UpdateReadingOrder.sql";
     private const string DeleteReadingOrderScriptName = "DeleteReadingOrder.sql";
     private const string GetReadingOrderNodesScriptName = "GetReadingOrderNodes.sql";
-    private const string GetReadingOrderConnectorsScriptName = "GetReadingOrderConnectors.sql";
     private const string AddNodeScriptName = "AddNode.sql";
     private const string DeleteNodeScriptName = "DeleteNode.sql";
-    private const string AddConnectorScriptName = "AddConnector.sql";
-    private const string DeleteConnectorScriptName = "DeleteConnector.sql";
 
     public static string GetCreateDatabaseScript()
     {
@@ -55,11 +52,6 @@ internal static class ScriptReader
         return ReadResource(GetReadingOrderNodesScriptName);
     }
 
-    public static string GetReadingOrderConnectorsScript()
-    {
-        return ReadResource(GetReadingOrderConnectorsScriptName);
-    }
-
     public static string GetAddNodeScript()
     {
         return ReadResource(AddNodeScriptName);
@@ -68,16 +60,6 @@ internal static class ScriptReader
     public static string GetDeleteNodeScript()
     {
         return ReadResource(DeleteNodeScriptName);
-    }
-
-    public static string GetAddConnectorScript()
-    {
-        return ReadResource(AddConnectorScriptName);
-    }
-
-    public static string GetDeleteConnectorScript()
-    {
-        return ReadResource(DeleteConnectorScriptName);
     }
 
     private static string ReadResource(string fileName)
