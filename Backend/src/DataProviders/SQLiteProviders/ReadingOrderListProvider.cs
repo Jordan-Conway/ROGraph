@@ -7,8 +7,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ROGraph.Backend.Context;
 using ROGraph.Backend.Contracts;
 using ROGraph.Backend.DatabaseModels;
+using ROGraph.Backend.Repositories.Nodes;
 using ROGraph.Backend.Scripts;
 using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
@@ -18,16 +20,23 @@ namespace ROGraph.Backend.DataProviders.SQLiteProviders;
 public class ReadingOrderListProvider : IReadingOrderProvider
 {
     private static readonly string ConnectionString = "Data Source = " + FilePathProvider.GetDatabaseFilePath();
+    
+    private IDBContextFactory  _dbContextFactory;
+
+    public ReadingOrderListProvider(IDBContextFactory dbContextFactory)
+    {
+        _dbContextFactory = dbContextFactory;
+    }
 
     public async Task<ReadingOrderOverview?> GetReadingOrderOverview(Guid id, CancellationToken token = default)
     {
         try
         {
-            var context = new ReadingOrderContext();
+            var context = _dbContextFactory.CreateDbContext();
             
-            return context.ReadingOrderOverviews.FirstOrDefault(o => o.Id == id);
+            return context.GetSet<ReadingOrderOverviewDbModel>().FirstOrDefault(o => o.Id == id);
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             throw;
@@ -38,9 +47,9 @@ public class ReadingOrderListProvider : IReadingOrderProvider
     {
         try
         {
-            var context = new ReadingOrderContext();
+            var context = _dbContextFactory.CreateDbContext();
             
-            var existing = context.ReadingOrderOverviews.FirstOrDefault(o => o.Id == readingOrderOverview.Id);
+            var existing = context.GetSet<ReadingOrderOverviewDbModel>().FirstOrDefault(o => o.Id == readingOrderOverview.Id);
 
             if (existing is null)
             {
@@ -50,9 +59,9 @@ public class ReadingOrderListProvider : IReadingOrderProvider
             
             var updated = readingOrderOverview.ToDbModel();
 
-            await context.AddAsync(updated, token);
+            await context.Add(updated, token);
 
-            var rowsChanged = await context.SaveChangesAsync(token);
+            var rowsChanged = await context.Save(token);
 
             if (rowsChanged == 0)
             {
@@ -80,13 +89,13 @@ public class ReadingOrderListProvider : IReadingOrderProvider
     {
         try
         {
-            var context = new ReadingOrderContext();
+            var context = _dbContextFactory.CreateDbContext();
 
-            return context.ReadingOrderOverviews
+            return context.GetSet<ReadingOrderOverviewDbModel>()
                 .Where(o => o.Status == ReadingOrderStatus.Active)
                 .Select(o => o.ToOverview()).ToListAsync(token);
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             throw;
@@ -97,13 +106,13 @@ public class ReadingOrderListProvider : IReadingOrderProvider
     {
         try
         {
-            var context = new ReadingOrderContext();
+            var context = _dbContextFactory.CreateDbContext();
             var toCreate = overview.ToDbModel();
 
-            await context.ReadingOrderOverviews.AddAsync(toCreate, token);
-            await context.SaveChangesAsync(token);
+            await context.Add(toCreate, token);
+            await context.Save(token);
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             return false;
@@ -147,7 +156,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
     {
         try
         {
-            var context = new ReadingOrderContext();
+            var context = _dbContextFactory.CreateDbContext();
             var translator = readingOrder.CoordinateTranslator ??
                              throw new InvalidOperationException(
                                  "Cannot add update reading order without coordinate translator");
@@ -163,7 +172,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
             var nodesToUpdate = nodes.Where(n => existingNodeIds.Contains(n.Id));
             var nodesToDelete = existingNodes.Where(n => !nodes.Contains(n, new NodeComparer())).Select(n => n.Id);
             
-            await context.Nodes.Where(n => nodesToDelete.Contains(n.Id)).ExecuteDeleteAsync(token);
+            await context.GetSet<NodeDbModel>().Where(n => nodesToDelete.Contains(n.Id)).ExecuteDeleteAsync(token);
 
             foreach (var node in nodesToCreate)
             {
@@ -184,11 +193,11 @@ public class ReadingOrderListProvider : IReadingOrderProvider
                     Y = y.Output
                 };
 
-                await context.AddAsync(nodeDbModel, token);
-                await context.AddAsync(placement, token);
+                await context.Add(nodeDbModel, token);
+                await context.Add(placement, token);
             }
 
-            foreach (var node in nodesToCreate)
+            foreach (var node in nodesToUpdate)
             {
                 var x = translator.GetXFromId(node.X);
                 var y = translator.GetYFromId(node.Y);
@@ -207,11 +216,26 @@ public class ReadingOrderListProvider : IReadingOrderProvider
                     Y = y.Output
                 };
 
-                context.Update(nodeDbModel);
-                context.Update(placement);   
-            }
+                var existingNode = await context.GetSet<NodeDbModel>().FirstAsync(n => n.Id == node.Id, token);
+                var existingPlacement = await context.GetSet<NodePlacementDbModel>()
+                    .FirstAsync(p => p.NodeId == node.Id && p.ReadingOrderId == readingOrder.Id, token);
 
-            await context.SaveChangesAsync(token);
+                existingNode = existingNode with
+                {
+                    Name = nodeDbModel.Name,
+                    ChecklistId = nodeDbModel.ChecklistId,
+                    Description = nodeDbModel.Description,
+                    IsCompleted = nodeDbModel.IsCompleted,
+                    Type = nodeDbModel.Type
+                };
+                existingPlacement = existingPlacement with
+                {
+                    X = placement.X,
+                    Y = placement.Y
+                };
+
+                await context.Save(token);
+            }
 
             var connectors = readingOrder.Contents.GetConnectors();
             var existingConnectors = GetReadingOrderConnectors(readingOrder.Id, translator, connection);
@@ -219,7 +243,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
             var connectorsToCreate = connectors.Except(existingConnectors, connectorComparer);
             var connectorsToDelete = existingConnectors.Where(x => !connectors.Contains(x, connectorComparer)).Select(c => c.Id);
 
-            await context.Connectors.Where(c => connectorsToDelete.Contains(c.Id)).ExecuteDeleteAsync(token);
+            await context.GetSet<NodeDbModel>().Where(c => connectorsToDelete.Contains(c.Id)).ExecuteDeleteAsync(token);
 
             foreach (var connector in connectorsToCreate)
             {
@@ -243,10 +267,10 @@ public class ReadingOrderListProvider : IReadingOrderProvider
                         ? y2.Output
                         : throw new InvalidOperationException("Cannot save connector without y2")
                 };
-                context.Connectors.Add(connectorDbModel);
+                context.GetSet<ConnectorDbModel>().Add(connectorDbModel);
             }
 
-            await context.SaveChangesAsync(token);
+            await context.Save(token);
 
         }
         catch (Exception ex)
@@ -260,11 +284,6 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
     public async Task<bool> DeleteReadingOrder(Guid id, CancellationToken token = default)
     {
-        if (id == Guid.Empty)
-        {
-            return false;
-        }
-
         try
         {
             var context = new ReadingOrderContext();
@@ -281,7 +300,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
             await context.SaveChangesAsync(token);
         }
-        catch (SQLiteException ex )
+        catch (Exception ex )
         {
             Debug.WriteLine(ex.Message);
             return false;

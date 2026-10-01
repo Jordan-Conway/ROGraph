@@ -1,6 +1,9 @@
-﻿namespace ROGraph.Shared.Models
+﻿using System;
+
+namespace ROGraph.Shared.Models
 {
-    public class Checklist
+    public record Checklist
     {
+        public Guid Id { get; set; }
     }
 }
