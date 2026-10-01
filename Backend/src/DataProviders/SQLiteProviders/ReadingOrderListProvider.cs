@@ -158,11 +158,14 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
             var nodes = readingOrder.Contents.GetNodes();
             var existingNodes = GetReadingOrderNodes(readingOrder.Id, translator, connection);
+            var existingNodeIds = existingNodes.Select(n => n.Id).ToList();
+            var nodesToCreate = nodes.Where(n => !existingNodeIds.Contains(n.Id));
+            var nodesToUpdate = nodes.Where(n => existingNodeIds.Contains(n.Id));
             var nodesToDelete = existingNodes.Where(n => !nodes.Contains(n, new NodeComparer())).Select(n => n.Id);
             
             await context.Nodes.Where(n => nodesToDelete.Contains(n.Id)).ExecuteDeleteAsync(token);
 
-            foreach (var node in nodes)
+            foreach (var node in nodesToCreate)
             {
                 var x = translator.GetXFromId(node.X);
                 var y = translator.GetYFromId(node.Y);
@@ -172,7 +175,40 @@ public class ReadingOrderListProvider : IReadingOrderProvider
                     Debug.WriteLine("Cannot save node without x and y coordinates");
                 }
 
-                await context.AddAsync(node, token);
+                var nodeDbModel = node.ToDbModel();
+                var placement = new NodePlacementDbModel
+                {
+                    ReadingOrderId = readingOrder.Id,
+                    NodeId = nodeDbModel.Id,
+                    X = x.Output,
+                    Y = y.Output
+                };
+
+                await context.AddAsync(nodeDbModel, token);
+                await context.AddAsync(placement, token);
+            }
+
+            foreach (var node in nodesToCreate)
+            {
+                var x = translator.GetXFromId(node.X);
+                var y = translator.GetYFromId(node.Y);
+
+                if (!x.Success || !y.Success)
+                {
+                    Debug.WriteLine("Cannot save node without x and y coordinates");
+                }
+
+                var nodeDbModel = node.ToDbModel();
+                var placement = new NodePlacementDbModel
+                {
+                    ReadingOrderId = readingOrder.Id,
+                    NodeId = nodeDbModel.Id,
+                    X = x.Output,
+                    Y = y.Output
+                };
+
+                context.Update(nodeDbModel);
+                context.Update(placement);   
             }
 
             await context.SaveChangesAsync(token);

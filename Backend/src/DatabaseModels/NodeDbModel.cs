@@ -1,8 +1,10 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using ROGraph.Shared.Enums;
 
 namespace ROGraph.Backend.DatabaseModels;
 
+[Table("Nodes")]
 internal record NodeDbModel
 {
     public Guid Id { get; set; }
