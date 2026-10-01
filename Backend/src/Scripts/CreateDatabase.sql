@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS ReadingOrders (
     maxY INTEGER,
     created INTEGER,
     lastModified INTEGER,
-    deleted INTEGER NOT NULL DEFAULT 0
+    status INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TRIGGER IF NOT EXISTS UpdateReadingOrdersLastModified

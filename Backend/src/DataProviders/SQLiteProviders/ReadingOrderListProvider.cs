@@ -19,59 +19,48 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 {
     private static readonly string ConnectionString = "Data Source = " + FilePathProvider.GetDatabaseFilePath();
 
-    public ReadingOrderOverview? GetReadingOrderOverview(Guid id)
+    public async Task<ReadingOrderOverview?> GetReadingOrderOverview(Guid id, CancellationToken token = default)
     {
         try
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = ScriptReader.GetAllReadingOrdersScript();
-            command.Parameters.Add(new SQLiteParameter("@roId", id.ToString()));
-            using var reader = command.ExecuteReader();
-
-            if (reader.HasRows && reader.Read())
-            {
-                return new ReadingOrderOverview
-                (
-                    reader.GetString(1),
-                    reader.GetGuid(0),
-                    reader.GetString(2),
-                    reader.GetInt32(3),
-                    reader.GetInt32(4)
-                );
-            }
+            var context = new ReadingOrderContext();
+            
+            return context.ReadingOrderOverviews.FirstOrDefault(o => o.Id == id);
         }
         catch (SQLiteException ex)
         {
             Debug.WriteLine(ex.Message);
             throw;
         }
-        
-        return null;
     }
 
-    public bool UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview)
+    public async Task<bool> UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview, CancellationToken token = default)
     {
         try
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = ScriptReader.GetUpdateReadingOrderScript();
-            command.Parameters.Add(new SQLiteParameter("@id", readingOrderOverview.Id.ToString()));
-            command.Parameters.Add(new SQLiteParameter("@name", readingOrderOverview.Name));
-            command.Parameters.Add(new SQLiteParameter("@description", readingOrderOverview.Description ?? string.Empty));
+            var context = new ReadingOrderContext();
+            
+            var existing = context.ReadingOrderOverviews.FirstOrDefault(o => o.Id == readingOrderOverview.Id);
 
-            var rowCount = command.ExecuteNonQuery();
+            if (existing is null)
+            {
+                Console.WriteLine($"Reading order with {readingOrderOverview.Id} was not found, it will be created instead");
+                return await CreateReadingOrder(readingOrderOverview, token);
+            }
+            
+            var updated = readingOrderOverview.ToDbModel();
 
-            if (rowCount == 0)
+            await context.AddAsync(updated, token);
+
+            var rowsChanged = await context.SaveChangesAsync(token);
+
+            if (rowsChanged == 0)
             {
                 Debug.WriteLine("No rows were updated");
                 return false;
             }
 
-            if (rowCount > 2)
+            if (rowsChanged > 2)
             {
                 Debug.WriteLine("Updated multiple rows, but should have been 1");
             }
@@ -87,56 +76,32 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return true;
     }
 
-    public List<ReadingOrderOverview> GetReadingOrders()
+    public Task<List<ReadingOrderOverview>> GetReadingOrders(CancellationToken token = default)
     {
-        List<ReadingOrderOverview> overviews = [];
-        
         try
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
-            var script = ScriptReader.GetAllReadingOrdersScript();
-            var command = connection.CreateCommand();
-            command.CommandText = script;
-            using var reader = command.ExecuteReader();
-            
-            while(reader.HasRows && reader.Read())
-            {
-                var overview = new ReadingOrderOverview
-                (
-                    reader.GetString(1),
-                    reader.GetGuid(0),
-                    reader.GetString(2),
-                    reader.GetInt32(3),
-                    reader.GetInt32(4)
-                );
-                
-                overviews.Add(overview);
-            }
+            var context = new ReadingOrderContext();
+
+            return context.ReadingOrderOverviews
+                .Where(o => o.Status == ReadingOrderStatus.Active)
+                .Select(o => o.ToOverview()).ToListAsync(token);
         }
         catch (SQLiteException ex)
         {
             Debug.WriteLine(ex.Message);
+            throw;
         }
-
-        return overviews;
     }
 
-    public bool CreateReadingOrder(ReadingOrderOverview overview)
+    public async Task<bool> CreateReadingOrder(ReadingOrderOverview overview, CancellationToken token = default)
     {
         try
         {
-            var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = ScriptReader.CreateReadingOrderScript();
-            command.Parameters.Add(new SQLiteParameter("@id", overview.Id == Guid.Empty ? overview.ToString() : Guid.NewGuid().ToString()));
-            command.Parameters.Add(new SQLiteParameter("@name", overview.Name));
-            command.Parameters.Add(new SQLiteParameter("@description", overview.Description ?? string.Empty));
-            command.Parameters.Add(new SQLiteParameter("@maxX", value: 0));
-            command.Parameters.Add(new SQLiteParameter("@maxY", value: 0));
-            
-            command.ExecuteNonQuery();
+            var context = new ReadingOrderContext();
+            var toCreate = overview.ToDbModel();
+
+            await context.ReadingOrderOverviews.AddAsync(toCreate, token);
+            await context.SaveChangesAsync(token);
         }
         catch (SQLiteException ex)
         {
@@ -147,9 +112,9 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return true;
     }
 
-    public ReadingOrder GetReadingOrder(Guid id)
+    public async Task<ReadingOrder?> GetReadingOrder(Guid id, CancellationToken token = default)
     {
-        var overview = GetReadingOrderOverview(id) ?? throw new InvalidOperationException($"No reading order with id {id.ToString()}");
+        var overview = await GetReadingOrderOverview(id) ?? throw new InvalidOperationException($"No reading order with id {id.ToString()}");
         var coordinateTranslator = new CoordinateTranslator(overview.MaxX, overview.MaxY);
         
         try
@@ -178,7 +143,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         }
     }
 
-    public async Task<bool> UpdateReadingOrder(ReadingOrder readingOrder, CancellationToken token)
+    public async Task<bool> UpdateReadingOrder(ReadingOrder readingOrder, CancellationToken token = default)
     {
         try
         {
@@ -193,17 +158,9 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
             var nodes = readingOrder.Contents.GetNodes();
             var existingNodes = GetReadingOrderNodes(readingOrder.Id, translator, connection);
-            var nodesToDelete = existingNodes.Where(n => !nodes.Contains(n, new NodeComparer()));
-
-            foreach (var node in nodesToDelete)
-            {
-                var deleteNodeCommand = connection.CreateCommand();
-                deleteNodeCommand.CommandText = ScriptReader.GetDeleteNodeScript();
-                deleteNodeCommand.Parameters.Add(new SQLiteParameter("@nodeId", node.Id.ToString()));
-                deleteNodeCommand.Parameters.Add(new SQLiteParameter("@roId", readingOrder.Id.ToString()));
-
-                deleteNodeCommand.ExecuteNonQuery();
-            }
+            var nodesToDelete = existingNodes.Where(n => !nodes.Contains(n, new NodeComparer())).Select(n => n.Id);
+            
+            await context.Nodes.Where(n => nodesToDelete.Contains(n.Id)).ExecuteDeleteAsync(token);
 
             foreach (var node in nodes)
             {
@@ -212,24 +169,13 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
                 if (!x.Success || !y.Success)
                 {
-                    Debug.WriteLine("Cannot save node with x and y coordinates");
+                    Debug.WriteLine("Cannot save node without x and y coordinates");
                 }
 
-                var addNodeCommand = connection.CreateCommand();
-                addNodeCommand.CommandText = ScriptReader.GetAddNodeScript();
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@nodeId", node.Id.ToString()));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@name", node.Name));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@description", node.Description));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@isCompleted", node.IsCompleted));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@checkListId", null));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@origin", node.Origin.ToString()));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@type", node.Type));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@readingOrderId", readingOrder.Id.ToString()));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@x", x.Output));
-                addNodeCommand.Parameters.Add(new SQLiteParameter("@y", y.Output));
-
-                addNodeCommand.ExecuteNonQuery();
+                await context.AddAsync(node, token);
             }
+
+            await context.SaveChangesAsync(token);
 
             var connectors = readingOrder.Contents.GetConnectors();
             var existingConnectors = GetReadingOrderConnectors(readingOrder.Id, translator, connection);
@@ -276,7 +222,7 @@ public class ReadingOrderListProvider : IReadingOrderProvider
         return true;
     }
 
-    public bool DeleteReadingOrder(Guid id)
+    public async Task<bool> DeleteReadingOrder(Guid id, CancellationToken token = default)
     {
         if (id == Guid.Empty)
         {
@@ -285,21 +231,19 @@ public class ReadingOrderListProvider : IReadingOrderProvider
 
         try
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
+            var context = new ReadingOrderContext();
             
-            var command = connection.CreateCommand();
-            command.CommandText = ScriptReader.DeleteReadingOrderScript();
-            command.Parameters.Add(new SQLiteParameter("@id", id.ToString()));
-            
-            var rowsUpdated = command.ExecuteNonQuery();
+            var existing = context.ReadingOrderOverviews.FirstOrDefault(x => x.Id == id);
 
-            switch (rowsUpdated)
+            if (existing is null)
             {
-                case 0: Debug.WriteLine($"Tried to delete reading order with id {id.ToString()}, but it was not found"); break;
-                case 1: break;
-                default: Debug.WriteLine($"Deleted multiple reading orders with  id {id.ToString()}"); break;
+                Console.WriteLine($"Cannot delete  reading order with id {id} as it does not exist");
+                return false;
             }
+
+            existing.Status = ReadingOrderStatus.Deleted;
+
+            await context.SaveChangesAsync(token);
         }
         catch (SQLiteException ex )
         {

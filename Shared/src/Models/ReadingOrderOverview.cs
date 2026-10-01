@@ -2,7 +2,7 @@
 
 namespace ROGraph.Shared.Models
 {
-    public class ReadingOrderOverview
+    public record ReadingOrderOverview
     {
         public string Name { get; set; }
 

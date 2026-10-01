@@ -8,58 +8,16 @@ namespace ROGraph.Backend.Scripts;
 internal static class ScriptReader
 {
     private const string CreateDatabaseScriptName = "CreateDatabase.sql";
-    private const string GetAllReadingOrdersScriptName = "GetAllReadingOrders.sql";
-    private const string GetReadingOrderScriptName = "GetReadingOrderScript.sql";
-    private const string CreateReadingOrderScriptName = "CreateReadingOrder.sql";
-    private const string UpdateReadingOrderScriptName = "UpdateReadingOrder.sql";
-    private const string DeleteReadingOrderScriptName = "DeleteReadingOrder.sql";
     private const string GetReadingOrderNodesScriptName = "GetReadingOrderNodes.sql";
-    private const string AddNodeScriptName = "AddNode.sql";
-    private const string DeleteNodeScriptName = "DeleteNode.sql";
 
     public static string GetCreateDatabaseScript()
     {
         return ReadResource(CreateDatabaseScriptName);
     }
 
-    public static string GetAllReadingOrdersScript()
-    {
-        return ReadResource(GetAllReadingOrdersScriptName);
-    }
-
-    public static string GetReadingOrderScript()
-    {
-        return ReadResource(GetReadingOrderScriptName);
-    }
-
-    public static string CreateReadingOrderScript()
-    {
-        return ReadResource(CreateReadingOrderScriptName);
-    }
-
-    public static string GetUpdateReadingOrderScript()
-    {
-        return ReadResource(UpdateReadingOrderScriptName);
-    }
-
-    public static string DeleteReadingOrderScript()
-    {
-        return ReadResource(DeleteReadingOrderScriptName);
-    }
-
     public static string GetReadingOrderNodesScript()
     {
         return ReadResource(GetReadingOrderNodesScriptName);
-    }
-
-    public static string GetAddNodeScript()
-    {
-        return ReadResource(AddNodeScriptName);
-    }
-
-    public static string GetDeleteNodeScript()
-    {
-        return ReadResource(DeleteNodeScriptName);
     }
 
     private static string ReadResource(string fileName)

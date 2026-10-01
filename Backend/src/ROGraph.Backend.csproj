@@ -27,9 +27,6 @@
     <EmbeddedResource Include="Scripts\ReadingOrders\GetAllReadingOrders.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Scripts\ReadingOrders\GetReadingOrder.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <None Remove="Scripts\CreateDatabase.sql" />
     <EmbeddedResource Include="Scripts\CreateDatabase.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -35,7 +36,7 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         Debug.WriteLine(roProvider.GetType());
         
         _readingOrderProvider = roProvider;
-        _overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders());
+        _overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders().GetAwaiter().GetResult());
         EditReadingOrderCommand = ReactiveCommand.CreateFromTask<Guid>(EditReadingOrder);
         EditReadingOrderCommand.ThrownExceptions.Subscribe(ex =>
         {
@@ -71,11 +72,11 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         Overviews.Remove(Overviews.First(x => x.Id == id));
     }
     
-    private void RefreshReadingOrders()
+    private async Task RefreshReadingOrders(CancellationToken token = default)
     {
         Overviews.Clear();
         
-        _overviews.AddRange(_readingOrderProvider.GetReadingOrders());
+        _overviews.AddRange(await _readingOrderProvider.GetReadingOrders(token));
     }
 
     private void RegisterMessages()

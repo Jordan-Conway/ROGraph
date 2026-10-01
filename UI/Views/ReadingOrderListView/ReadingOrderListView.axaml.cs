@@ -1,5 +1,6 @@
 using System;
 using System.Reactive;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using ROGraph.UI.Views.ReadingOrderView;
@@ -26,7 +27,7 @@ internal partial class ReadingOrderListViewControl : UserControl
 
         DataContext = new ReadingOrderListViewModel(RoProvider);
 
-        NavigateCommand = ReactiveCommand.Create<Guid>(NavigateToReadingOrder);
+        NavigateCommand = ReactiveCommand.CreateFromTask<Guid>(NavigateToReadingOrder);
         
         RegisterMessages();
     }
@@ -39,9 +40,9 @@ internal partial class ReadingOrderListViewControl : UserControl
         this.InvalidateVisual();
     }
 
-    private static void NavigateToReadingOrder(Guid id)
+    private static async Task NavigateToReadingOrder(Guid id)
     {
-        var readingOrder = RoProvider.GetReadingOrder(id);
+        var readingOrder = await RoProvider.GetReadingOrder(id);
         ArgumentNullException.ThrowIfNull(readingOrder);
         
         WeakReferenceMessenger.Default.Send(new NavigationMessage(new ReadingOrderViewControl(readingOrder)));

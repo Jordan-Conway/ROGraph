@@ -10,12 +10,12 @@ namespace ROGraph.Backend.DataProviders.MockProviders;
 
 public class MockReadingOrderProvider : IReadingOrderProvider
 {
-    public bool CreateReadingOrder(ReadingOrderOverview overview)
+    public Task<bool> CreateReadingOrder(ReadingOrderOverview overview, CancellationToken token = default)
     {
-        return true;
+        return Task.FromResult(true);
     }
 
-    public ReadingOrder GetReadingOrder(Guid id)
+    public Task<ReadingOrder?> GetReadingOrder(Guid id, CancellationToken token = default)
     {
         var content = new ReadingOrderContentsManager();
         var coordinateTranslator = new CoordinateTranslator(2, 2);
@@ -45,10 +45,10 @@ public class MockReadingOrderProvider : IReadingOrderProvider
             CoordinateTranslator = coordinateTranslator
         };
 
-        return mockReadingOrder;
+        return Task.FromResult(mockReadingOrder);
     }
     
-    public List<ReadingOrderOverview> GetReadingOrders()
+    public Task<List<ReadingOrderOverview>> GetReadingOrders(CancellationToken token = default)
     {
         var list = new List<ReadingOrderOverview>
         {
@@ -56,17 +56,18 @@ public class MockReadingOrderProvider : IReadingOrderProvider
             new("Reading Order 2", Guid.NewGuid()),
         };
 
-        return list;
+        return Task.FromResult(list);
     }
 
-    public ReadingOrderOverview GetReadingOrderOverview(Guid id)
+    public Task<ReadingOrderOverview?> GetReadingOrderOverview(Guid id, CancellationToken token = default)
     {
-        return new ReadingOrderOverview("Reading Order 1", Guid.NewGuid());
+        var overview = new ReadingOrderOverview("Reading Order 1", Guid.NewGuid());
+        return Task.FromResult(overview);
     }
 
-    public bool UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview)
+    public Task<bool> UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview, CancellationToken token = default)
     {
-        return true;
+        return Task.FromResult(true);
     }
 
     public Task<bool> UpdateReadingOrder(ReadingOrder readingOrder, CancellationToken token = default)
@@ -74,8 +75,8 @@ public class MockReadingOrderProvider : IReadingOrderProvider
         return Task.FromResult(true);
     }
 
-    public bool DeleteReadingOrder(Guid id)
+    public Task<bool> DeleteReadingOrder(Guid id, CancellationToken token = default)
     {
-        return true;
+        return Task.FromResult(true);
     }
 }
