@@ -16,10 +16,10 @@ namespace ROGraph.Shared.Models
             Connectors = [];
         }
 
-        public ReadingOrderContentsManager(List<Node> nodes, List<Connector> connectors)
+        public ReadingOrderContentsManager(IList<Node> nodes, IList<Connector> connectors)
         {
-            Nodes = nodes;
-            Connectors = connectors;
+            Nodes = nodes as List<Node> ?? [.. nodes];
+            Connectors = connectors as List<Connector> ?? [.. connectors];
         }
 
         public Node? GetNode(Guid id)
