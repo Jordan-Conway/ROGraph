@@ -1,8 +1,7 @@
 using System;
-using ROGraph.Backend.DatabaseModels;
 using ROGraph.Shared.Models;
 
-namespace ROGraph.Backend.Repositories.Nodes;
+namespace ROGraph.Backend.DatabaseModels;
 
 internal static class NodeExtensions
 {
