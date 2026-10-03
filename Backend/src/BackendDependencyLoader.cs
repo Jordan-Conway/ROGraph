@@ -13,7 +13,7 @@ public static class BackendDependencyLoader
 {
     public static void AddDependencies(IServiceCollection services)
     {
-        services.AddTransient<IDBContextFactory, DBContextFactory>();
+        services.AddSingleton<IDBContextFactory, DBContextFactory>();
         services.AddSingleton<IReadingOrderDataSourceCreator, SqlDataSourceCreator>();
         services.AddSingleton<IReadingOrderProvider, ReadingOrderListProvider>();
 
@@ -23,13 +23,13 @@ public static class BackendDependencyLoader
 
     private static void AddRepositories(IServiceCollection services)
     {
-        services.AddTransient<INodeRepository, NodeRepository>();
-        services.AddTransient<IConnectorRepository, ConnectorRepository>();
-        services.AddTransient<IReadingOrderRepository, ReadingOrderRepository>();
+        services.AddSingleton<INodeRepository, NodeRepository>();
+        services.AddSingleton<IConnectorRepository, ConnectorRepository>();
+        services.AddSingleton<IReadingOrderRepository, ReadingOrderRepository>();
     }
 
     private static void AddServices(IServiceCollection services)
     {
-        services.AddTransient<IReadingOrderService, ReadingOrderService>();
+        services.AddSingleton<IReadingOrderService, ReadingOrderService>();
     }
 }

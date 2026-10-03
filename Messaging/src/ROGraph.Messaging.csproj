@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\src\ROGraph.Shared.csproj" />
+    <ProjectReference Include="..\..\Backend\src\ROGraph.Backend.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+  	<InternalsVisibleTo Include="ROGraph.Messaging.Tests" />
+  </ItemGroup>
+</Project>
