@@ -21,7 +21,7 @@ internal static class NodeExtensions
         };
     }
 
-    public static Node ToNode(this NodeDbModel model)
+    public static Node ToNode(this NodeDbModel model, Guid? X = null, Guid? Y = null)
     {
         return new Node
         (
@@ -30,8 +30,8 @@ internal static class NodeExtensions
             model.Origin,
             model.Created,
             model.LastModified,
-            Guid.Empty,
-            Guid.Empty,
+            X ?? Guid.Empty,
+            Y ?? Guid.Empty,
             model.Type,
             model.IsCompleted,
             description: model.Description

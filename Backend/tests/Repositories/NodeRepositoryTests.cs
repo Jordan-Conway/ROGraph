@@ -27,22 +27,32 @@ public sealed class NodeRepositoryTests : RepositoryTest
     [Test]
     public async Task GetNodesForReadingOrder_ReturnsNodesPlacedInReadingOrder()
     {
+        // Arrange
+        var translator = new CoordinateTranslator(2, 2);
+
         // Act
         var result =
-            await _repository.GetNodesForReadingOrder(ExistingReadingOrderId, TestContext.CurrentContext.CancellationToken);
-        
+            await _repository.GetNodesForReadingOrder(ExistingReadingOrderId, translator, TestContext.CurrentContext.CancellationToken);
+
         // Assert
         var context = Mocker.GetMock<IDBContext>().Object;
-        var expectedNodes = context.GetSet<NodeDbModel>().Take(2).Select(n => n.ToNode());
+        var expectedNodes = context.GetSet<NodeDbModel>().Take(2).Select(n => n.ToNode()).ToList();
+        expectedNodes[0].X = translator.GetXFromInt(0);
+        expectedNodes[0].Y = translator.GetYFromInt(0);
+        expectedNodes[1].X = translator.GetXFromInt(1);
+        expectedNodes[1].Y = translator.GetYFromInt(0);
         Assert.That(result, Is.EquivalentTo(expectedNodes));
     }
 
     [Test]
     public async Task GetNodesForReadingOrder_NoNodesForReadingOrder_ReturnsEmptyList()
     {
+        // Arrange
+        var translator = new CoordinateTranslator(2, 2);
+
         // Act
-        var result = await _repository.GetNodesForReadingOrder(Guid.NewGuid(), TestContext.CurrentContext.CancellationToken);
-        
+        var result = await _repository.GetNodesForReadingOrder(Guid.NewGuid(), translator, TestContext.CurrentContext.CancellationToken);
+
         // Assert
         Assert.That(result, Is.Empty);
     }
@@ -58,14 +68,14 @@ public sealed class NodeRepositoryTests : RepositoryTest
             Origin = ExistingReadingOrderId
         };
         var placementToCreate = (4, 1);
-        
+
         // Act
         var result = await _repository.CreateNode(nodeToCreate, ExistingReadingOrderId, placementToCreate,
             TestContext.CurrentContext.CancellationToken);
-        
+
         // Assert
         Assert.That(result, Is.EqualTo(nodeToCreate.Id));
-        
+
         var expectedNode = nodeToCreate.ToDbModel();
         var expectedPlacement = new NodePlacementDbModel
         {
@@ -88,11 +98,11 @@ public sealed class NodeRepositoryTests : RepositoryTest
             Id = ExistingNodeId1
         };
         var placementToCreate = (3, 4);
-        
+
         // Act
         var result = await _repository.CreateNode(nodeToCreate, ExistingReadingOrderId, placementToCreate,
             TestContext.CurrentContext.CancellationToken);
-        
+
         // Asset
         Assert.That(result, Is.EqualTo(ExistingNodeId1));
 
@@ -129,16 +139,16 @@ public sealed class NodeRepositoryTests : RepositoryTest
         Mocker.Setup<IDBContext, Task<int>>(c => c.Save(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
         // Act
-        var result = await _repository.UpdateNode(updatedNode, updatedPlacement, ExistingReadingOrderId,
+        var result = await _repository.UpdateNode(updatedNode, ExistingReadingOrderId, updatedPlacement,
             TestContext.CurrentContext.CancellationToken);
-        
+
         // Assert
         Assert.That(result, Is.True);
 
         var context = Mocker.GetMock<IDBContext>().Object;
         var updatedNodeInDb = context.GetSet<NodeDbModel>().First(n => n.Id == ExistingNodeId1);
         var updatedPlacementInDb = context.GetSet<NodePlacementDbModel>().First(p => p.NodeId == ExistingNodeId1);
-        
+
         AssertNodeIsAsExpected(updatedNode, updatedNodeInDb);
         Assert.Multiple(() =>
         {
@@ -172,15 +182,15 @@ public sealed class NodeRepositoryTests : RepositoryTest
         Mocker.Setup<IDBContext, Task<int>>(c => c.Save(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
         // Act
-        var result = await _repository.UpdateNode(updatedNode, newPlacement, newReadingOrderId,
+        var result = await _repository.UpdateNode(updatedNode, newReadingOrderId, newPlacement,
             TestContext.CurrentContext.CancellationToken);
-        
+
         // Assert
         Assert.That(result, Is.True);
-        
+
         var context = Mocker.GetMock<IDBContext>().Object;
         var updatedNodeInDb = context.GetSet<NodeDbModel>().First(n => n.Id == ExistingNodeId1);
-        
+
         AssertNodeIsAsExpected(updatedNode, updatedNodeInDb);
 
         var expectedPlacement = new NodePlacementDbModel

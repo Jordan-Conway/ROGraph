@@ -18,20 +18,20 @@ internal class NodeRepository : INodeRepository
     {
         _dbContextFactory = dbContextFactory;
     }
-    
-    public async Task<IList<Node>> GetNodesForReadingOrder(Guid readingOrderId, CancellationToken token)
+
+    public async Task<IList<Node>> GetNodesForReadingOrder(Guid readingOrderId, CoordinateTranslator translator, CancellationToken token)
     {
         var context = _dbContextFactory.CreateDbContext();
 
-        var query = context.GetSet<NodeDbModel>().Join(
+        var nodes = context.GetSet<NodeDbModel>().Join(
                 context.GetSet<NodePlacementDbModel>(),
                 n => n.Id,
                 p => p.NodeId,
-                (node, placement) => new { Node = node, ReadingOrderId = placement.ReadingOrderId })
-            .Where(n => n.ReadingOrderId == readingOrderId)
-            .Select(n => n.Node.ToNode());
+                (node, placement) => new { Node = node, Placement = placement })
+            .Where(n => n.Placement.ReadingOrderId == readingOrderId)
+            .Select(n => n.Node.ToNode(translator.GetXFromInt(n.Placement.X), translator.GetYFromInt(n.Placement.Y)));
 
-        return await query.ToListAsync(token);
+        return await nodes.ToListAsync(token);
     }
 
     public async Task<Guid> CreateNode(Node node, Guid readingOrderId, (int X, int Y) placement,
@@ -43,7 +43,7 @@ internal class NodeRepository : INodeRepository
         {
             node.Id = Guid.NewGuid();
         }
-        
+
         var alreadyExists = await context.GetSet<NodeDbModel>().FirstOrDefaultAsync(n => n.Id == node.Id, token) is not null;
 
         if (!alreadyExists)
@@ -55,7 +55,7 @@ internal class NodeRepository : INodeRepository
 
             node.Created = DateTime.UtcNow;
             node.LastModified = node.Created;
-            
+
             var nodeToCreate = node.ToDbModel();
             await context.Add(nodeToCreate, token);
         }
@@ -66,7 +66,7 @@ internal class NodeRepository : INodeRepository
         return node.Id;
     }
 
-    public async Task<bool> UpdateNode(Node node, (int X, int Y) placement, Guid readingOrderId, CancellationToken token)
+    public async Task<bool> UpdateNode(Node node, Guid readingOrderId, (int X, int Y) placement, CancellationToken token)
     {
         var context = _dbContextFactory.CreateDbContext();
 
@@ -74,7 +74,7 @@ internal class NodeRepository : INodeRepository
 
         existingNode.Name = node.Name;
         existingNode.Type = node.Type;
-        existingNode.Description = node.Description;
+        existingNode.Description = node.Description ?? string.Empty;
         existingNode.IsCompleted = node.IsCompleted;
         existingNode.ChecklistId = node.Checklist?.Id ?? Guid.Empty;
 
@@ -91,7 +91,7 @@ internal class NodeRepository : INodeRepository
             existingPlacement.Y = placement.Y;
         }
 
-        var rowsChanged= await context.Save(token);
+        var rowsChanged = await context.Save(token);
 
         return rowsChanged > 0;
     }

@@ -12,12 +12,13 @@ namespace ROGraph.Backend.Tests.Repositories;
 public abstract class RepositoryTest
 {
     protected static readonly Guid ExistingReadingOrderId = Guid.NewGuid();
+    internal static readonly ReadingOrderOverviewDbModel ExistingReadingOrder = new("Existing Reader Order", ExistingReadingOrderId, "A description", 2, 2);
     protected static readonly Guid ExistingNodeId1 = Guid.NewGuid();
     protected static readonly Guid ExistingNodeId2 = Guid.NewGuid();
     protected static readonly Guid ExistingConnectorId1 = Guid.NewGuid();
     protected static readonly Guid ExistingConnectorId2 = Guid.NewGuid();
     protected static readonly DateTime FakeCreationDate = DateTime.MinValue;
-    
+
     protected readonly AutoMocker Mocker = new();
 
     [SetUp]
@@ -25,10 +26,10 @@ public abstract class RepositoryTest
     {
         Mocker.Setup<IDBContextFactory, IDBContext>(f => f.CreateDbContext())
             .Returns(() => Mocker.GetMock<IDBContext>().Object);
-        
+
         SetupDatabase();
     }
-    
+
     private void SetupDatabase()
     {
         var nodes = new List<NodeDbModel>
@@ -70,6 +71,10 @@ public abstract class RepositoryTest
                 Y2 = 2,
             }
         };
+        var readingOrders = new List<ReadingOrderOverviewDbModel>
+        {
+            ExistingReadingOrder
+        };
 
         Mocker.Setup<IDBContext, DbSet<NodeDbModel>>(c => c.GetSet<NodeDbModel>())
             .ReturnsDbSet(nodes);
@@ -77,6 +82,8 @@ public abstract class RepositoryTest
             .ReturnsDbSet(placements);
         Mocker.Setup<IDBContext, DbSet<ConnectorDbModel>>(c => c.GetSet<ConnectorDbModel>())
             .ReturnsDbSet(connectors);
+        Mocker.Setup<IDBContext, DbSet<ReadingOrderOverviewDbModel>>(r => r.GetSet<ReadingOrderOverviewDbModel>())
+            .ReturnsDbSet(readingOrders);
     }
 
     private static NodeDbModel CreateNodeModel(string name, Guid readingOrderId)

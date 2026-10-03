@@ -18,7 +18,7 @@ internal class ConnectorRepository : IConnectorRepository
     {
         _dbContextFactory = dbContextFactory;
     }
-    
+
     public async Task<IList<Connector>> GetConnectorsForReadingOrder(Guid readingOrderId, CoordinateTranslator translator, CancellationToken token)
     {
         var context = _dbContextFactory.CreateDbContext();
@@ -35,12 +35,40 @@ internal class ConnectorRepository : IConnectorRepository
         {
             connector.Id = Guid.NewGuid();
         }
-        
+
         var context = _dbContextFactory.CreateDbContext();
 
         var dbConnector = coordinateTranslator.ToConnectorDbModel(connector);
 
         await context.Add(dbConnector, token);
+        await context.Save(token);
+    }
+
+    public async Task UpdateConnector(Connector connector, CoordinateTranslator coordinateTranslator,
+        CancellationToken token)
+    {
+        if (connector.Id == Guid.Empty)
+        {
+            return;
+        }
+
+        var context = _dbContextFactory.CreateDbContext();
+
+        var existing = context.GetSet<ConnectorDbModel>().FirstOrDefault(c => c.Id == connector.Id);
+
+        if (existing is null)
+        {
+            return;
+        }
+
+        var origin = coordinateTranslator.Translate(connector.Origin);
+        var destination = coordinateTranslator.Translate(connector.Destination);
+
+        existing.X1 = origin.Item1;
+        existing.Y1 = origin.Item2;
+        existing.X2 = origin.Item1;
+        existing.Y2 = origin.Item2;
+
         await context.Save(token);
     }
 }
