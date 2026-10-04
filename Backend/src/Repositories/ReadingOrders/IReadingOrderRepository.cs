@@ -6,7 +6,7 @@ using ROGraph.Shared.Models;
 
 namespace ROGraph.Backend.Repositories.ReadingOrders;
 
-public interface IReadingOrderRepository
+internal interface IReadingOrderRepository
 {
     Task<IList<ReadingOrderOverview>> GetAllReadingOrders(CancellationToken token = default);
 

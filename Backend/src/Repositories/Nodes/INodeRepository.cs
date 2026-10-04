@@ -6,7 +6,7 @@ using ROGraph.Shared.Models;
 
 namespace ROGraph.Backend.Repositories.Nodes;
 
-public interface INodeRepository
+internal interface INodeRepository
 {
     public Task<IList<Node>> GetNodesForReadingOrder(Guid readingOrderId, CoordinateTranslator translator, CancellationToken token);
 
