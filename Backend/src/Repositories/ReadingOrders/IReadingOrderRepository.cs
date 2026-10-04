@@ -10,11 +10,11 @@ internal interface IReadingOrderRepository
 {
     Task<IList<ReadingOrderOverview>> GetAllReadingOrders(CancellationToken token = default);
 
-    public Task<ReadingOrderOverview?> GetReadingOrder(Guid id, CancellationToken token = default);
+    Task<ReadingOrderOverview?> GetReadingOrder(Guid id, CancellationToken token = default);
 
-    public Task<bool> CreateReadingOrder(ReadingOrderOverview readingOrderOverview, CancellationToken token = default);
+    Task<bool> CreateReadingOrder(ReadingOrderOverview readingOrderOverview, CancellationToken token = default);
 
-    public Task<bool> UpdateReadingOrder(ReadingOrderOverview readingOrderOverview, CancellationToken token = default);
+    Task<bool> UpdateReadingOrder(ReadingOrderOverview readingOrderOverview, CancellationToken token = default);
 
-    public Task<bool> DeleteReadingOrder(Guid id, CancellationToken token = default);
+    Task<bool> DeleteReadingOrder(Guid id, CancellationToken token = default);
 }
