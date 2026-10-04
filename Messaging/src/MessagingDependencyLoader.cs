@@ -1,4 +1,5 @@
 using System;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using ROGraph.Messaging.MessageHandlers;
 
@@ -15,5 +16,6 @@ public static class MessagingDependencyLoader
     {
         services.AddSingleton<MessageHandler>();
         services.AddSingleton<ReadingOrderMessageHandler>();
+        services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
     }
 }

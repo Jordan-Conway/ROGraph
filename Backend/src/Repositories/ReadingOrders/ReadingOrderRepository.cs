@@ -23,7 +23,9 @@ internal class ReadingOrderRepository : IReadingOrderRepository
     {
         var context = _dbContextFactory.CreateDbContext();
 
-        var overviews = context.GetSet<ReadingOrderOverviewDbModel>().Select(n => n.ToOverview());
+        var overviews = context.GetSet<ReadingOrderOverviewDbModel>()
+            .Where(n => n.Status != ReadingOrderStatus.Deleted)
+            .Select(n => n.ToOverview());
 
         return await overviews.ToListAsync(token);
     }

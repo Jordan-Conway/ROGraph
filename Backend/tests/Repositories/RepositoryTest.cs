@@ -13,6 +13,12 @@ public abstract class RepositoryTest
 {
     protected static readonly Guid ExistingReadingOrderId = Guid.NewGuid();
     internal static readonly ReadingOrderOverviewDbModel ExistingReadingOrder = new("Existing Reader Order", ExistingReadingOrderId, "A description", 2, 2);
+
+    private static readonly ReadingOrderOverviewDbModel DeletedReadingOrder =
+        new ReadingOrderOverviewDbModel("Deleted Reading Order", Guid.NewGuid()) with
+        {
+            Status = ReadingOrderStatus.Deleted
+        };
     protected static readonly Guid ExistingNodeId1 = Guid.NewGuid();
     protected static readonly Guid ExistingNodeId2 = Guid.NewGuid();
     protected static readonly Guid ExistingConnectorId1 = Guid.NewGuid();
@@ -73,7 +79,8 @@ public abstract class RepositoryTest
         };
         var readingOrders = new List<ReadingOrderOverviewDbModel>
         {
-            ExistingReadingOrder
+            ExistingReadingOrder,
+            DeletedReadingOrder
         };
 
         Mocker.Setup<IDBContext, DbSet<NodeDbModel>>(c => c.GetSet<NodeDbModel>())

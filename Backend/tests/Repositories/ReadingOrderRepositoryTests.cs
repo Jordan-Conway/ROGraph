@@ -22,7 +22,7 @@ public sealed class ReadingOrderRepositoryTests : RepositoryTest
     }
 
     [Test]
-    public async Task GetAllReadingOrders_ReturnsAllReadingOrders()
+    public async Task GetAllReadingOrders_ReturnsAllReadingOrdersThatAreNotDeleted()
     {
         // Act
         var result = await _repository.GetAllReadingOrders(TestContext.CurrentContext.CancellationToken);
