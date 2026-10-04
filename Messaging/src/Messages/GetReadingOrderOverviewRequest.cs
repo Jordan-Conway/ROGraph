@@ -1,13 +1,14 @@
 using System;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using ROGraph.Shared.Models;
 
 namespace ROGraph.Messaging.Messages;
 
-public class DeleteReadingOrderMessage : AsyncRequestMessage<bool>
+public class GetReadingOrderOverviewRequest : AsyncRequestMessage<ReadingOrderOverview?>
 {
     public Guid ReadingOrderId;
 
-    public DeleteReadingOrderMessage(Guid readingOrderId)
+    public GetReadingOrderOverviewRequest(Guid readingOrderId)
     {
         ReadingOrderId = readingOrderId;
     }

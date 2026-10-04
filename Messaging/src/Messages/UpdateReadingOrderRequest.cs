@@ -3,11 +3,11 @@ using ROGraph.Shared.Models;
 
 namespace ROGraph.Messaging.Messages;
 
-public class UpdateReadingOrderMessage : AsyncRequestMessage<bool>
+public class UpdateReadingOrderRequest : AsyncRequestMessage<bool>
 {
     public ReadingOrderOverview Overview;
 
-    public UpdateReadingOrderMessage(ReadingOrderOverview readingOrder)
+    public UpdateReadingOrderRequest(ReadingOrderOverview readingOrder)
     {
         Overview = readingOrder;
     }
