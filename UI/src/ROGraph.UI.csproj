@@ -4,6 +4,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="ROGraph.UI.Tests" />
+    </ItemGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
@@ -30,7 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\src\ROGraph.Shared.csproj" />
-    <ProjectReference Include="..\Backend\src\ROGraph.Backend.csproj" />
+    <ProjectReference Include="..\..\\Messaging\src\ROGraph.Messaging.csproj" />
+    <ProjectReference Include="..\..\Shared\src\ROGraph.Shared.csproj" />
+    <ProjectReference Include="..\..\Backend\src\ROGraph.Backend.csproj" />
   </ItemGroup>
 </Project>

@@ -22,7 +22,7 @@ public partial class App : Application
        DisableAvaloniaDataAnnotationValidation();
 
        var collection = new ServiceCollection();
-       BackendDependencyLoader.AddDependencies(collection);
+       BackendDependencyLoader.AddBackendDependencies(collection);
        AddDependencies(collection);
        
        var services = collection.BuildServiceProvider();

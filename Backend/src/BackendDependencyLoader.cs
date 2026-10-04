@@ -11,7 +11,7 @@ namespace ROGraph.Backend;
 
 public static class BackendDependencyLoader
 {
-    public static void AddDependencies(IServiceCollection services)
+    public static void AddBackendDependencies(this IServiceCollection services)
     {
         services.AddSingleton<IDBContextFactory, DBContextFactory>();
         services.AddSingleton<IReadingOrderDataSourceCreator, SqlDataSourceCreator>();
