@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
 using ROGraph.UI.Components.Toolbar;
-using ROGraph.UI.Dispatchers;
 using ROGraph.UI.Views.ReadingOrderListView;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
@@ -215,13 +214,12 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     
     private async Task Save()
     {
-        var result = await ReadingOrderViewDispatcher.DispatchSaveReadingOrderEvent(ReadingOrder);
-        Debug.WriteLine(!result ? "Failed to save reading order" : "Successfully saved reading order");
+        
     }
 
     private void NavigateToReadingOrderList()
     {
-        WeakReferenceMessenger.Default.Send(new NavigationMessage(new ReadingOrderListViewControl()));
+        
     }
 
     /// <summary>

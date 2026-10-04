@@ -1,17 +1,34 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ROGraph.Backend;
 using ROGraph.Messaging;
 using ROGraph.UI.Services;
+using ROGraph.UI.Views.ReadingOrderListView;
 
 namespace ROGraph.UI;
 
 internal static class DependencyLoader
 {
-    public static void RegisterServices(IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddSingleton<IMessagingService, MessagingService>();
+        public void RegisterDependencies()
+        {
+            services.AddSingleton<IMessagingService, MessagingService>();
         
-        services.AddBackendDependencies();
-        services.AddMessagingDependencies();
+            services.AddSingleton<ILoggerFactory, LoggerFactory>();
+        
+            services.AddBackendDependencies();
+            services.AddMessagingDependencies();
+            services.RegisterPages();
+        }
+
+        private void RegisterPages()
+        {
+            services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<MainWindow>();
+
+            services.AddTransient<ReadingOrderListViewModel>();
+            services.AddTransient<ReadingOrderListView>();
+        }
     }
 }

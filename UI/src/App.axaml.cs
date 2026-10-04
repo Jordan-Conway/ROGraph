@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ROGraph.Backend;
 using ROGraph.Backend.Contracts;
+using ROGraph.Messaging;
 
 namespace ROGraph.UI;
 
@@ -22,10 +23,10 @@ public partial class App : Application
        DisableAvaloniaDataAnnotationValidation();
 
        var collection = new ServiceCollection();
-       BackendDependencyLoader.AddBackendDependencies(collection);
-       AddDependencies(collection);
+       collection.RegisterDependencies();
        
        var services = collection.BuildServiceProvider();
+       services.SetupMessaging();
 
        var dataSourceCreator = services.GetRequiredService<IReadingOrderDataSourceCreator>();
        dataSourceCreator.CreateDataSource();
@@ -49,11 +50,5 @@ public partial class App : Application
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
-    }
-
-    private void AddDependencies(IServiceCollection serviceCollection)
-    {
-        serviceCollection.AddSingleton<ILoggerFactory, LoggerFactory>();
-        serviceCollection.AddSingleton<MainWindow, MainWindow>();
     }
 }

@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:ROGraph.UI.Views.ReadingOrderListView"
-             x:Class="ROGraph.UI.Views.ReadingOrderListView.ReadingOrderListViewControl"
+             x:Class="ROGraph.UI.Views.ReadingOrderListView.ReadingOrderListView"
              x:DataType="vm:ReadingOrderListViewModel"
              x:Name="Root">
     <UserControl.Styles>
@@ -23,7 +23,7 @@
     </UserControl.Styles>
     <ScrollViewer>
         <StackPanel>
-            <Button Command="{Binding CreateReadingOrder, RelativeSource={RelativeSource AncestorType=vm:ReadingOrderListViewControl}}">
+            <Button Command="{Binding CreateReadingOrderCommand}">
                 New
             </Button>
             <ItemsControl ItemsSource="{Binding Overviews}">
@@ -33,7 +33,7 @@
                             ColumnDefinitions="*,auto,auto"
                             Classes="ROList">
                             <Button 
-                                Command="{Binding NavigateCommand, RelativeSource={RelativeSource AncestorType=vm:ReadingOrderListViewControl}}"
+                                Command="{Binding NavigateCommand, RelativeSource={RelativeSource AncestorType=vm:ReadingOrderListView}}"
                                 CommandParameter="{Binding Id}"
                                 Grid.Column="0" 
                                 Classes="ROListItemButton">

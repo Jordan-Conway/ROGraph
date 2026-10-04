@@ -10,30 +10,23 @@ using ROGraph.Backend.Contracts;
 using ROGraph.Backend.DataProviders.SQLiteProviders;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Dialogs.EditReadingOrderDialog;
-using ROGraph.UI.Dispatchers;
 using ROGraph.UI.Messages;
 
 namespace ROGraph.UI.Views.ReadingOrderListView;
 
-internal partial class ReadingOrderListViewControl : UserControl
+public partial class ReadingOrderListView : UserControl
 {
     public ReactiveCommand<Guid, Unit> NavigateCommand { get; }
 
-    public ReadingOrderListViewControl()
+    public ReadingOrderListView(ReadingOrderListViewModel viewModel)
     {
         InitializeComponent();
+        
+        DataContext = viewModel;
 
         NavigateCommand = ReactiveCommand.CreateFromTask<Guid>(NavigateToReadingOrder);
 
         RegisterMessages();
-    }
-
-    [RelayCommand]
-    public void CreateReadingOrder()
-    {
-        var overview = new ReadingOrderOverview("New", Guid.NewGuid());
-        ReadingOrderListViewDispatcher.DispatchReadingOrderAddedMessage(overview);
-        this.InvalidateVisual();
     }
 
     private static async Task NavigateToReadingOrder(Guid id)

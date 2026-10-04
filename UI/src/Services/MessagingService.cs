@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,26 @@ internal class MessagingService : IMessagingService
     public async Task<IList<ReadingOrderOverview>> GetReadingOrderOverviews(CancellationToken token = default)
     {
         var message = new GetReadingOrderOverviewsRequest();
+        return await _messenger.Send(message);
+    }
+
+    public async Task<bool> CreateReadingOrder(ReadingOrderOverview readingOrderOverview,
+        CancellationToken token = default)
+    {
+        var message = new AddReadingOrderRequest(readingOrderOverview);
+        return await _messenger.Send(message);
+    }
+
+    public async Task<bool> UpdateReadingOrder(ReadingOrderOverview readingOrderOverview,
+        CancellationToken token = default)
+    {
+        var message = new UpdateReadingOrderRequest(readingOrderOverview);
+        return await _messenger.Send(message);
+    }
+
+    public async Task<bool> DeleteReadingOrder(Guid readingOrderId, CancellationToken token = default)
+    {
+        var message = new DeleteReadingOrderRequest(readingOrderId);
         return await _messenger.Send(message);
     }
 }

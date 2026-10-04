@@ -13,12 +13,13 @@ using ReactiveUI;
 using ROGraph.Backend.Contracts;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Messages;
+using ROGraph.UI.Services;
 
 namespace ROGraph.UI.Views.ReadingOrderListView;
 
-internal partial class ReadingOrderListViewModel : ObservableObject
+public partial class ReadingOrderListViewModel : ObservableObject
 {
-    private readonly IReadingOrderProvider _readingOrderProvider;
+    private readonly IMessagingService _messagingService;
     
     private ObservableCollection<ReadingOrderOverview> _overviews;
 
@@ -30,19 +31,36 @@ internal partial class ReadingOrderListViewModel : ObservableObject
     
     public ReactiveCommand<Guid, Unit> EditReadingOrderCommand { get; set; }
 
-    public ReadingOrderListViewModel(IReadingOrderProvider roProvider)
+    public ReadingOrderListViewModel(IMessagingService messagingService)
     {
-        ArgumentNullException.ThrowIfNull(roProvider);
-        Debug.WriteLine(roProvider.GetType());
+        ArgumentNullException.ThrowIfNull(messagingService);
         
-        _readingOrderProvider = roProvider;
-        _overviews = new ObservableCollection<ReadingOrderOverview>(_readingOrderProvider.GetReadingOrders().GetAwaiter().GetResult());
+        _messagingService = messagingService;
+
+        var existingOverviews = _messagingService.GetReadingOrderOverviews();
+        _overviews = new ObservableCollection<ReadingOrderOverview>(existingOverviews.GetAwaiter().GetResult());
+        Debug.WriteLine($"Resolved {_overviews.Count} overviews ");
         EditReadingOrderCommand = ReactiveCommand.CreateFromTask<Guid>(EditReadingOrder);
         EditReadingOrderCommand.ThrownExceptions.Subscribe(ex =>
         {
             Debug.WriteLine(ex);
         });
-        RegisterMessages();
+    }
+    
+    [RelayCommand]
+    public async void CreateReadingOrder()
+    {
+        var overview = new ReadingOrderOverview("New", Guid.NewGuid());
+        
+        var created = await _messagingService.CreateReadingOrder(overview);
+
+        if (!created)
+        {
+            Debug.WriteLine($"Failed to create reading order with id: {overview.Id}");
+            return;
+        }
+        
+        Overviews.Add(overview);
     }
     
     public async Task EditReadingOrder(Guid id)
@@ -60,31 +78,38 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         {
             return;
         }
+
+        var updated = await _messagingService.UpdateReadingOrder(overview);
+
+        if (!updated)
+        {
+            Debug.WriteLine($"Failed to update reading order with id: {id}");
+            return;
+        }
         
         Overviews.Replace(original, overview);
-        _readingOrderProvider.UpdateReadingOrderOverview(overview);
     }
 
     [RelayCommand]
-    public void DeleteReadingOrder(Guid id)
+    public async Task DeleteReadingOrder(Guid id)
     {
-        _readingOrderProvider.DeleteReadingOrder(id);
+        var deleted = await _messagingService.DeleteReadingOrder(id);
+
+        if (!deleted)
+        {
+            Debug.WriteLine($"Failed to delete reading order with id: {id}");
+            return;
+        }
+        
         Overviews.Remove(Overviews.First(x => x.Id == id));
     }
     
     private async Task RefreshReadingOrders(CancellationToken token = default)
     {
         Overviews.Clear();
-        
-        _overviews.AddRange(await _readingOrderProvider.GetReadingOrders(token));
-    }
 
-    private void RegisterMessages()
-    {
-        WeakReferenceMessenger.Default.Register<ReadingOrderAddedMessage>(this, (r,m) =>
-        {
-            _readingOrderProvider.CreateReadingOrder(m.Value);
-            RefreshReadingOrders();
-        });
+        var overviews = await _messagingService.GetReadingOrderOverviews(token);
+        
+        Overviews.AddRange(overviews);
     }
 }

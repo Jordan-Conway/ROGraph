@@ -4,7 +4,7 @@
              xmlns:md="using:ROGraph.UI.Models"
              xmlns:tb="using:ROGraph.UI.Components.Toolbar"
              x:Name="Root"
-             x:Class="ROGraph.UI.Views.ReadingOrderView.ReadingOrderViewControl"
+             x:Class="ROGraph.UI.Views.ReadingOrderView.ReadingOrderView"
              x:DataType="vm:ReadingOrderViewModel">
     <StackPanel>
         <tb:Toolbar Name="Toolbar" Content="{Binding ToolbarContent}"></tb:Toolbar>

@@ -8,14 +8,13 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using ROGraph.UI.Dialogs.ConfirmDialog;
 using ROGraph.UI.Dialogs.EditNodeDialog;
-using ROGraph.UI.Dispatchers;
 using ROGraph.UI.Models;
 using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
 
-internal partial class ReadingOrderViewControl : UserControl
+internal partial class ReadingOrderView : UserControl
 {
     private (Guid, Guid) _newConnectorOrigin = (Guid.Empty, Guid.Empty);
     private InteractionMode _interactionMode = InteractionMode.DEFAULT;
@@ -23,7 +22,7 @@ internal partial class ReadingOrderViewControl : UserControl
     public int ImageWidth => Sizes.ImageSize;
     public int ImageHeight => Sizes.ImageSize;
 
-    public ReadingOrderViewControl(ReadingOrder readingOrder)
+    public ReadingOrderView(ReadingOrder readingOrder)
     {
         InitializeComponent();
 
@@ -52,7 +51,6 @@ internal partial class ReadingOrderViewControl : UserControl
         
         var destination = node.Node.GetPosition();
         var connector = new Connector(this._newConnectorOrigin, destination);
-        ReadingOrderViewDispatcher.DispatchConnectorAddedMessage(connector);
         this._interactionMode = InteractionMode.DEFAULT;
     }
 
@@ -177,14 +175,8 @@ internal partial class ReadingOrderViewControl : UserControl
             null,
             string.Empty);
         NodeModel model = new(node, position.Item1, position.Item2);
-        ReadingOrderViewDispatcher.DispatchNodeAddedMessage(model);
 
         var result = await EditNode(node, true);
-
-        if(!result)
-        {
-            ReadingOrderViewDispatcher.DispatchNodeDeletedMessage(node.Id);
-        }
     }
 
     [RelayCommand]
@@ -193,11 +185,6 @@ internal partial class ReadingOrderViewControl : UserControl
         var dialog = new ConfirmDialogView($"Are you sure you want to delete {node.Name}?");
         var root = this.VisualRoot as Window;
         var shouldDelete = await dialog.ShowDialog<bool>(root!);
-
-        if(shouldDelete)
-        {
-            ReadingOrderViewDispatcher.DispatchNodeDeletedMessage(node.Id);
-        }
     }
 
     [RelayCommand]
@@ -216,7 +203,7 @@ internal partial class ReadingOrderViewControl : UserControl
     [RelayCommand]
     private void DeleteConnector(Guid id)
     {
-        ReadingOrderViewDispatcher.DispatchConnectorDeletedMessage(id);
+        
     }
 
     private async Task<bool> EditNode(Node node, bool confirmCancel = false)
@@ -231,7 +218,6 @@ internal partial class ReadingOrderViewControl : UserControl
     [RelayCommand]
     private void AddColumn(int position)
     {
-        ReadingOrderViewDispatcher.DispatchColumnAddedEvent(position);
         this.InvalidateVisual();
     }
 
@@ -248,14 +234,12 @@ internal partial class ReadingOrderViewControl : UserControl
         }
 
         Console.WriteLine($"Deleting column {position}");
-        ReadingOrderViewDispatcher.DispatchColumnDeletedEvent(position);
         this.InvalidateVisual();
     }
 
     [RelayCommand]
     private void AddRow(int position)
     {
-        ReadingOrderViewDispatcher.DispatchRowAddedEvent(position);
         this.InvalidateVisual();
     }
 
@@ -270,8 +254,7 @@ internal partial class ReadingOrderViewControl : UserControl
         {
             return;
         }
-
-        ReadingOrderViewDispatcher.DispatchRowDeletedEvent(position);
+        
         this.InvalidateVisual();
     }
 }

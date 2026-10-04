@@ -6,6 +6,7 @@ using ROGraph.UI.Messages;
 using System;
 using System.Data.SQLite;
 using ROGraph.Backend.Contracts;
+using ROGraph.UI.Services;
 
 namespace ROGraph.UI;
 
@@ -13,12 +14,12 @@ public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
     private UserControl _currentPage;
-    private readonly IReadingOrderProvider _readingOrderProvider;
+    private readonly IMessagingService _messagingService;
 
-    public MainWindowViewModel(IReadingOrderProvider readingOrderProvider)
+    public MainWindowViewModel(ReadingOrderListView initialPage, IMessagingService messagingService)
     {
-        _currentPage  = new ReadingOrderListViewControl();
-        _readingOrderProvider = readingOrderProvider;
+        _currentPage  = initialPage;
+        _messagingService = messagingService;
         
         this.RegisterMessages();
     }
@@ -28,17 +29,6 @@ public partial class MainWindowViewModel : ObservableObject
         WeakReferenceMessenger.Default.Register<NavigationMessage>(this, (r, m) =>
         {
             this.ChangeView(m.Value);
-        });
-        WeakReferenceMessenger.Default.Register<SaveReadingOrderMessage>(this, (r, m) =>
-        {
-            try
-            {
-                m.Reply(_readingOrderProvider.UpdateReadingOrder(m.ReadingOrder));
-            }
-            catch (SQLiteException)
-            {
-                m.Reply(false);
-            }
         });
     }
 
