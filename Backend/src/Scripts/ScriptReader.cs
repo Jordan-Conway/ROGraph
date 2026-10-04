@@ -8,16 +8,10 @@ namespace ROGraph.Backend.Scripts;
 internal static class ScriptReader
 {
     private const string CreateDatabaseScriptName = "CreateDatabase.sql";
-    private const string GetReadingOrderNodesScriptName = "GetReadingOrderNodes.sql";
 
     public static string GetCreateDatabaseScript()
     {
         return ReadResource(CreateDatabaseScriptName);
-    }
-
-    public static string GetReadingOrderNodesScript()
-    {
-        return ReadResource(GetReadingOrderNodesScriptName);
     }
 
     private static string ReadResource(string fileName)

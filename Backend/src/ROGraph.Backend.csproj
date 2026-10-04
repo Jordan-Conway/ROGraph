@@ -23,37 +23,8 @@
     </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Nodes\AddNode.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Scripts\Nodes\GetReadingOrderNodes.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Scripts\ReadingOrders\GetAllReadingOrders.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <None Remove="Scripts\CreateDatabase.sql" />
     <EmbeddedResource Include="Scripts\CreateDatabase.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Remove="Scripts\GetAllReadingOrders.sql" />
-    <None Remove="Scripts\GetReadingOrderNodes.sql" />
-    <None Remove="Scripts\GetReadingOrder.sql" />
-    <None Remove="Scripts\AddNode.sql" />
-    <None Remove="Scripts\Nodes\DeleteNode.sql" />
-    <EmbeddedResource Include="Scripts\Nodes\DeleteNode.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Remove="Scripts\ReadingOrders\CreateReadingOrder.sql" />
-    <EmbeddedResource Include="Scripts\ReadingOrders\CreateReadingOrder.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Remove="Scripts\ReadingOrders\DeleteReadingOrder.sql" />
-    <EmbeddedResource Include="Scripts\ReadingOrders\DeleteReadingOrder.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Remove="Scripts\ReadingOrders\UpdateReadingOrder.sql" />
-    <EmbeddedResource Include="Scripts\ReadingOrders\UpdateReadingOrder.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

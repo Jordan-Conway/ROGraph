@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using ROGraph.Backend.Contracts;
 using ROGraph.Backend.Scripts;
 
-namespace ROGraph.Backend.DataProviders.SQLiteProviders;
+namespace ROGraph.Backend.DataProviders;
 
 internal class SqlDataSourceCreator : IReadingOrderDataSourceCreator
 {

@@ -1,6 +1,6 @@
 using ROGraph.Backend.Contracts;
 
-namespace ROGraph.Backend.DataProviders.MockProviders;
+namespace ROGraph.Backend.DataProviders;
 
 public class MockReadingOrderDataSourceCreator : IReadingOrderDataSourceCreator
 {

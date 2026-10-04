@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ROGraph.Backend.Context;
 using ROGraph.Backend.Contracts;
-using ROGraph.Backend.DataProviders.SQLiteProviders;
+using ROGraph.Backend.DataProviders;
 using ROGraph.Backend.Repositories.Connectors;
 using ROGraph.Backend.Repositories.Nodes;
 using ROGraph.Backend.Repositories.ReadingOrders;
@@ -15,7 +15,6 @@ public static class BackendDependencyLoader
     {
         services.AddSingleton<IDBContextFactory, DBContextFactory>();
         services.AddSingleton<IReadingOrderDataSourceCreator, SqlDataSourceCreator>();
-        services.AddSingleton<IReadingOrderProvider, ReadingOrderListProvider>();
 
         AddRepositories(services);
         AddServices(services);

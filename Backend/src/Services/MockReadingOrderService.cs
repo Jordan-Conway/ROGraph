@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,11 +7,28 @@ using ROGraph.Backend.Contracts;
 using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
 
-namespace ROGraph.Backend.DataProviders.MockProviders;
+namespace ROGraph.Backend.Services;
 
-public class MockReadingOrderProvider : IReadingOrderProvider
+public class MockReadingOrderService : IReadingOrderService
 {
-    public Task<bool> CreateReadingOrder(ReadingOrderOverview overview, CancellationToken token = default)
+    public Task<IList<ReadingOrderOverview>> GetReadingOrderOverviews(CancellationToken token = default)
+    {
+        IList<ReadingOrderOverview> list = new List<ReadingOrderOverview>
+        {
+            new("Reading Order 1", Guid.NewGuid()),
+            new("Reading Order 2", Guid.NewGuid()),
+        };
+
+        return Task.FromResult(list);
+    }
+
+    public Task<ReadingOrderOverview?> GetReadingOrderOverview(Guid id, CancellationToken token = default)
+    {
+        ReadingOrderOverview? overview = new("Reading Order 1", Guid.NewGuid());
+        return Task.FromResult(overview);
+    }
+    
+    public Task<bool> UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview, CancellationToken token = default)
     {
         return Task.FromResult(true);
     }
@@ -48,24 +66,7 @@ public class MockReadingOrderProvider : IReadingOrderProvider
         return Task.FromResult(mockReadingOrder);
     }
     
-    public Task<List<ReadingOrderOverview>> GetReadingOrders(CancellationToken token = default)
-    {
-        var list = new List<ReadingOrderOverview>
-        {
-            new("Reading Order 1", Guid.NewGuid()),
-            new("Reading Order 2", Guid.NewGuid()),
-        };
-
-        return Task.FromResult(list);
-    }
-
-    public Task<ReadingOrderOverview?> GetReadingOrderOverview(Guid id, CancellationToken token = default)
-    {
-        var overview = new ReadingOrderOverview("Reading Order 1", Guid.NewGuid());
-        return Task.FromResult(overview);
-    }
-
-    public Task<bool> UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview, CancellationToken token = default)
+    public Task<bool> CreateReadingOrder(ReadingOrderOverview overview, CancellationToken token = default)
     {
         return Task.FromResult(true);
     }
