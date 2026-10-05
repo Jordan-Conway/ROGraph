@@ -1,12 +1,13 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using ROGraph.UI.Pages;
 
 namespace ROGraph.UI.Messages;
 
-internal class NavigationMessage : ValueChangedMessage<UserControl>
+internal class NavigationMessage : ValueChangedMessage<PageType>
 {
-    public NavigationMessage(UserControl userControl) : base(userControl)
+    public NavigationMessage(PageType pageType) : base(pageType)
     {
-        
+
     }
 }

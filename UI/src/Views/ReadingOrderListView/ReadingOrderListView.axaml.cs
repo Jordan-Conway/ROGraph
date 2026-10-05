@@ -10,32 +10,24 @@ using ROGraph.Backend.Contracts;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Dialogs.EditReadingOrderDialog;
 using ROGraph.UI.Messages;
+using ROGraph.UI.Pages;
 
 namespace ROGraph.UI.Views.ReadingOrderListView;
 
-public partial class ReadingOrderListView : UserControl
+public partial class ReadingOrderListView : Page
 {
-    public ReactiveCommand<Guid, Unit> NavigateCommand { get; }
-
     public ReadingOrderListView(ReadingOrderListViewModel viewModel)
     {
         InitializeComponent();
-        
-        DataContext = viewModel;
 
-        NavigateCommand = ReactiveCommand.CreateFromTask<Guid>(NavigateToReadingOrder);
+        DataContext = viewModel;
 
         RegisterMessages();
     }
 
-    private static async Task NavigateToReadingOrder(Guid id)
-    {
-
-    }
-
     private void RegisterMessages()
     {
-        WeakReferenceMessenger.Default.Register<EditReadingOrderMessage>(this,  (r, m) =>
+        WeakReferenceMessenger.Default.Register<EditReadingOrderMessage>(this, (r, m) =>
         {
             var dialog = new EditReadingOrderDialog(m.Overview);
             var root = this.VisualRoot as Window;

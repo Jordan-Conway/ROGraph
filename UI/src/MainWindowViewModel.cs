@@ -1,26 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using ROGraph.UI.Views.ReadingOrderListView;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using System;
-using System.Data.SQLite;
-using ROGraph.Backend.Contracts;
 using ROGraph.UI.Services;
+using ROGraph.UI.Pages;
 
 namespace ROGraph.UI;
 
 public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
-    private UserControl _currentPage;
+    private Page _currentPage;
     private readonly IMessagingService _messagingService;
+    private readonly IPageService _pageService;
 
-    public MainWindowViewModel(ReadingOrderListView initialPage, IMessagingService messagingService)
+    public MainWindowViewModel(IMessagingService messagingService, IPageService pageService)
     {
-        _currentPage  = initialPage;
         _messagingService = messagingService;
-        
+        _pageService = pageService;
+
+        CurrentPage = _pageService.GetPage(new PageType.ReadingOrderListPage());
+
         this.RegisterMessages();
     }
 
@@ -32,9 +32,10 @@ public partial class MainWindowViewModel : ObservableObject
         });
     }
 
-    private void ChangeView(UserControl userControl)
+    private void ChangeView(PageType pageType)
     {
         Console.WriteLine("Moving to new view");
-        CurrentPage = userControl;
+        var page = _pageService.GetPage(pageType);
+        CurrentPage = page;
     }
 }

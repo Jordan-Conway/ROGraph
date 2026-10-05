@@ -1,9 +1,10 @@
 using System;
 using Avalonia.Controls;
+using ROGraph.UI.Pages;
 
 namespace ROGraph.UI.Services;
 
-internal interface IPageService
+public interface IPageService
 {
-    public T GetPage<T>() where T : UserControl;
+    public Page GetPage(PageType pageType);
 }

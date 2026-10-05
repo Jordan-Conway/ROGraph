@@ -13,6 +13,7 @@ using ReactiveUI;
 using ROGraph.Backend.Contracts;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Messages;
+using ROGraph.UI.Pages;
 using ROGraph.UI.Services;
 
 namespace ROGraph.UI.Views.ReadingOrderListView;
@@ -20,6 +21,7 @@ namespace ROGraph.UI.Views.ReadingOrderListView;
 public partial class ReadingOrderListViewModel : ObservableObject
 {
     private readonly IMessagingService _messagingService;
+    private readonly IMessenger _messenger;
     
     private ObservableCollection<ReadingOrderOverview> _overviews;
 
@@ -31,11 +33,12 @@ public partial class ReadingOrderListViewModel : ObservableObject
     
     public ReactiveCommand<Guid, Unit> EditReadingOrderCommand { get; set; }
 
-    public ReadingOrderListViewModel(IMessagingService messagingService)
+    public ReadingOrderListViewModel(IMessagingService messagingService, IMessenger messenger)
     {
         ArgumentNullException.ThrowIfNull(messagingService);
         
         _messagingService = messagingService;
+        _messenger = messenger;
 
         var existingOverviews = _messagingService.GetReadingOrderOverviews();
         _overviews = new ObservableCollection<ReadingOrderOverview>(existingOverviews.GetAwaiter().GetResult());
@@ -45,6 +48,12 @@ public partial class ReadingOrderListViewModel : ObservableObject
         {
             Debug.WriteLine(ex);
         });
+    }
+
+    [RelayCommand]
+    public void NavigateToReadingOrder(Guid readingOrderId)
+    {
+        _messenger.Send(new NavigationMessage(new PageType.ReadingOrderPage(readingOrderId)));
     }
     
     [RelayCommand]

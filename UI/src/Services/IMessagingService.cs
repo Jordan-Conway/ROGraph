@@ -9,6 +9,8 @@ namespace ROGraph.UI.Services;
 public interface IMessagingService
 {
     public Task<IList<ReadingOrderOverview>> GetReadingOrderOverviews(CancellationToken token = default);
+
+    public Task<ReadingOrder?> GetReadingOrder(Guid readingOrderId, CancellationToken token = default);
     
     public Task<bool> CreateReadingOrder(ReadingOrderOverview readingOrder, CancellationToken token = default);
 

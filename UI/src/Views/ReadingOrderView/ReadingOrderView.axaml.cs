@@ -11,22 +11,35 @@ using ROGraph.UI.Dialogs.EditNodeDialog;
 using ROGraph.UI.Models;
 using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
+using ROGraph.UI.Pages;
+using ROGraph.UI.Services;
+using ROGraph.UI.Services.StateService;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
 
-internal partial class ReadingOrderView : UserControl
+internal partial class ReadingOrderView : Page
 {
     private (Guid, Guid) _newConnectorOrigin = (Guid.Empty, Guid.Empty);
     private InteractionMode _interactionMode = InteractionMode.DEFAULT;
-    
+
     public int ImageWidth => Sizes.ImageSize;
     public int ImageHeight => Sizes.ImageSize;
 
-    public ReadingOrderView(ReadingOrder readingOrder)
+    public ReadingOrderView(IMessagingService messagingService, IStateService stateService)
     {
         InitializeComponent();
 
-        DataContext = new ReadingOrderViewModel(readingOrder);
+        var selectedReadingOrderId = stateService.SelectedReadingOrderId;
+        var readingOrder = messagingService.GetReadingOrder(selectedReadingOrderId).GetAwaiter().GetResult();
+
+        if (readingOrder is not null)
+        {
+            DataContext = new ReadingOrderViewModel(readingOrder);
+        }
+        else
+        {
+            Console.WriteLine($"Reading order with id {selectedReadingOrderId} does not exist");
+        }
     }
 
     private void HandleEmptySpaceNodeClick(object sender, PointerPressedEventArgs e)
@@ -34,8 +47,8 @@ internal partial class ReadingOrderView : UserControl
         e.Handled = true;
 
         if (!e.Properties.IsRightButtonPressed) return;
-        
-        var point =  e.GetCurrentPoint(sender as Control);
+
+        var point = e.GetCurrentPoint(sender as Control);
         OpenContextMenu(sender, point);
     }
 
@@ -48,7 +61,7 @@ internal partial class ReadingOrderView : UserControl
 
         var control = (Control)sender;
         if (control is not { DataContext: NodeModel node }) return;
-        
+
         var destination = node.Node.GetPosition();
         var connector = new Connector(this._newConnectorOrigin, destination);
         this._interactionMode = InteractionMode.DEFAULT;
@@ -60,11 +73,11 @@ internal partial class ReadingOrderView : UserControl
         e.Handled = true;
 
         if (!e.Properties.IsRightButtonPressed) return;
-        
+
         var control = (Control)sender;
         if (control is not { DataContext: NodeModel node }) return;
-        
-        var point =  e.GetCurrentPoint(sender as Control);
+
+        var point = e.GetCurrentPoint(sender as Control);
         OpenContextMenu(node, point);
     }
 
@@ -73,14 +86,14 @@ internal partial class ReadingOrderView : UserControl
         e.Handled = true;
 
         if (!e.Properties.IsRightButtonPressed) return;
-        
+
         var control = (Control)sender;
         if (control is not { DataContext: ConnectorModel connector }) return;
-        
-        var point =  e.GetCurrentPoint(sender as Control);
+
+        var point = e.GetCurrentPoint(sender as Control);
         OpenContextMenu(connector, point);
     }
-    
+
     private void OpenContextMenu(object clicked, PointerPoint position)
     {
         ViewPanel.ContextMenu!.ItemsSource = null;
@@ -89,25 +102,25 @@ internal partial class ReadingOrderView : UserControl
         switch (clicked)
         {
             case NodeModel model:
-            {
-                items.AddRange(GetNodeContextMenuItems(model));
-                break;
-            }
+                {
+                    items.AddRange(GetNodeContextMenuItems(model));
+                    break;
+                }
             case ConnectorModel connectorModel:
-            {
-                items.AddRange(GetConnectorContextMenuItems(connectorModel));
-                break;
-            }
+                {
+                    items.AddRange(GetConnectorContextMenuItems(connectorModel));
+                    break;
+                }
             case Grid:
-            {
-                items.AddRange(GetEmptySpaceContextMenuItems(position));
-                break;
-            }
+                {
+                    items.AddRange(GetEmptySpaceContextMenuItems(position));
+                    break;
+                }
         }
 
         items.AddRange(GetDefaultContextMenuItems(position));
 
-        if(items.Count > 0)
+        if (items.Count > 0)
         {
             ViewPanel.ContextMenu!.ItemsSource = items;
         }
@@ -163,11 +176,11 @@ internal partial class ReadingOrderView : UserControl
     private async Task CreateNewNode((int, int) position)
     {
         var node = new Node(
-            Guid.NewGuid(), 
-            "New Node", 
-            Guid.Empty, 
-            DateTime.Now, 
-            DateTime.Now, 
+            Guid.NewGuid(),
+            "New Node",
+            Guid.Empty,
+            DateTime.Now,
+            DateTime.Now,
             Guid.Empty,
             Guid.Empty,
             NodeType.TRIANGLE,
@@ -203,7 +216,7 @@ internal partial class ReadingOrderView : UserControl
     [RelayCommand]
     private void DeleteConnector(Guid id)
     {
-        
+
     }
 
     private async Task<bool> EditNode(Node node, bool confirmCancel = false)
@@ -228,7 +241,7 @@ internal partial class ReadingOrderView : UserControl
         var root = this.VisualRoot as Window;
         var shouldDelete = await dialog.ShowDialog<bool>(root!);
 
-        if(!shouldDelete)
+        if (!shouldDelete)
         {
             return;
         }
@@ -250,11 +263,11 @@ internal partial class ReadingOrderView : UserControl
         var root = this.VisualRoot as Window;
         var shouldDelete = await dialog.ShowDialog<bool>(root!);
 
-        if(!shouldDelete)
+        if (!shouldDelete)
         {
             return;
         }
-        
+
         this.InvalidateVisual();
     }
 }

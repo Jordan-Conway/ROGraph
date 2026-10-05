@@ -52,6 +52,7 @@ internal class ReadingOrderService : IReadingOrderService
 
         var contentManager = new ReadingOrderContentsManager(nodes, connectors);
         var readingOrder = new ReadingOrder(overview.Name, overview.Id, contentManager, overview.Description ?? "");
+        readingOrder.CoordinateTranslator = translator;
 
         return readingOrder;
     }

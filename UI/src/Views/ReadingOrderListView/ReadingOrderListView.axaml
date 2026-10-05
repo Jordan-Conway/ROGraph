@@ -33,7 +33,7 @@
                             ColumnDefinitions="*,auto,auto"
                             Classes="ROList">
                             <Button 
-                                Command="{Binding NavigateCommand, RelativeSource={RelativeSource AncestorType=vm:ReadingOrderListView}}"
+                                Command="{Binding #Root.((vm:ReadingOrderListViewModel)DataContext).NavigateToReadingOrderCommand}"
                                 CommandParameter="{Binding Id}"
                                 Grid.Column="0" 
                                 Classes="ROListItemButton">
