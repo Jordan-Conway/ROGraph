@@ -5,12 +5,14 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using ROGraph.UI.Dialogs.ConfirmDialog;
 using ROGraph.UI.Dialogs.EditNodeDialog;
 using ROGraph.UI.Models;
 using ROGraph.Shared.Enums;
 using ROGraph.Shared.Models;
+using ROGraph.UI.Messages;
 using ROGraph.UI.Pages;
 using ROGraph.UI.Services;
 using ROGraph.UI.Services.StateService;
@@ -19,22 +21,26 @@ namespace ROGraph.UI.Views.ReadingOrderView;
 
 internal partial class ReadingOrderView : Page
 {
+    private readonly IMessenger _messenger;
+    
     private (Guid, Guid) _newConnectorOrigin = (Guid.Empty, Guid.Empty);
     private InteractionMode _interactionMode = InteractionMode.DEFAULT;
 
     public int ImageWidth => Sizes.ImageSize;
     public int ImageHeight => Sizes.ImageSize;
 
-    public ReadingOrderView(IMessagingService messagingService, IStateService stateService)
+    public ReadingOrderView(IMessagingService messagingService, IStateService stateService, IMessenger messenger)
     {
         InitializeComponent();
+
+        _messenger = messenger;
 
         var selectedReadingOrderId = stateService.SelectedReadingOrderId;
         var readingOrder = messagingService.GetReadingOrder(selectedReadingOrderId).GetAwaiter().GetResult();
 
         if (readingOrder is not null)
         {
-            DataContext = new ReadingOrderViewModel(readingOrder);
+            DataContext = new ReadingOrderViewModel(readingOrder, messenger, messagingService);
         }
         else
         {
@@ -64,6 +70,7 @@ internal partial class ReadingOrderView : Page
 
         var destination = node.Node.GetPosition();
         var connector = new Connector(this._newConnectorOrigin, destination);
+        _messenger.Send(new ConnectorAddedMessage(connector));
         this._interactionMode = InteractionMode.DEFAULT;
     }
 
@@ -189,7 +196,14 @@ internal partial class ReadingOrderView : Page
             string.Empty);
         NodeModel model = new(node, position.Item1, position.Item2);
 
+        _messenger.Send(new NodeAddedMessage(model));
+
         var result = await EditNode(node, true);
+
+        if (!result)
+        {
+            _messenger.Send(new NodeDeletedMessage(node.Id));
+        }
     }
 
     [RelayCommand]
@@ -198,6 +212,11 @@ internal partial class ReadingOrderView : Page
         var dialog = new ConfirmDialogView($"Are you sure you want to delete {node.Name}?");
         var root = this.VisualRoot as Window;
         var shouldDelete = await dialog.ShowDialog<bool>(root!);
+
+        if (shouldDelete)
+        {
+            _messenger.Send(new NodeDeletedMessage(node.Id));
+        }
     }
 
     [RelayCommand]
@@ -216,7 +235,7 @@ internal partial class ReadingOrderView : Page
     [RelayCommand]
     private void DeleteConnector(Guid id)
     {
-
+        _messenger.Send(new ConnectorDeletedMessage(id));
     }
 
     private async Task<bool> EditNode(Node node, bool confirmCancel = false)
@@ -231,6 +250,7 @@ internal partial class ReadingOrderView : Page
     [RelayCommand]
     private void AddColumn(int position)
     {
+        _messenger.Send(new ColumnAddedMessage(position));
         this.InvalidateVisual();
     }
 
@@ -247,12 +267,14 @@ internal partial class ReadingOrderView : Page
         }
 
         Console.WriteLine($"Deleting column {position}");
+        _messenger.Send(new ColumnDeletedMessage(position));
         this.InvalidateVisual();
     }
 
     [RelayCommand]
     private void AddRow(int position)
     {
+        _messenger.Send(new RowAddedMessage(position));
         this.InvalidateVisual();
     }
 
@@ -268,6 +290,7 @@ internal partial class ReadingOrderView : Page
             return;
         }
 
+        _messenger.Send(new RowDeletedMessage(position));
         this.InvalidateVisual();
     }
 }

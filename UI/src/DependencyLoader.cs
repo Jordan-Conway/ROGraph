@@ -4,8 +4,9 @@ using ROGraph.Backend;
 using ROGraph.Messaging;
 using ROGraph.UI.Services;
 using ROGraph.UI.Services.StateService;
-using ROGraph.UI.Views.ReadingOrderListView;
+using ROGraph.UI.Views;
 using ROGraph.UI.Views.ReadingOrderView;
+using ReadingOrderListViewModel = ROGraph.UI.ViewModels.ReadingOrderListViewModel;
 
 namespace ROGraph.UI;
 

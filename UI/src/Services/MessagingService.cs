@@ -29,6 +29,12 @@ internal class MessagingService : IMessagingService
         return await _messenger.Send(message);
     }
 
+    public async Task<bool> SaveReadingOrder(ReadingOrder readingOrder, CancellationToken token = default)
+    {
+        var message = new UpdateReadingOrderContentRequest(readingOrder);
+        return await _messenger.Send(message);
+    }
+
     public async Task<bool> CreateReadingOrder(ReadingOrderOverview readingOrderOverview,
         CancellationToken token = default)
     {

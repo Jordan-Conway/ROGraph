@@ -1,18 +1,12 @@
-using System;
-using System.Reactive;
-using System.Threading.Tasks;
 using Avalonia.Controls;
-using CommunityToolkit.Mvvm.Input;
-using ROGraph.UI.Views.ReadingOrderView;
-using ReactiveUI;
 using CommunityToolkit.Mvvm.Messaging;
-using ROGraph.Backend.Contracts;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Dialogs.EditReadingOrderDialog;
 using ROGraph.UI.Messages;
 using ROGraph.UI.Pages;
+using ROGraph.UI.ViewModels;
 
-namespace ROGraph.UI.Views.ReadingOrderListView;
+namespace ROGraph.UI.Views;
 
 public partial class ReadingOrderListView : Page
 {

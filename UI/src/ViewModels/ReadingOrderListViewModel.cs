@@ -10,13 +10,12 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using ReactiveUI;
-using ROGraph.Backend.Contracts;
 using ROGraph.Shared.Models;
 using ROGraph.UI.Messages;
 using ROGraph.UI.Pages;
 using ROGraph.UI.Services;
 
-namespace ROGraph.UI.Views.ReadingOrderListView;
+namespace ROGraph.UI.ViewModels;
 
 public partial class ReadingOrderListViewModel : ObservableObject
 {
@@ -57,7 +56,7 @@ public partial class ReadingOrderListViewModel : ObservableObject
     }
     
     [RelayCommand]
-    public async void CreateReadingOrder()
+    public async Task CreateReadingOrder()
     {
         var overview = new ReadingOrderOverview("New", Guid.NewGuid());
         

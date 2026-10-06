@@ -70,7 +70,13 @@ internal class NodeRepository : INodeRepository
     {
         var context = _dbContextFactory.CreateDbContext();
 
-        var existingNode = await context.GetSet<NodeDbModel>().FirstAsync(n => n.Id == node.Id, token);
+        var existingNode = await context.GetSet<NodeDbModel>().FirstOrDefaultAsync(n => n.Id == node.Id, token);
+
+        if (existingNode is null)
+        {
+            Console.WriteLine($"Cannot update node with id {node.Id} as it does not exist");
+            return false;
+        }
 
         existingNode.Name = node.Name;
         existingNode.Type = node.Type;

@@ -12,6 +12,8 @@ public interface IMessagingService
 
     public Task<ReadingOrder?> GetReadingOrder(Guid readingOrderId, CancellationToken token = default);
     
+    public Task<bool> SaveReadingOrder(ReadingOrder readingOrder, CancellationToken token = default);
+    
     public Task<bool> CreateReadingOrder(ReadingOrderOverview readingOrder, CancellationToken token = default);
 
     public Task<bool> UpdateReadingOrder(ReadingOrderOverview readingOrder, CancellationToken token = default);

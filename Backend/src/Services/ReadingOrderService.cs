@@ -84,35 +84,45 @@ internal class ReadingOrderService : IReadingOrderService
 
         var nodes = readingOrder.Contents.GetNodes();
 
-        foreach (var node in nodes)
+        try
         {
-            var placement = (coordinateTranslator.GetXFromId(node.X).Output, coordinateTranslator.GetYFromId(node.Y).Output);
+            foreach (var node in nodes)
+            {
+                var placement = (coordinateTranslator.GetXFromId(node.X).Output,
+                    coordinateTranslator.GetYFromId(node.Y).Output);
 
-            if (existingNodes.Contains(node.Id))
-            {
-                await _nodeRepository.UpdateNode(node, readingOrder.Id, placement, token);
+                if (existingNodes.Contains(node.Id))
+                {
+                    await _nodeRepository.UpdateNode(node, readingOrder.Id, placement, token);
+                }
+                else
+                {
+                    await _nodeRepository.CreateNode(node, readingOrder.Id, placement, token);
+                }
             }
-            else
+
+            var connectors = readingOrder.Contents.GetConnectors();
+
+            foreach (var connector in connectors)
             {
-                await _nodeRepository.CreateNode(node, readingOrder.Id, placement, token);
+                if (existingConnectors.Contains(connector.Id))
+                {
+                    await _connectorRepository.UpdateConnector(connector, coordinateTranslator, token);
+                }
+                else
+                {
+                    await _connectorRepository.CreateConnector(connector, coordinateTranslator, token);
+                }
             }
+
+            return await _readingOrderRepository.UpdateReadingOrder(readingOrder.ToOverview(), token);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
         }
 
-        var connectors = readingOrder.Contents.GetConnectors();
-
-        foreach (var connector in connectors)
-        {
-            if (existingConnectors.Contains(connector.Id))
-            {
-                await _connectorRepository.UpdateConnector(connector, coordinateTranslator, token);
-            }
-            else
-            {
-                await _connectorRepository.CreateConnector(connector, coordinateTranslator, token);
-            }
-        }
-
-        return await _readingOrderRepository.UpdateReadingOrder(readingOrder.ToOverview(), token);
     }
 
     public async Task<bool> UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview, CancellationToken token = default)

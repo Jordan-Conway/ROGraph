@@ -11,16 +11,21 @@ using ROGraph.UI.Messages;
 using DynamicData;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
 using ROGraph.UI.Components.Toolbar;
-using ROGraph.UI.Views.ReadingOrderListView;
+using ROGraph.UI.Pages;
+using ROGraph.UI.Services;
 
 namespace ROGraph.UI.Views.ReadingOrderView;
 
 internal partial class ReadingOrderViewModel : ViewModelBase
 {
+    private readonly IMessenger _messenger;
+    private readonly IMessagingService _messagingService;
+    
     private ReadingOrder ReadingOrder { get; set; }
 
     public ObservableCollection<NodeModel> Nodes { get; set; } = [];
@@ -32,12 +37,14 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
     public ToolbarContent ToolbarContent { get; init; }
 
-    public ReadingOrderViewModel(ReadingOrder readingOrder)
+    public ReadingOrderViewModel(ReadingOrder readingOrder, IMessenger messenger, IMessagingService messagingService)
     {
         ArgumentNullException.ThrowIfNull(readingOrder.CoordinateTranslator, nameof(readingOrder.CoordinateTranslator));
 
         ReadingOrder = readingOrder;
         ToolbarContent = GetToolbarContent();
+        _messenger = messenger;
+        _messagingService = messagingService;
 
         RegisterMessages();
         PlaceContents();
@@ -90,17 +97,17 @@ internal partial class ReadingOrderViewModel : ViewModelBase
             throw new InvalidOperationException("Cannot place contents without coordinate translator");
         }
 
-        foreach(Node n in ReadingOrder.Contents.GetNodes())
+        foreach(var n in ReadingOrder.Contents.GetNodes())
         {
             Console.WriteLine(n.Name);
-            (int, int) position =  CoordinateUtils.GetNodePosition(ReadingOrder.CoordinateTranslator.Translate(n));
+            var position =  CoordinateUtils.GetNodePosition(ReadingOrder.CoordinateTranslator.Translate(n));
             Nodes.Add(new NodeModel(n, position.Item1, position.Item2));
         }
 
-        foreach(Connector c in ReadingOrder.Contents.GetConnectors())
+        foreach(var c in ReadingOrder.Contents.GetConnectors())
         {
-            (int, int) origin = ReadingOrder.CoordinateTranslator.Translate(c.Origin);
-            (int, int) destination = ReadingOrder.CoordinateTranslator.Translate(c.Destination);
+            var origin = ReadingOrder.CoordinateTranslator.Translate(c.Origin);
+            var destination = ReadingOrder.CoordinateTranslator.Translate(c.Destination);
 
             var positions = CoordinateUtils.GetConnectorPositions(origin, destination);
 
@@ -212,14 +219,14 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         RefreshContents();
     }
     
-    private async Task Save()
+    private async Task Save(CancellationToken token = default)
     {
-        
+        await _messagingService.SaveReadingOrder(ReadingOrder, token);
     }
 
     private void NavigateToReadingOrderList()
     {
-        
+        _messenger.Send(new NavigationMessage(new PageType.ReadingOrderListPage()));
     }
 
     /// <summary>

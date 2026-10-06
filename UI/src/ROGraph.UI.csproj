@@ -38,4 +38,15 @@
     <ProjectReference Include="..\..\Shared\src\ROGraph.Shared.csproj" />
     <ProjectReference Include="..\..\Backend\src\ROGraph.Backend.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\ReadingOrderListView\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\ReadingOrderListView.axaml.cs">
+      <DependentUpon>ReadingOrderListView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
