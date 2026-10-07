@@ -1,3 +1,4 @@
+using System;
 using ROGraph.Shared.Models;
 
 namespace ROGraph.Backend.DatabaseModels;
@@ -18,13 +19,14 @@ internal static class ConnectorExtensions
             };
         }
 
-        public ConnectorDbModel ToConnectorDbModel(Connector connector)
+        public ConnectorDbModel ToConnectorDbModel(Connector connector, Guid readingOrderId)
         {
             var origin = coordinateTranslator.Translate(connector.Origin);
             var destination = coordinateTranslator.Translate(connector.Destination);
             return new ConnectorDbModel
             {
                 Id = connector.Id,
+                ReadingOrderId = readingOrderId,
                 X1 = origin.Item1,
                 Y1 = origin.Item2,
                 X2 = destination.Item1,

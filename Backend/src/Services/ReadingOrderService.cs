@@ -111,7 +111,7 @@ internal class ReadingOrderService : IReadingOrderService
                 }
                 else
                 {
-                    await _connectorRepository.CreateConnector(connector, coordinateTranslator, token);
+                    await _connectorRepository.CreateConnector(connector, readingOrder.Id, coordinateTranslator, token);
                 }
             }
 

@@ -48,6 +48,7 @@ public class ConnectorRepositoryTests : RepositoryTest
     public async Task CreateConnector_ConnectorIsCreated()
     {
         // Arrange
+        var readingOrderId = Guid.NewGuid();
         var translator = new CoordinateTranslator(2, 2);
         var origin = (translator.GetXFromInt(1),  translator.GetYFromInt(1));
         var destination = (translator.GetXFromInt(2), translator.GetYFromInt(2));
@@ -57,7 +58,7 @@ public class ConnectorRepositoryTests : RepositoryTest
         };
         
         // Act
-        await _repository.CreateConnector(connector, translator, TestContext.CurrentContext.CancellationToken);
+        await _repository.CreateConnector(connector, readingOrderId, translator, TestContext.CurrentContext.CancellationToken);
         
         // Assert
         var expectedOrigin = translator.Translate(origin);
@@ -65,6 +66,7 @@ public class ConnectorRepositoryTests : RepositoryTest
         var expected = new ConnectorDbModel
         {
             Id = connector.Id,
+            ReadingOrderId = readingOrderId,
             X1 = expectedOrigin.Item1,
             Y1 = expectedOrigin.Item2,
             X2 = expectedDestination.Item1,
@@ -86,7 +88,7 @@ public class ConnectorRepositoryTests : RepositoryTest
         };
         
         // Act
-        await _repository.CreateConnector(connector, translator, TestContext.CurrentContext.CancellationToken);
+        await _repository.CreateConnector(connector, Guid.NewGuid(), translator, TestContext.CurrentContext.CancellationToken);
         
         // Assert
         Mocker.Verify<IDBContext>(c => c.Add(It.Is<ConnectorDbModel>(model => model.Id != Guid.Empty), TestContext.CurrentContext.CancellationToken ));

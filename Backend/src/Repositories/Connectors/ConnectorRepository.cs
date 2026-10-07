@@ -28,7 +28,7 @@ internal class ConnectorRepository : IConnectorRepository
         return await dbConnectors.Select(c => translator.ToConnector(c)).ToListAsync(token);
     }
 
-    public async Task CreateConnector(Connector connector, CoordinateTranslator coordinateTranslator,
+    public async Task CreateConnector(Connector connector, Guid readingOrderId, CoordinateTranslator coordinateTranslator,
         CancellationToken token)
     {
         if (connector.Id == Guid.Empty)
@@ -38,7 +38,7 @@ internal class ConnectorRepository : IConnectorRepository
 
         var context = _dbContextFactory.CreateDbContext();
 
-        var dbConnector = coordinateTranslator.ToConnectorDbModel(connector);
+        var dbConnector = coordinateTranslator.ToConnectorDbModel(connector, readingOrderId);
 
         await context.Add(dbConnector, token);
         await context.Save(token);
