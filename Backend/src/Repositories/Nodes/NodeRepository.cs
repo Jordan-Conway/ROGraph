@@ -59,9 +59,10 @@ internal class NodeRepository : INodeRepository
             var nodeToCreate = node.ToDbModel();
             await context.Add(nodeToCreate, token);
         }
+        
+        await context.Save(token);
 
         await CreatePlacement(node.Id, readingOrderId, placement, token);
-        await context.Save(token);
 
         return node.Id;
     }
