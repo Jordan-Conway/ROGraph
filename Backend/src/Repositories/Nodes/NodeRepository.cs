@@ -103,6 +103,18 @@ internal class NodeRepository : INodeRepository
         return rowsChanged > 0;
     }
 
+    public async Task<bool> DeleteNodePlacements(IEnumerable<Guid> nodeIds, Guid readingOrderId, CancellationToken token = default)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+
+        var toDelete = context.GetSet<NodePlacementDbModel>()
+            .Where(n => nodeIds.Contains(n.NodeId) && n.ReadingOrderId == readingOrderId);
+        
+        context.GetSet<NodePlacementDbModel>().RemoveRange(toDelete);
+        
+        return await context.Save(token) > 0;
+    }
+
     private async Task<NodePlacementDbModel> CreatePlacement(Guid nodeId, Guid readingOrderId, (int X, int Y) placement, CancellationToken token)
     {
         var context = _dbContextFactory.CreateDbContext();

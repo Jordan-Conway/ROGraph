@@ -82,10 +82,10 @@ internal class ReadingOrderService : IReadingOrderService
         var existingConnectors = (await _connectorRepository.GetConnectorsForReadingOrder(readingOrder.Id, coordinateTranslator, token))
             .Select(c => c.Id).ToHashSet();
 
-        var nodes = readingOrder.Contents.GetNodes();
-
         try
         {
+            var nodes = readingOrder.Contents.GetNodes();
+            
             foreach (var node in nodes)
             {
                 var placement = (coordinateTranslator.GetXFromId(node.X).Output,
@@ -93,7 +93,7 @@ internal class ReadingOrderService : IReadingOrderService
 
                 if (existingNodes.Contains(node.Id))
                 {
-                    await _nodeRepository.UpdateNode(node, readingOrder.Id, placement, token);
+                   await _nodeRepository.UpdateNode(node, readingOrder.Id, placement, token);
                 }
                 else
                 {
@@ -101,8 +101,11 @@ internal class ReadingOrderService : IReadingOrderService
                 }
             }
 
-            var connectors = readingOrder.Contents.GetConnectors();
+            var nodesToDelete = existingNodes.Where(nodeId => nodes.All(node => node.Id != nodeId));
+            await _nodeRepository.DeleteNodePlacements(nodesToDelete, readingOrder.Id, token);
 
+            var connectors = readingOrder.Contents.GetConnectors();
+            
             foreach (var connector in connectors)
             {
                 if (existingConnectors.Contains(connector.Id))
@@ -114,15 +117,19 @@ internal class ReadingOrderService : IReadingOrderService
                     await _connectorRepository.CreateConnector(connector, readingOrder.Id, coordinateTranslator, token);
                 }
             }
+            
+            var connectorsToDelete = existingConnectors.Where(connectorId => connectors.All(c => c.Id != connectorId));
+            await _connectorRepository.DeleteConnectors(connectorsToDelete, token);
+            
+            await _readingOrderRepository.UpdateReadingOrder(readingOrder.ToOverview(), token);
 
-            return await _readingOrderRepository.UpdateReadingOrder(readingOrder.ToOverview(), token);
+            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
             throw;
         }
-
     }
 
     public async Task<bool> UpdateReadingOrderOverview(ReadingOrderOverview readingOrderOverview, CancellationToken token = default)

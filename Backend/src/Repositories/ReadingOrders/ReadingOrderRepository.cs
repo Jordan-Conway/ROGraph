@@ -75,7 +75,7 @@ internal class ReadingOrderRepository : IReadingOrderRepository
 
         var rowsChanged = await context.Save(token);
 
-        return rowsChanged == 1;
+        return rowsChanged > 0;
     }
 
     public async Task<bool> DeleteReadingOrder(Guid id, CancellationToken token = default)

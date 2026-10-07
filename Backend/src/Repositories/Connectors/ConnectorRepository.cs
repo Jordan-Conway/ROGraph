@@ -71,4 +71,15 @@ internal class ConnectorRepository : IConnectorRepository
 
         await context.Save(token);
     }
+
+    public async Task DeleteConnectors(IEnumerable<Guid> connectorId, CancellationToken token)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+        
+        var toDelete = context.GetSet<ConnectorDbModel>().Where(c => connectorId.Contains(c.Id));
+        
+        context.GetSet<ConnectorDbModel>().RemoveRange(toDelete);
+
+        await context.Save(token);
+    }
 }
