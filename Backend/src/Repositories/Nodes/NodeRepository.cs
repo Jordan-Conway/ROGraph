@@ -108,6 +108,7 @@ internal class NodeRepository : INodeRepository
 
         var placementModel = new NodePlacementDbModel
         {
+            Id = Guid.NewGuid(),
             NodeId = nodeId,
             ReadingOrderId = readingOrderId,
             X = placement.X,

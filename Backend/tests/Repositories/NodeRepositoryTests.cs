@@ -85,7 +85,7 @@ public sealed class NodeRepositoryTests : RepositoryTest
             Y = placementToCreate.Item2
         };
         Mocker.Verify<IDBContext>(c => c.Add(expectedNode, TestContext.CurrentContext.CancellationToken), Times.Once);
-        Mocker.Verify<IDBContext>(c => c.Add(expectedPlacement, TestContext.CurrentContext.CancellationToken), Times.Once);
+        AssertPlacementWasCreated(expectedPlacement);
 
     }
 
@@ -113,7 +113,7 @@ public sealed class NodeRepositoryTests : RepositoryTest
             X = placementToCreate.Item1,
             Y = placementToCreate.Item2
         };
-        Mocker.Verify<IDBContext>(c => c.Add(expectedPlacement, TestContext.CurrentContext.CancellationToken), Times.Once);
+        AssertPlacementWasCreated(expectedPlacement);
         Mocker.Verify<IDBContext>(c => c.Add(It.IsAny<NodeDbModel>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -200,7 +200,7 @@ public sealed class NodeRepositoryTests : RepositoryTest
             X = newPlacement.Item1,
             Y = newPlacement.Item2
         };
-        Mocker.Verify<IDBContext>(c => c.Add(expectedPlacement, TestContext.CurrentContext.CancellationToken), Times.Once);
+        AssertPlacementWasCreated(expectedPlacement);
     }
 
     private static void AssertNodeIsAsExpected(Node updatedNode, NodeDbModel nodeInDatabase)
@@ -215,6 +215,15 @@ public sealed class NodeRepositoryTests : RepositoryTest
             Assert.That(nodeInDatabase.ChecklistId, Is.EqualTo(updatedNode.Checklist?.Id ?? Guid.Empty));
             Assert.That(nodeInDatabase.Description, Is.EqualTo(updatedNode.Description));
         });
+    }
 
+    private void AssertPlacementWasCreated(NodePlacementDbModel expectedPlacement)
+    {
+        Mocker.Verify<IDBContext>(c => c.Add(It.Is<NodePlacementDbModel>(n => 
+                n.ReadingOrderId == expectedPlacement.ReadingOrderId &&
+                n.NodeId == expectedPlacement.NodeId &&
+                n.X == expectedPlacement.X &&
+                n.Y == expectedPlacement.Y), 
+            TestContext.CurrentContext.CancellationToken), Times.Once);
     }
 }
