@@ -66,8 +66,8 @@ internal class ConnectorRepository : IConnectorRepository
 
         existing.X1 = origin.Item1;
         existing.Y1 = origin.Item2;
-        existing.X2 = origin.Item1;
-        existing.Y2 = origin.Item2;
+        existing.X2 = destination.Item1;
+        existing.Y2 = destination.Item2;
 
         await context.Save(token);
     }
