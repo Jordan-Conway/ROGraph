@@ -102,6 +102,7 @@ internal class ReadingOrderService : IReadingOrderService
             }
 
             var connectors = readingOrder.Contents.GetConnectors();
+            var connectorsToDelete = existingConnectors.Where(connectorId => connectors.All(c => c.Id != connectorId));
 
             foreach (var connector in connectors)
             {
@@ -114,6 +115,8 @@ internal class ReadingOrderService : IReadingOrderService
                     await _connectorRepository.CreateConnector(connector, readingOrder.Id, coordinateTranslator, token);
                 }
             }
+            
+            await _connectorRepository.DeleteConnectors(connectorsToDelete, token);
 
             return await _readingOrderRepository.UpdateReadingOrder(readingOrder.ToOverview(), token);
         }
