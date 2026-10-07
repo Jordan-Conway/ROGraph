@@ -221,7 +221,8 @@ internal partial class ReadingOrderViewModel : ViewModelBase
     
     private async Task Save(CancellationToken token = default)
     {
-        await _messagingService.SaveReadingOrder(ReadingOrder, token);
+        var result = await _messagingService.SaveReadingOrder(ReadingOrder, token);
+        Console.WriteLine($"Saved reading order: {result.ToString()}");
     }
 
     private void NavigateToReadingOrderList()

@@ -14,4 +14,6 @@ internal interface INodeRepository
         CancellationToken token);
 
     public Task<bool> UpdateNode(Node node, Guid readingOrderId, (int X, int Y) placement, CancellationToken token);
+
+    public Task<bool> DeleteNodePlacements(IEnumerable<Guid> nodeIds, Guid readingOrderId, CancellationToken token = default);
 }
