@@ -39,6 +39,11 @@ namespace ROGraph.Shared.Models
             return (this._columnIds[position.Item1], this._rowIds[position.Item2]);
         }
 
+        public (Guid, Guid) Translate((int x, int y) position)
+        {
+            return(_reversedColumnIds[position.x],  _reversedRowIds[position.y]);
+        }
+
         public Result<int> GetXFromId(Guid id)
         {
             return this._columnIds.TryGetValue(id, out var columnId) ? new Result<int>(true, columnId) : new Result<int>(false, 0);

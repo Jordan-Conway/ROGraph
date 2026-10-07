@@ -1,14 +1,14 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS ReadingOrders (
-    id TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY COLLATE NOCASE,
     name TEXT,
     description TEXT,
     maxX INTEGER,
     maxY INTEGER,
     created INTEGER,
     lastModified INTEGER,
-    deleted INTEGER NOT NULL DEFAULT 0
+    status INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TRIGGER IF NOT EXISTS UpdateReadingOrdersLastModified
@@ -28,12 +28,12 @@ BEGIN
 END;
 
 CREATE TABLE IF NOT EXISTS Nodes (
-    id TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY COLLATE NOCASE,
     name TEXT,
     description TEXT,
     isCompleted INT,
     checkListId TEXT,
-    origin TEXT,
+    origin TEXT COLLATE NOCASE,
     type INT,
     created INTEGER,
     lastModified INTEGER
@@ -56,8 +56,9 @@ BEGIN
 END;
 
 CREATE TABLE IF NOT EXISTS ReadingOrders_Nodes (
-    readingOrderId TEXT NOT NULL,
-    nodeId TEXT NOT NULL,
+    id TEXT PRIMARY KEY NOT NULL COLLATE NOCASE,
+    readingOrderId TEXT NOT NULL COLLATE NOCASE,
+    nodeId TEXT NOT NULL COLLATE NOCASE,
     x INTEGER,
     y INTEGER,
     
@@ -70,11 +71,12 @@ CREATE TABLE IF NOT EXISTS ReadingOrders_Nodes (
 CREATE UNIQUE INDEX IF NOT EXISTS ReadingOrders_Nodes_ROId_Index ON ReadingOrders_Nodes (readingOrderId, nodeId);
 
 CREATE TABLE IF NOT EXISTS Connectors (
+    id TEXT PRIMARY KEY NOT NULL COLLATE NOCASE,
     x1 INTEGER,
     y1 INTEGER,
     x2 INTEGER,
     y2 INTEGER,
-    readingOrderId TEXT,
+    readingOrderId TEXT COLLATE NOCASE,
     
     FOREIGN KEY (readingOrderId)
         REFERENCES ReadingOrders (id)

@@ -4,20 +4,22 @@ using ROGraph.Shared.Enums;
 
 namespace ROGraph.Shared.Models;
 
-public class Node
+public record Node
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string? Description { get; set; }
-    public bool IsCompleted { get; set; }
-    public Checklist? Checklist { get; set; }
-    public Guid Origin { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime LastModified { get; set; }
+    public Guid Id { get; set; } = Guid.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
+    public bool IsCompleted { get; set; } = false;
+    public Checklist? Checklist { get; set; } = null;
+    public Guid Origin { get; set; } = Guid.Empty;
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime LastModified { get; set; }  = DateTime.UtcNow;
 
-    public Guid X { get; set; }
-    public Guid Y { get; set; }
-    public NodeType Type { get; set; }
+    public Guid X { get; set; } = Guid.Empty;
+    public Guid Y { get; set; } = Guid.Empty;
+    public NodeType Type { get; set; } = NodeType.CIRCLE;
+    
+    public Node() {}
 
     public Node(
         Guid id,

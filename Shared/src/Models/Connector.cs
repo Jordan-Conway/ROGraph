@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace ROGraph.Shared.Models;
 
-public class Connector
+public record Connector
 {
+    public Guid Id { get; set; } = Guid.Empty;
     public (Guid, Guid) Origin { get; set; }
     public (Guid, Guid) Destination { get; set; }
 
