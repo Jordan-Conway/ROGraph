@@ -113,6 +113,7 @@ public abstract class RepositoryTest
     {
         return new NodePlacementDbModel
         {
+            Id = Guid.NewGuid(),
             ReadingOrderId = readingOrderId,
             NodeId = nodeId,
             X = x,
