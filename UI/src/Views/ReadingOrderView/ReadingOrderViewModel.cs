@@ -99,9 +99,9 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
         foreach(var n in ReadingOrder.Contents.GetNodes())
         {
-            Console.WriteLine(n.Name);
-            var position =  CoordinateUtils.GetNodePosition(ReadingOrder.CoordinateTranslator.Translate(n));
-            Nodes.Add(new NodeModel(n, position.Item1, position.Item2));
+            var (row, col) = ReadingOrder.CoordinateTranslator.Translate(n);
+            var (x, y) = CoordinateUtils.GetNodePosition((row, col));
+            Nodes.Add(new NodeModel(n, x, y));
         }
 
         foreach(var c in ReadingOrder.Contents.GetConnectors())

@@ -7,15 +7,17 @@ internal static class CoordinateUtils
     /// <summary>
     /// Converts a node's column and row position to pixel positions
     /// </summary>
-    /// <param name="position">A tuple representing the nodes column and row coordinates</param>
+    /// <param name="coordinates">A tuple representing the nodes column and row coordinates</param>
     /// <returns></returns>
-    public static (int, int) GetNodePosition((int, int) position)
+    public static (int, int) GetNodePosition((int, int) coordinates)
     {
-        var x = position.Item1;
-        var y = position.Item2;
-
-        x = (x * Sizes.ImageSize) + (x * Sizes.ImageGapSize) + (Sizes.ImageGapSize / 2);
-        y = (y * Sizes.ImageSize) + (y * (Sizes.ImageGapSize / 2)) + (Sizes.ImageGapSize / 4);
+        var x = coordinates.Item1;
+        var y = coordinates.Item2;
+        var numHorizontalGaps = Math.Max(x -1, 0);
+        var numVerticalGaps = Math.Max(y -1, 0);
+        
+        x = (x * Sizes.ImageSize) + (numHorizontalGaps * Sizes.ImageHorizontalGapSize);
+        y = (y * Sizes.ImageSize) + (numVerticalGaps * Sizes.ImageVerticalGapSize);
 
         return (x, y);
     }
@@ -45,13 +47,30 @@ internal static class CoordinateUtils
         var x = position.Item1;
         var y = position.Item2;
 
-        x -= Sizes.ImageGapSize / 2;
-        x /= Sizes.ImageSize + Sizes.ImageGapSize;
+        var verticalNodes = 0;
+        var horizontalNodes = 0;
 
-        y -= Sizes.ImageGapSize / 4;
-        y /= Sizes.ImageSize + (Sizes.ImageGapSize / 2);
+        while (y > 0)
+        {
+            y -= Sizes.ImageSize;
+            verticalNodes++;
+            
+            if (y <= 0) continue;
 
-        return (x, y);
+            y -= Sizes.ImageVerticalGapSize;
+        }
+        
+        while (x > 0)
+        {
+            x -= Sizes.ImageSize;
+            horizontalNodes++;
+
+            if (x <= 0) continue;
+            
+            x -= Sizes.ImageHorizontalGapSize;
+        }
+
+        return (horizontalNodes, verticalNodes);
     }
 
     /// <summary>
@@ -62,15 +81,15 @@ internal static class CoordinateUtils
     /// <returns></returns>
     public static ((int, int), (int, int)) GetConnectorPositions((int, int) origin, (int, int) destination)
     {
-        var x1 = origin.Item1;
-        var y1 = origin.Item2;
-        var x2 = destination.Item1;
-        var y2 = destination.Item2;
+        const int halfImageGapSize = Sizes.ImageSize / 2;
 
-        x1 = (x1 * Sizes.ImageSize) + (x1 * Sizes.ImageGapSize) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 2);
-        y1 = (y1 * Sizes.ImageSize) + (y1 * (Sizes.ImageGapSize / 2)) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 4);
-        x2 = (x2 * Sizes.ImageSize) + (x2 * Sizes.ImageGapSize) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 2);
-        y2 = (y2 * Sizes.ImageSize) + (y2 * (Sizes.ImageGapSize / 2)) + (Sizes.ImageSize / 2) + (Sizes.ImageGapSize / 4);
+        var (x1, y1) = GetNodePosition(origin);
+        var (x2, y2) = GetNodePosition(destination);
+
+        x1 += halfImageGapSize;
+        y1 += halfImageGapSize;
+        x2 += halfImageGapSize;
+        y2 += halfImageGapSize;
 
         return ((x1, y1), (x2, y2));
     }
@@ -83,8 +102,8 @@ internal static class CoordinateUtils
     public static int GetColumnPosition(double position)
     {
         var index = (int)Math.Round(position, 0);
-        index -= Sizes.ImageGapSize / 2;
-        index /= Sizes.ImageSize + Sizes.ImageGapSize;
+        index -= Sizes.ImageHorizontalGapSize / 2;
+        index /= Sizes.ImageSize + Sizes.ImageHorizontalGapSize;
 
         return index;
     }
@@ -97,8 +116,8 @@ internal static class CoordinateUtils
     public static int GetRowPosition(double position)
     {
         var index = (int)Math.Round(position, 0);
-        index -= Sizes.ImageGapSize / 4;
-        index /= Sizes.ImageSize + (Sizes.ImageGapSize / 2);
+        index -= Sizes.ImageHorizontalGapSize / 4;
+        index /= Sizes.ImageSize + (Sizes.ImageHorizontalGapSize / 2);
 
         return index;
     }
