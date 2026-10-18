@@ -197,13 +197,6 @@ internal partial class ReadingOrderView : Page
         NodeModel model = new(node, position.Item1, position.Item2);
 
         _messenger.Send(new NodeAddedMessage(model));
-
-        var result = await EditNode(node, true);
-
-        if (!result)
-        {
-            _messenger.Send(new NodeDeletedMessage(node.Id));
-        }
     }
 
     [RelayCommand]
