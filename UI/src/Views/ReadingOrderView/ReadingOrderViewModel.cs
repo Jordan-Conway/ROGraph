@@ -133,6 +133,14 @@ internal partial class ReadingOrderViewModel : ViewModelBase
         nodeModel.Node.X = ReadingOrder.CoordinateTranslator.GetXFromInt(gridPosition.Item1);
         nodeModel.Node.Y = ReadingOrder.CoordinateTranslator.GetYFromInt(gridPosition.Item2);
 
+        var alreadyExists =ReadingOrder.Contents.NodeExistsAtPosition(nodeModel.Node.X, nodeModel.Node.Y);
+
+        if (alreadyExists)
+        {
+            Console.WriteLine($"Cannot add node at {gridPosition} as a node is already there");
+            return;
+        }
+        
         Console.WriteLine($"Added node with x: {nodeModel.Node.X}, y: {nodeModel.Node.Y}");
 
         Nodes.Add(nodeModel);
