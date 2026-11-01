@@ -13,7 +13,7 @@ internal partial class EditNodeDialogViewModel : ViewModelBase
     public string? Description {get; set;}
     public bool IsCompleted {get; set;}
 
-    public EditNodeDialogViewModel(Node node)
+    public EditNodeDialogViewModel(Node node, IMessenger messenger)
     {
         this.NodeModel = node;
 
@@ -21,7 +21,7 @@ internal partial class EditNodeDialogViewModel : ViewModelBase
         this.Description = node.Description;
         this.IsCompleted = node.IsCompleted;
 
-        WeakReferenceMessenger.Default.Register<EditNodeDialogClosedMessage>(this, (r,m) =>
+        messenger.Register<EditNodeDialogClosedMessage>(this, (r,m) =>
         {
             if(m.Value)
             {
@@ -33,7 +33,7 @@ internal partial class EditNodeDialogViewModel : ViewModelBase
             node.Description = Description;
             node.IsCompleted = IsCompleted;
 
-            WeakReferenceMessenger.Default.Send(new NodeEditedMessage(node));
+            messenger.Send(new NodeEditedMessage(node));
         });
     }
 }

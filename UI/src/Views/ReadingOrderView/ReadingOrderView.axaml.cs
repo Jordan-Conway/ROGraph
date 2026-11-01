@@ -240,7 +240,7 @@ internal partial class ReadingOrderView : Page
 
     private async Task<bool> EditNode(Node node, bool confirmCancel = false)
     {
-        var dialog = new EditNodeDialogView(node, confirmCancel);
+        var dialog = new EditNodeDialogView(node, _messenger, confirmCancel);
         var root = this.VisualRoot as Window;
         var result = await dialog.ShowDialog<bool>(root!);
 

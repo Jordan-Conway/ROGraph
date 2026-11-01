@@ -11,12 +11,13 @@ public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
     private Page _currentPage;
-    private readonly IMessagingService _messagingService;
+
+    private readonly IMessenger _messenger;
     private readonly IPageService _pageService;
 
-    public MainWindowViewModel(IMessagingService messagingService, IPageService pageService)
+    public MainWindowViewModel(IMessenger messenger, IPageService pageService)
     {
-        _messagingService = messagingService;
+        _messenger = messenger;
         _pageService = pageService;
 
         CurrentPage = _pageService.GetPage(new PageType.ReadingOrderListPage());
@@ -26,7 +27,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void RegisterMessages()
     {
-        WeakReferenceMessenger.Default.Register<NavigationMessage>(this, (r, m) =>
+        _messenger.Register<NavigationMessage>(this, (r, m) =>
         {
             this.ChangeView(m.Value);
         });
