@@ -15,12 +15,15 @@ namespace ROGraph.Messaging.Tests.MessageHandlersTests;
 public sealed class ReadingOrderMessageHandlerTests
 {
     private readonly AutoMocker _mocker = new();
-    private ReadingOrderMessageHandler _handler;
+    private readonly ReadingOrderMessageHandler _messageHandler;
+    private readonly IMessenger _messenger;
 
-    [OneTimeSetUp]
-    public void Setup()
+    public ReadingOrderMessageHandlerTests()
     {
-        _handler = _mocker.CreateInstance<ReadingOrderMessageHandler>();
+        _mocker.Use<IMessenger>(WeakReferenceMessenger.Default);
+
+        _messageHandler = _mocker.CreateInstance<ReadingOrderMessageHandler>();
+        _messenger = _mocker.Get<IMessenger>();
     }
 
     [Test]
@@ -34,7 +37,7 @@ public sealed class ReadingOrderMessageHandlerTests
             .ReturnsAsync(readingOrder);
         
         // Act
-        var result = await WeakReferenceMessenger.Default.Send(message);
+        var result = await _messenger.Send(message);
         
         // Assert
         Assert.That(result, Is.EqualTo(readingOrder));
@@ -51,12 +54,13 @@ public sealed class ReadingOrderMessageHandlerTests
             .ReturnsAsync(readingOrder);
 
         // Act
-        var result = await WeakReferenceMessenger.Default.Send(message);
+        var result = await _messenger.Send(message);
         
         // Assert
         Assert.That(result, Is.EqualTo(readingOrder));
     }
 
+    [Test]
     public async Task GetReadingOrderOverviewsRequest_CallsService()
     {
         // Arrange
@@ -71,7 +75,7 @@ public sealed class ReadingOrderMessageHandlerTests
             .ReturnsAsync(readingOrders);
         
         // Act
-        var result = await WeakReferenceMessenger.Default.Send(message);
+        var result = await _messenger.Send(message);
         
         // Assert
         Assert.That(result, Is.EquivalentTo(readingOrders));
@@ -88,7 +92,7 @@ public sealed class ReadingOrderMessageHandlerTests
             .ReturnsAsync(true);
         
         // Act
-        var result = await WeakReferenceMessenger.Default.Send(message);
+        var result = await _messenger.Send(message);
         
         // Assert
         Assert.That(result, Is.True);
@@ -107,7 +111,7 @@ public sealed class ReadingOrderMessageHandlerTests
             .ReturnsAsync(true);
         
         // Act
-        var result = await WeakReferenceMessenger.Default.Send(message);
+        var result = await _messenger.Send(message);
 
         // Assert
         Assert.That(result, Is.True);
@@ -126,7 +130,7 @@ public sealed class ReadingOrderMessageHandlerTests
             .ReturnsAsync(true);
         
         // Act
-        var result = await WeakReferenceMessenger.Default.Send(message);
+        var result = await _messenger.Send(message);
 
         // Assert
         Assert.That(result, Is.True);
@@ -145,7 +149,7 @@ public sealed class ReadingOrderMessageHandlerTests
             .ReturnsAsync(true);
         
         // Act
-        var result = await WeakReferenceMessenger.Default.Send(message);
+        var result = await _messenger.Send(message);
 
         // Assert
         Assert.That(result, Is.True);
