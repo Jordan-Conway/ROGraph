@@ -13,17 +13,21 @@ public class EditReadingOrderDialogViewModel
     private readonly Guid _id;
     private readonly int _maxX = 0;
     private readonly int _maxY = 0;
+
+    private readonly IMessenger _messenger;
     
     public ReactiveCommand<Unit, Unit> SaveChangesCommand { get; }
     public ReactiveCommand<Unit, Unit> CancelChangesCommand { get; }
 
-    public EditReadingOrderDialogViewModel(ReadingOrderOverview readingOrderOverview)
+    public EditReadingOrderDialogViewModel(ReadingOrderOverview readingOrderOverview, IMessenger messenger)
     {
         Name = readingOrderOverview.Name;
         Description = readingOrderOverview.Description ?? string.Empty;
         _id = readingOrderOverview.Id;
         _maxX = readingOrderOverview.MaxX;
         _maxY = readingOrderOverview.MaxY;
+        
+        _messenger =  messenger;
 
         SaveChangesCommand = ReactiveCommand.Create(SaveChanges);
 
@@ -34,12 +38,12 @@ public class EditReadingOrderDialogViewModel
     {
         var overview = new ReadingOrderOverview(Name, _id, Description, _maxX, _maxY);
         var message = new EditReadingOrderDialogClosedMessage(overview);
-        WeakReferenceMessenger.Default.Send(message);
+        _messenger.Send(message);
     }
 
     private void CancelChanges()
     {
         var message = new EditReadingOrderDialogClosedMessage();
-        WeakReferenceMessenger.Default.Send(message);
+        _messenger.Send(message);
     }
 }

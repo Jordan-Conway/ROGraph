@@ -10,20 +10,23 @@ namespace ROGraph.UI.Views;
 
 public partial class ReadingOrderListView : Page
 {
-    public ReadingOrderListView(ReadingOrderListViewModel viewModel)
+    private readonly IMessenger _messenger;
+    
+    public ReadingOrderListView(ReadingOrderListViewModel viewModel, IMessenger messenger)
     {
         InitializeComponent();
 
         DataContext = viewModel;
 
+        _messenger  = messenger;
         RegisterMessages();
     }
 
     private void RegisterMessages()
     {
-        WeakReferenceMessenger.Default.Register<EditReadingOrderMessage>(this, (r, m) =>
+        _messenger.Register<EditReadingOrderMessage>(this, (r, m) =>
         {
-            var dialog = new EditReadingOrderDialog(m.Overview);
+            var dialog = new EditReadingOrderDialog(m.Overview, _messenger);
             var root = this.VisualRoot as Window;
             m.Reply(dialog.ShowDialog<ReadingOrderOverview?>(root!));
         });

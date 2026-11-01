@@ -80,7 +80,7 @@ public partial class ReadingOrderListViewModel : ObservableObject
             return;
         }
         
-        var overview = await WeakReferenceMessenger.Default.Send(new EditReadingOrderMessage(original));
+        var overview = await _messenger.Send(new EditReadingOrderMessage(original));
 
         if (overview == null)
         {

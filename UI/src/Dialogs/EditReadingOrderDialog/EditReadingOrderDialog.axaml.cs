@@ -6,13 +6,13 @@ namespace ROGraph.UI.Dialogs.EditReadingOrderDialog;
 
 public partial class EditReadingOrderDialog : Window
 {
-    public EditReadingOrderDialog(ReadingOrderOverview readingOrderOverview)
+    public EditReadingOrderDialog(ReadingOrderOverview readingOrderOverview, IMessenger messenger)
     {
         InitializeComponent();
         
-        this.DataContext = new EditReadingOrderDialogViewModel(readingOrderOverview);
+        this.DataContext = new EditReadingOrderDialogViewModel(readingOrderOverview, messenger);
         
-        WeakReferenceMessenger.Default.Register<EditReadingOrderDialogClosedMessage>(this, (r, m) =>
+        messenger.Register<EditReadingOrderDialogClosedMessage>(this, (r, m) =>
         {
             this.Close(m.ReadingOrderOverview);
         });

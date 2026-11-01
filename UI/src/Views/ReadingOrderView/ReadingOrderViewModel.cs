@@ -52,39 +52,39 @@ internal partial class ReadingOrderViewModel : ViewModelBase
 
     private void RegisterMessages()
     {
-        WeakReferenceMessenger.Default.Register<NodeAddedMessage>(this, (r,m) =>
+        _messenger.Register<NodeAddedMessage>(this, (r,m) =>
         {
             AddNode(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<NodeDeletedMessage>(this, (r, m) =>
+        _messenger.Register<NodeDeletedMessage>(this, (r, m) =>
         {
             DeleteNode(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<NodeEditedMessage>(this, (r,m) =>
+        _messenger.Register<NodeEditedMessage>(this, (r,m) =>
         {
             EditNode(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<ConnectorAddedMessage>(this, (r, m) =>
+        _messenger.Register<ConnectorAddedMessage>(this, (r, m) =>
         {
             AddConnector(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<ConnectorDeletedMessage>(this, (r, m) =>
+        _messenger.Register<ConnectorDeletedMessage>(this, (r, m) =>
         {
             DeleteConnector(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<ColumnAddedMessage>(this, (r, m) =>
+        _messenger.Register<ColumnAddedMessage>(this, (r, m) =>
         {
            AddColumn(m.Value); 
         });
-        WeakReferenceMessenger.Default.Register<ColumnDeletedMessage>(this, (r, m) =>
+        _messenger.Register<ColumnDeletedMessage>(this, (r, m) =>
         {
            DeleteColumn(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<RowAddedMessage>(this, (r,m) =>
+        _messenger.Register<RowAddedMessage>(this, (r,m) =>
         {
            AddRow(m.Value); 
         });
-        WeakReferenceMessenger.Default.Register<RowDeletedMessage>(this, (r,m) =>
+        _messenger.Register<RowDeletedMessage>(this, (r,m) =>
         {
            DeleteRow(m.Value); 
         });

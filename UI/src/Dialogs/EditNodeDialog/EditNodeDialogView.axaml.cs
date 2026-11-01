@@ -8,20 +8,23 @@ namespace ROGraph.UI.Dialogs.EditNodeDialog;
 
 internal partial class EditNodeDialogView : Window
 {
+    private readonly IMessenger _messenger;
     private bool ConfirmCancel { get; set; }
 
-    public EditNodeDialogView(Node node, bool confirmCancel = false)
+    public EditNodeDialogView(Node node, IMessenger messenger, bool confirmCancel = false)
     {
+        _messenger = messenger;
+        
         InitializeComponent();
 
         ConfirmCancel = confirmCancel;
 
-        DataContext = new EditNodeDialogViewModel(node);
+        DataContext = new EditNodeDialogViewModel(node, messenger);
     }
 
     private void Confirm(object? sender, RoutedEventArgs e)
     {
-        WeakReferenceMessenger.Default.Send(new EditNodeDialogClosedMessage(false));
+        _messenger.Send(new EditNodeDialogClosedMessage(false));
 
         Close(true);
     }
@@ -42,7 +45,7 @@ internal partial class EditNodeDialogView : Window
             return;
         }
 
-        WeakReferenceMessenger.Default.Send(new EditNodeDialogClosedMessage(true));
+        _messenger.Send(new EditNodeDialogClosedMessage(true));
 
         Close(false);
     }
