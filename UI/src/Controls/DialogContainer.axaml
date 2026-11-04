@@ -1,0 +1,6 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ns="using:ROGraph.UI.Controls"
+        x:Class="ROGraph.UI.Controls.DialogContainer">
+    <ContentPresenter Content="{Binding $parent[ns:DialogContainer].DialogControl}"></ContentPresenter>
+</UserControl>

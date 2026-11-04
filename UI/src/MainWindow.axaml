@@ -9,6 +9,17 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="UI">
 
-    <ContentPresenter Content="{Binding CurrentPage}"/>
-
+    <Grid ColumnDefinitions="*" RowDefinitions="*">
+        <ContentPresenter 
+            Grid.Row="0"
+            Grid.Column="0"
+            Content="{Binding CurrentPage}"
+            />
+        <ContentPresenter
+            Grid.Row="0"
+            Grid.Column="0"
+            ZIndex="999"
+            Content="{Binding DialogContainer}"
+        />
+    </Grid>
 </Window>
