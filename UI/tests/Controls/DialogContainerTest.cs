@@ -1,5 +1,5 @@
 using ROGraph.UI.Controls;
-using ROGraph.UI.Dialogs.TestDialog;
+using ROGraph.UI.Tests.Utils;
 
 namespace ROGraph.UI.Tests.Controls;
 

@@ -1,8 +1,8 @@
 using Moq;
 using Moq.AutoMock;
 using ROGraph.UI.Controls;
-using ROGraph.UI.Dialogs.TestDialog;
 using ROGraph.UI.Services;
+using ROGraph.UI.Tests.Utils;
 
 namespace ROGraph.UI.Tests.Services;
 
