@@ -40,4 +40,10 @@ internal class DialogService : IDialogService
             tcs.TrySetResult(args.Result);
         }
     }
+
+    public Task<bool> OpenConfirmDialog(string message)
+    {
+        var dialog = new ConfirmationDialog(message);
+        return Open(dialog);
+    }
 }

@@ -11,7 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using ReactiveUI;
 using ROGraph.Shared.Models;
-using ROGraph.UI.Dialogs.TestDialog;
+using ROGraph.UI.Dialogs;
 using ROGraph.UI.Messages;
 using ROGraph.UI.Pages;
 using ROGraph.UI.Services;
@@ -120,7 +120,7 @@ internal partial class ReadingOrderListViewModel : ObservableObject
     [RelayCommand]
     public async Task OpenTestDialog()
     {
-        var dialog = new TestDialog();
+        var dialog = new ConfirmationDialog("I am a test");
         var result = await _dialogService.Open(dialog);
         
         Console.WriteLine($"Received result {result} from test dialog");

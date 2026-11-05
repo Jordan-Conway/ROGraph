@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ROGraph.UI.Dialogs.ConfirmationDialog"
+             x:Name="Root">
+    <UserControl.Styles>
+        <Style Selector="StackPanel.Header">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Background" Value="#98915D" />
+            <Setter Property="FlowDirection" Value="RightToLeft" />
+        </Style>
+        <Style Selector="StackPanel.Dialog">
+            <Setter Property="Width" Value="600" />
+            <Setter Property="Height" Value="250" />
+            <Setter Property="Background" Value="#4e4e4e" />
+        </Style>
+        <Style Selector="StackPanel.ButtonRow">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="FlowDirection" Value="RightToLeft" />
+            <Setter Property="Spacing" Value="15" />
+        </Style>
+        <Style Selector="Button.Confirm">
+            <Setter Property="Background" Value="#98915D" />
+        </Style>
+    </UserControl.Styles>
+    <StackPanel
+        Classes="Dialog">
+        <StackPanel Classes="Header">
+            <Button Command="{Binding #Root.Cancel}">X</Button>
+        </StackPanel>
+        <TextBlock Text="{Binding #Root.Message}" />
+        <StackPanel Classes="ButtonRow">
+            <Button Classes="Confirm" Command="{Binding #Root.Confirm}">Confirm</Button>
+            <Button Command="{Binding #Root.Cancel}">Cancel</Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

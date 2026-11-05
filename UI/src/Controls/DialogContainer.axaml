@@ -11,8 +11,7 @@
     <Panel
         IsVisible="{Binding $parent[ns:DialogContainer].HasDialog}"
         IsHitTestVisible="{Binding $parent[ns:DialogContainer].HasDialog}"
-        Background="#40000000"
-        >
+        Background="#40000000">
         <ContentPresenter
             Classes="Container"
             Content="{Binding $parent[ns:DialogContainer].DialogControl}">

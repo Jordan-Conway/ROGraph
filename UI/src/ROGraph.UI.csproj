@@ -18,6 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
+      <PackageReference Include="Avalonia.Markup.Xaml.Loader" PrivateAssets="All" Publish="True" />
     <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
@@ -27,6 +28,7 @@
     </PackageReference>
     <PackageReference Include="Avalonia.Xaml.Interactions" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
+      <PackageReference Include="HotAvalonia" PrivateAssets="All" Publish="True" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="ReactiveUI.Avalonia" />
