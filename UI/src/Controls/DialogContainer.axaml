@@ -2,9 +2,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ns="using:ROGraph.UI.Controls"
         x:Class="ROGraph.UI.Controls.DialogContainer">
-    <ContentPresenter
+    <UserControl.Styles>
+        <Style Selector="ContentPresenter.Container">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+    <Panel
         IsVisible="{Binding $parent[ns:DialogContainer].HasDialog}"
-        Background="#40000000"
         IsHitTestVisible="{Binding $parent[ns:DialogContainer].HasDialog}"
-        Content="{Binding $parent[ns:DialogContainer].DialogControl}"></ContentPresenter>
+        Background="#40000000"
+        >
+        <ContentPresenter
+            Classes="Container"
+            Content="{Binding $parent[ns:DialogContainer].DialogControl}">
+        </ContentPresenter>
+    </Panel>
 </UserControl>
