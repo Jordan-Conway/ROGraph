@@ -2,25 +2,32 @@
 using CommunityToolkit.Mvvm.Messaging;
 using ROGraph.UI.Messages;
 using System;
+using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
+using ROGraph.UI.Controls;
 using ROGraph.UI.Services;
 using ROGraph.UI.Pages;
 
 namespace ROGraph.UI;
 
-public partial class MainWindowViewModel : ObservableObject
+internal partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
     private Page _currentPage;
 
+    [ObservableProperty]
+    private IDialogContainer _dialogContainer;
+
     private readonly IMessenger _messenger;
     private readonly IPageService _pageService;
 
-    public MainWindowViewModel(IMessenger messenger, IPageService pageService)
+    public MainWindowViewModel(IMessenger messenger, IPageService pageService, [FromKeyedServices("dialogContainer")] IDialogContainer dialogContainer )
     {
         _messenger = messenger;
         _pageService = pageService;
 
         CurrentPage = _pageService.GetPage(new PageType.ReadingOrderListPage());
+        DialogContainer = dialogContainer;
 
         this.RegisterMessages();
     }

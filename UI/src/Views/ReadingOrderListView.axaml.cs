@@ -8,7 +8,7 @@ using ROGraph.UI.ViewModels;
 
 namespace ROGraph.UI.Views;
 
-public partial class ReadingOrderListView : Page
+internal partial class ReadingOrderListView : Page
 {
     private readonly IMessenger _messenger;
     

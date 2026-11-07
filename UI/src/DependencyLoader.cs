@@ -1,7 +1,9 @@
+using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ROGraph.Backend;
 using ROGraph.Messaging;
+using ROGraph.UI.Controls;
 using ROGraph.UI.Services;
 using ROGraph.UI.Services.StateService;
 using ROGraph.UI.Views;
@@ -16,11 +18,14 @@ internal static class DependencyLoader
     {
         public void RegisterDependencies()
         {
+            services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<IMessagingService, MessagingService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<IStateService, StateService>();
         
             services.AddSingleton<ILoggerFactory, LoggerFactory>();
+
+            services.AddKeyedSingleton<IDialogContainer, DialogContainer>("dialogContainer");
         
             services.AddBackendDependencies();
             services.AddMessagingDependencies();

@@ -4,7 +4,7 @@ using ROGraph.Backend.Contracts;
 
 namespace ROGraph.UI;
 
-public partial class MainWindow : Window
+internal partial class MainWindow : Window
 {
     public MainWindow(MainWindowViewModel viewModel)
     {

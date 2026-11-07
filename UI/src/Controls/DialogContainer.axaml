@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ns="using:ROGraph.UI.Controls"
+        x:Class="ROGraph.UI.Controls.DialogContainer">
+    <UserControl.Styles>
+        <Style Selector="ContentPresenter.DialogPresenter">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+    <Panel
+        IsVisible="{Binding $parent[ns:DialogContainer].HasDialog}"
+        IsHitTestVisible="{Binding $parent[ns:DialogContainer].HasDialog}"
+        Background="#40000000">
+        <ContentPresenter
+            Classes="DialogPresenter"
+            Content="{Binding $parent[ns:DialogContainer].DialogControl}" />
+    </Panel>
+</UserControl>

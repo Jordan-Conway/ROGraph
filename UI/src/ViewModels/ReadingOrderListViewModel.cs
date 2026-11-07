@@ -11,14 +11,16 @@ using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using ReactiveUI;
 using ROGraph.Shared.Models;
+using ROGraph.UI.Dialogs;
 using ROGraph.UI.Messages;
 using ROGraph.UI.Pages;
 using ROGraph.UI.Services;
 
 namespace ROGraph.UI.ViewModels;
 
-public partial class ReadingOrderListViewModel : ObservableObject
+internal partial class ReadingOrderListViewModel : ObservableObject
 {
+    private readonly IDialogService _dialogService;
     private readonly IMessagingService _messagingService;
     private readonly IMessenger _messenger;
     
@@ -32,12 +34,15 @@ public partial class ReadingOrderListViewModel : ObservableObject
     
     public ReactiveCommand<Guid, Unit> EditReadingOrderCommand { get; set; }
 
-    public ReadingOrderListViewModel(IMessagingService messagingService, IMessenger messenger)
+    public ReadingOrderListViewModel(IMessagingService messagingService, IMessenger messenger, IDialogService dialogService)
     {
         ArgumentNullException.ThrowIfNull(messagingService);
+        ArgumentNullException.ThrowIfNull(messenger);
+        ArgumentNullException.ThrowIfNull(dialogService);
         
         _messagingService = messagingService;
         _messenger = messenger;
+        _dialogService = dialogService;
 
         var existingOverviews = _messagingService.GetReadingOrderOverviews();
         _overviews = new ObservableCollection<ReadingOrderOverview>(existingOverviews.GetAwaiter().GetResult());
@@ -101,6 +106,14 @@ public partial class ReadingOrderListViewModel : ObservableObject
     [RelayCommand]
     public async Task DeleteReadingOrder(Guid id)
     {
+        var shouldDelete = await _dialogService.OpenConfirmDialog("Are you sure you want to delete this reading order?");
+
+        if (!shouldDelete)
+        {
+            Debug.WriteLine($"Deleting reading order {id} cancelled");
+            return;
+        }
+        
         var deleted = await _messagingService.DeleteReadingOrder(id);
 
         if (!deleted)
