@@ -3,34 +3,65 @@
              x:Class="ROGraph.UI.Dialogs.ConfirmationDialog"
              x:Name="Root">
     <UserControl.Styles>
-        <Style Selector="StackPanel.Header">
-            <Setter Property="Orientation" Value="Horizontal" />
+        <Style Selector="Border.DialogBorder">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="ClipToBounds" Value="True" />
+        </Style>
+        <Style Selector="Panel.Header">
             <Setter Property="Background" Value="#98915D" />
+            <Setter Property="Height" Value="38" />
+        </Style>
+        <Style Selector="StackPanel.HeaderButtons">
+            <Setter Property="Orientation" Value="Horizontal" />
             <Setter Property="FlowDirection" Value="RightToLeft" />
+            <Setter Property="Margin" Value="0 0 10 0"></Setter>
+        </Style>
+        <Style Selector="Button.HeaderButton">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Width" Value="30" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
         <Style Selector="StackPanel.Dialog">
             <Setter Property="Width" Value="600" />
             <Setter Property="Height" Value="250" />
             <Setter Property="Background" Value="#4e4e4e" />
         </Style>
+        <Style Selector="TextBlock.MessageText">
+            <Setter Property="Height" Value="160" />
+            <Setter Property="Margin" Value="15 15 15 0" />
+        </Style>
         <Style Selector="StackPanel.ButtonRow">
             <Setter Property="Orientation" Value="Horizontal" />
             <Setter Property="FlowDirection" Value="RightToLeft" />
             <Setter Property="Spacing" Value="15" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="15 0" />
         </Style>
         <Style Selector="Button.Confirm">
             <Setter Property="Background" Value="#98915D" />
         </Style>
     </UserControl.Styles>
-    <StackPanel
-        Classes="Dialog">
-        <StackPanel Classes="Header">
-            <Button Command="{Binding #Root.Cancel}">X</Button>
+    <Border
+        Classes="DialogBorder">
+        <StackPanel
+            Classes="Dialog">
+            <Panel
+                Classes="Header">
+                <StackPanel
+                    Classes="HeaderButtons">
+                    <Button
+                        Classes="HeaderButton"
+                        Command="{Binding #Root.Cancel}">
+                            <TextBlock Text="X" />
+                    </Button>
+                </StackPanel>
+            </Panel>
+            <TextBlock Classes="MessageText" Text="{Binding #Root.Message}" />
+            <StackPanel Classes="ButtonRow">
+                <Button Classes="Confirm" Command="{Binding #Root.Confirm}">Confirm</Button>
+                <Button Command="{Binding #Root.Cancel}">Cancel</Button>
+            </StackPanel>
         </StackPanel>
-        <TextBlock Text="{Binding #Root.Message}" />
-        <StackPanel Classes="ButtonRow">
-            <Button Classes="Confirm" Command="{Binding #Root.Confirm}">Confirm</Button>
-            <Button Command="{Binding #Root.Cancel}">Cancel</Button>
-        </StackPanel>
-    </StackPanel>
+    </Border>
 </UserControl>
