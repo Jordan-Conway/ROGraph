@@ -26,9 +26,6 @@
             <Button Command="{Binding CreateReadingOrderCommand}">
                 New
             </Button>
-            <Button Command="{Binding OpenTestDialogCommand}">
-                Open Test Dialog
-            </Button>
             <ItemsControl ItemsSource="{Binding Overviews}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

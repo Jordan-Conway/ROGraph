@@ -106,6 +106,14 @@ internal partial class ReadingOrderListViewModel : ObservableObject
     [RelayCommand]
     public async Task DeleteReadingOrder(Guid id)
     {
+        var shouldDelete = await _dialogService.OpenConfirmDialog("Are you sure you want to delete this reading order?");
+
+        if (!shouldDelete)
+        {
+            Debug.WriteLine($"Deleting reading order {id} cancelled");
+            return;
+        }
+        
         var deleted = await _messagingService.DeleteReadingOrder(id);
 
         if (!deleted)
@@ -115,15 +123,6 @@ internal partial class ReadingOrderListViewModel : ObservableObject
         }
         
         Overviews.Remove(Overviews.First(x => x.Id == id));
-    }
-
-    [RelayCommand]
-    public async Task OpenTestDialog()
-    {
-        var dialog = new ConfirmationDialog("I am a test");
-        var result = await _dialogService.Open(dialog);
-        
-        Console.WriteLine($"Received result {result} from test dialog");
     }
     
     private async Task RefreshReadingOrders(CancellationToken token = default)
