@@ -6,6 +6,7 @@ using ROGraph.Messaging;
 using ROGraph.UI.Controls;
 using ROGraph.UI.Services;
 using ROGraph.UI.Services.StateService;
+using ROGraph.UI.Services.ThemeService;
 using ROGraph.UI.Views;
 using ROGraph.UI.Views.ReadingOrderView;
 using ReadingOrderListViewModel = ROGraph.UI.ViewModels.ReadingOrderListViewModel;
@@ -22,6 +23,8 @@ internal static class DependencyLoader
             services.AddSingleton<IMessagingService, MessagingService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<IStateService, StateService>();
+            services.AddSingleton<IThemeManager, ThemeService>();
+            services.AddSingleton<IThemeToggler, ThemeService>();
         
             services.AddSingleton<ILoggerFactory, LoggerFactory>();
 

@@ -1,13 +1,16 @@
+using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ROGraph.Backend;
 using ROGraph.Backend.Contracts;
 using ROGraph.Messaging;
+using ROGraph.UI.Services.ThemeService;
 
 namespace ROGraph.UI;
 
@@ -31,6 +34,9 @@ public partial class App : Application
        var dataSourceCreator = services.GetRequiredService<IReadingOrderDataSourceCreator>();
        dataSourceCreator.CreateDataSource();
        
+       var themeService = services.GetRequiredService<IThemeManager>();
+       RegisterThemes(themeService);
+       
        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
        {
            desktop.MainWindow = services.GetRequiredService<MainWindow>();
@@ -49,6 +55,30 @@ public partial class App : Application
         foreach (var plugin in dataValidationPluginsToRemove)
         {
             BindingPlugins.DataValidators.Remove(plugin);
+        }
+    }
+
+    private void RegisterThemes(IThemeManager themeService)
+    {
+        var themes = themeService.GetAllThemeKeys();
+        foreach (var themeKey in themes)
+        {
+            var theme = themeService.GetTheme(themeKey);
+            var resourceDictionary = ThemeConvertor.ConvertTheme(theme);
+
+            var themeVariant = new ThemeVariant(themeKey, ThemeVariant.Dark);
+            Resources.ThemeDictionaries.Add(themeVariant, resourceDictionary);
+        }
+
+        RequestedThemeVariant = themeService.GetSelectedTheme();
+        
+        themeService.ThemeChanged += UpdateTheme;
+        return;
+
+        void UpdateTheme(object? sender, string themeKey)
+        {
+            var variant = themeService.GetTheme(themeKey).Key;
+            RequestedThemeVariant = variant;
         }
     }
 }
