@@ -21,7 +21,7 @@ internal interface ITheme
     ButtonColors ButtonColors { get; set; }
 }
 
-internal class DefaultTheme : ITheme
+internal record DefaultTheme : ITheme
 {
     public const string DefaultThemeKey = "DefaultThemeKey";
     

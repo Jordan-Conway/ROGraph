@@ -23,7 +23,7 @@ internal static class DependencyLoader
             services.AddSingleton<IMessagingService, MessagingService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<IStateService, StateService>();
-            services.AddSingleton<IThemeService, ThemeService>();
+            services.AddSingleton<IThemeManager, ThemeService>();
         
             services.AddSingleton<ILoggerFactory, LoggerFactory>();
 

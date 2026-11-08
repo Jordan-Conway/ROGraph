@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Avalonia.Styling;
 using ROGraph.UI.Assets.Themes;
 
 namespace ROGraph.UI.Services.ThemeService;
 
-internal class ThemeService : IThemeService
+internal class ThemeService : IThemeManager, IThemeToggler
 {
     private readonly Dictionary<string, ITheme> _themes = [];
 
@@ -17,12 +18,25 @@ internal class ThemeService : IThemeService
         RegisterTheme(DefaultTheme.DefaultThemeKey, defaultTheme);
     }
     
+    public event EventHandler<string>? ThemeChanged;
+    
     /// <inheritdoc/>
     public ITheme GetTheme(string themeKey)
     {
         var registeredTheme =  _themes.TryGetValue(themeKey, out var theme) ? theme : null;
 
         return registeredTheme ?? _themes[DefaultTheme.DefaultThemeKey];
+    }
+
+    public void SetTheme(string themeKey)
+    {
+        if (SelectedThemeKey == themeKey)
+        {
+            return;
+        }
+        
+        SelectedThemeKey = themeKey;
+        ThemeChanged?.Invoke(this, SelectedThemeKey);
     }
 
     public ThemeVariant GetSelectedTheme()

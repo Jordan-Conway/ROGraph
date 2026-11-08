@@ -34,7 +34,7 @@ public partial class App : Application
        var dataSourceCreator = services.GetRequiredService<IReadingOrderDataSourceCreator>();
        dataSourceCreator.CreateDataSource();
        
-       var themeService = services.GetRequiredService<IThemeService>();
+       var themeService = services.GetRequiredService<IThemeManager>();
        RegisterThemes(themeService);
        
        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -58,7 +58,7 @@ public partial class App : Application
         }
     }
 
-    private void RegisterThemes(IThemeService themeService)
+    private void RegisterThemes(IThemeManager themeService)
     {
         var themes = themeService.GetAllThemeKeys();
         foreach (var themeKey in themes)
@@ -71,5 +71,14 @@ public partial class App : Application
         }
 
         RequestedThemeVariant = themeService.GetSelectedTheme();
+        
+        themeService.ThemeChanged += UpdateTheme;
+        return;
+
+        void UpdateTheme(object? sender, string themeKey)
+        {
+            var variant = themeService.GetTheme(themeKey).Key;
+            RequestedThemeVariant = variant;
+        }
     }
 }
