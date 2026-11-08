@@ -24,6 +24,7 @@ internal static class DependencyLoader
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<IStateService, StateService>();
             services.AddSingleton<IThemeManager, ThemeService>();
+            services.AddSingleton<IThemeToggler, ThemeService>();
         
             services.AddSingleton<ILoggerFactory, LoggerFactory>();
 
