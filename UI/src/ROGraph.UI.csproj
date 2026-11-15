@@ -42,10 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\ReadingOrderListView\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Views\ReadingOrderListView.axaml.cs">
       <DependentUpon>ReadingOrderListView.axaml</DependentUpon>
       <SubType>Code</SubType>
