@@ -5,6 +5,27 @@
              x:DataType="viewModels:ReadingOrderListViewModel"
              x:Name="Root">
     <UserControl.Styles>
+        <Style Selector="StackPanel.Background">
+            <Setter Property="Background" Value="{DynamicResource DialogBackgroundColor}" />    
+        </Style>
+        <Style Selector="Border.HeaderBorder">
+            <Setter Property="BoxShadow" Value="0 2 10 0 #333333" />
+        </Style>
+        <Style Selector="StackPanel.Header">
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Background" Value="{DynamicResource DialogHeaderColor}" />
+            <Setter Property="FlowDirection" Value="RightToLeft" />
+            <Setter Property="Orientation" Value="Horizontal" />
+        </Style>
+        <Style Selector="Button.HeaderButton">
+            <Setter Property="Margin" Value="10 0 0 0" />
+        </Style>
+        <Style Selector="Border.ItemBorder">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="Margin" Value="10,10,10,0" />
+            <Setter Property="CornerRadius" Value="15" />
+        </Style>
         <Style Selector="Grid.ROList">
             <Setter Property="Margin" Value="10,10,10,0" />
         </Style>
@@ -22,41 +43,49 @@
         </Style>
     </UserControl.Styles>
     <ScrollViewer>
-        <StackPanel>
-            <Button Command="{Binding CreateReadingOrderCommand}">
-                New
-            </Button>
+        <StackPanel Classes="Background">
+            <Border Classes="HeaderBorder">
+                <StackPanel Classes="Header">
+                    <Button 
+                        Classes="HeaderButton"
+                        Command="{Binding CreateReadingOrderCommand}">
+                        New
+                    </Button>
+                </StackPanel>
+            </Border>
             <ItemsControl ItemsSource="{Binding Overviews}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid
-                            ColumnDefinitions="*,auto,auto"
-                            Classes="ROList">
-                            <Button 
-                                Command="{Binding #Root.((viewModels:ReadingOrderListViewModel)DataContext).NavigateToReadingOrderCommand}"
-                                CommandParameter="{Binding Id}"
-                                Grid.Column="0" 
-                                Classes="ROListItemButton">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Name}" />
-                                    <TextBlock Text="{Binding Description}" />
-                                </StackPanel>
-                            </Button>
-                            <Button
-                                Grid.Column="1"
-                                Command="{Binding #Root.((viewModels:ReadingOrderListViewModel)DataContext).EditReadingOrder}"
-                                CommandParameter="{Binding Id}"
-                                Classes="ROListItemModifyButton">
-                                Edit
-                            </Button>
-                            <Button 
-                                Command="{Binding #Root.((viewModels:ReadingOrderListViewModel)DataContext).DeleteReadingOrderCommand}"
-                                CommandParameter="{Binding Id}"
-                                Grid.Column="2"
-                                Classes="ROListItemDeleteButton">
-                                X
-                            </Button>
-                        </Grid>
+                        <Border Classes="ItemBorder">
+                            <Grid
+                                ColumnDefinitions="*,auto,auto"
+                                Classes="ROList">
+                                <Button 
+                                    Command="{Binding #Root.((viewModels:ReadingOrderListViewModel)DataContext).NavigateToReadingOrderCommand}"
+                                    CommandParameter="{Binding Id}"
+                                    Grid.Column="0" 
+                                    Classes="ROListItemButton">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" />
+                                        <TextBlock Text="{Binding Description}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button
+                                    Grid.Column="1"
+                                    Command="{Binding #Root.((viewModels:ReadingOrderListViewModel)DataContext).EditReadingOrder}"
+                                    CommandParameter="{Binding Id}"
+                                    Classes="ROListItemModifyButton">
+                                    Edit
+                                </Button>
+                                <Button 
+                                    Command="{Binding #Root.((viewModels:ReadingOrderListViewModel)DataContext).DeleteReadingOrderCommand}"
+                                    CommandParameter="{Binding Id}"
+                                    Grid.Column="2"
+                                    Classes="ROListItemDeleteButton">
+                                    X
+                                </Button>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
