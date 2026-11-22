@@ -21,25 +21,32 @@
             <Setter Property="Margin" Value="10 0 0 0" />
         </Style>
         <Style Selector="Border.ItemBorder">
-            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderThickness" Value="2" />
             <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="Background" Value="#888888" />
             <Setter Property="Margin" Value="10,10,10,0" />
+            <Setter Property="Padding" Value="3" />
             <Setter Property="CornerRadius" Value="15" />
-        </Style>
-        <Style Selector="Grid.ROList">
-            <Setter Property="Margin" Value="10,10,10,0" />
         </Style>
         <Style Selector="Button.ROListItemButton">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="5, 0, 0, 0" />
         </Style>
         <Style Selector="Button.ROListItemModifyButton">
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="Transparent" />
         </Style>
         <Style Selector="Button.ROListItemDeleteButton">
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Background" Value="Red" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="15, 0, 5 , 0" />
+        </Style>
+        <Style Selector="TextBlock.Description">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontStyle" Value="Italic" />
         </Style>
     </UserControl.Styles>
     <ScrollViewer>
@@ -58,8 +65,7 @@
                     <DataTemplate>
                         <Border Classes="ItemBorder">
                             <Grid
-                                ColumnDefinitions="*,auto,auto"
-                                Classes="ROList">
+                                ColumnDefinitions="*,auto,auto">
                                 <Button 
                                     Command="{Binding #Root.((viewModels:ReadingOrderListViewModel)DataContext).NavigateToReadingOrderCommand}"
                                     CommandParameter="{Binding Id}"
@@ -67,7 +73,7 @@
                                     Classes="ROListItemButton">
                                     <StackPanel>
                                         <TextBlock Text="{Binding Name}" />
-                                        <TextBlock Text="{Binding Description}" />
+                                        <TextBlock Classes="Description" Text="{Binding Description}" />
                                     </StackPanel>
                                 </Button>
                                 <Button
